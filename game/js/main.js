@@ -1,9 +1,12 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+const allLevels = [maps.map1, maps.map2, maps.map3];
+let currentLevelIndex = 0;
 
-const maze = new Maze(maps.map1, tileSize);
+let maze = new Maze(allLevels[currentLevelIndex], tileSize);
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
+
 
 canvas.width = maze.cols * tileSize;
 canvas.height = maze.rows * tileSize;
@@ -21,6 +24,29 @@ window.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
 });
 
+function nextLevel() {
+    currentLevelIndex++;
+
+    if (currentLevelIndex < allLevels.length) {
+        maze = new Maze(allLevels[currentLevelIndex], tileSize);
+
+        const startPos = maze.getStartPos();
+
+        player.gridX = startPos.x;
+        player.gridY = startPos.y;
+        player.x = startPos.x * tileSize;
+        player.y = startPos.y * tileSize;
+
+        canvas.width = maze.cols * tileSize;
+        canvas.height = maze.rows * tileSize;
+
+    } else {
+        alert("Поздравляем! Вы прошли все уровни!");
+        currentLevelIndex = 0; 
+        gameLoop();
+    }
+}
+
 function update() {
     let dx = 0;
     let dy = 0;
@@ -32,6 +58,13 @@ function update() {
 
     if (dx !== 0 || dy !== 0) {
         player.move(dx, dy, maze);
+    }
+
+    const exit = maze.getExitPos();
+    if (player.gridX === exit.x && player.gridY === exit.y) {
+        if (player.x === player.gridX * tileSize && player.y === player.gridY * tileSize) {
+            nextLevel();
+        }
     }
 }
 
