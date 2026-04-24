@@ -2,11 +2,13 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const maze = new Maze(maps.map1, tileSize);
+const startPos = maze.getStartPos();
+const exitPos = maze.getExitPos();
 
 canvas.width = maze.cols * tileSize;
 canvas.height = maze.rows * tileSize;
 
-const player = new Player(9, 0, tileSize);
+const player = new Player(startPos.x, startPos.y, tileSize);
 
 // зажата ли клавиша | czy przycisk jest wciśnięty
 const keys = {};

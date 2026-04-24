@@ -1,17 +1,36 @@
-export class Maze
+class Maze
 {
 
-  // выбор карты для уровня | wybór mapy dla poziomu
-  constructor(map, tileSize)
-  {
-    this.grid = map;
-    this.tileSize = tileSize;
-    this.rows = map.length;
-    this.cols = map[0].length;
-  }
+    // выбор карты для уровня | wybór mapy dla poziomu
+     constructor(map, tileSize)
+    {
+        this.grid = map;
+        this.tileSize = tileSize;
+        this.rows = map.length;
+        this.cols = map[0].length;
+    }
 
-  // отрисовка лабиринта | rysowanie labiryntu 
-  draw(ctx) {
+    // находит стартовую позицию | znajduje początkowy tile
+    getStartPos() {
+        const lastRowIndex = this.rows - 1;
+        for (let x = 0; x < this.cols; x++) {
+            if (this.grid[lastRowIndex][x] === 0) {
+                return { x: x, y: lastRowIndex };
+            }
+        }
+    }
+
+    // находит выход | znajduje wyjście
+    getExitPos() {
+        for (let x = 0; x < this.cols; x++) {
+            if (this.grid[0][x] === 0) {
+                return { x: x, y: 0 };
+            }
+        }
+    }   
+
+    // отрисовка лабиринта | rysowanie labiryntu 
+    draw(ctx) {
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
                 if (this.grid[y][x] === 1) {
@@ -22,10 +41,13 @@ export class Maze
                 ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
             }
         }
-  }
+        const exit = this.getExitPos();
+        ctx.fillStyle = "rgba(46, 204, 113, 0.5)";
+        ctx.fillRect(exit.x * this.tileSize, exit.y * this.tileSize, this.tileSize, this.tileSize);
+    }  
 
-  // проверка стен | sprawdzanie ścian
-  isWall(x, y) {
+    // проверка стен | sprawdzanie ścian
+    isWall(x, y) {
         if (y < 0 || y >= this.rows || x < 0 || x >= this.cols) {
             return true; 
         }
