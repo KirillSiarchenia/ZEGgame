@@ -8,25 +8,41 @@ canvas.height = maze.rows * tileSize;
 
 const player = new Player(9, 0, tileSize);
 
+// зажата ли клавиша | czy przycisk jest wciśnięty
+const keys = {};
+
+window.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+});
+
+function update() {
+    let dx = 0;
+    let dy = 0;
+
+    if (keys["w"] || keys["arrowup"] || keys["ц"]) dy = -1;
+    else if (keys["s"] || keys["arrowdown"] || keys["ы"]) dy = 1;
+    else if (keys["a"] || keys["arrowleft"] || keys["ф"]) dx = -1;
+    else if (keys["d"] || keys["arrowright"] || keys["в"]) dx = 1;
+
+    if (dx !== 0 || dy !== 0) {
+        player.move(dx, dy, maze);
+    }
+}
+
 function gameLoop() {
+    update();
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     maze.draw(ctx);
     player.draw(ctx);
 
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(gameLoop); 
 }
 
-window.addEventListener("keydown", (e) => {
-    const key = e.key.toLowerCase();
-    let dx = 0, dy = 0;
-
-    if (key === "arrowup" || key === "w" || key === "ц") dy = -1;
-    if (key === "arrowdown" || key === "s" || key === "ы") dy = 1;
-    if (key === "arrowleft" || key === "a" || key === "ф") dx = -1;
-    if (key === "arrowright" || key === "d" || key === "в") dx = 1;
-
-    player.move(dx, dy, maze); 
-});
 
 gameLoop();
