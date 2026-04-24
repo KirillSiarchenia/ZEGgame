@@ -1,8 +1,7 @@
-class Maze
+export class Maze
 {
 
-  // Выбор карты для уровня
-
+  // выбор карты для уровня | wybór mapy dla poziomu
   constructor(map, tileSize)
   {
     this.grid = map;
@@ -12,18 +11,25 @@ class Maze
   }
 
   // отрисовка лабиринта | rysowanie labiryntu 
-  
   draw(ctx) {
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
                 if (this.grid[y][x] === 1) {
-                    ctx.fillStyle = "black"; // Стены [cite: 80]
+                    ctx.fillStyle = "black"; 
                 } else {
-                    ctx.fillStyle = "white"; // Проходы
+                    ctx.fillStyle = "white"; 
                 }
                 ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
             }
         }
+  }
+
+  // проверка стен | sprawdzanie ścian
+  isWall(x, y) {
+        if (y < 0 || y >= this.rows || x < 0 || x >= this.cols) {
+            return true; 
+        }
+        return this.grid[y][x] === 1;
     }
 
 }
