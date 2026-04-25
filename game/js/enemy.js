@@ -3,7 +3,6 @@ class Enemy {
         this.gridX = x;
         this.gridY = y;
         this.tileSize = tileSize;
-        this.fovRange = 6;         // "Зрение" (длина луча)
         this.lastPlayerPos = null; // Память о игроке
         this.searchTimer = 0;      // Таймер стояния на месте
         
@@ -129,6 +128,7 @@ class Enemy {
         if (Math.abs(this.gridX - player.gridX) <= 1 && Math.abs(this.gridY - player.gridY) <= 1) {
             if (!this.lastAttack || Date.now() - this.lastAttack > 1000) {
                 player.hp -= 1;
+                console.log(player.hp);
                 this.lastAttack = Date.now();
             }
         }

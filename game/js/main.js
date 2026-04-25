@@ -2,10 +2,23 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const allLevels = [maps.map1, maps.map2, maps.map3];
 let currentLevelIndex = 0;
+let enemies = [];
 
 let maze = new Maze(allLevels[currentLevelIndex], tileSize);
+loadEnemies(currentLevelIndex);
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
+
+function loadEnemies(levelIndex) {
+    const levelKey = "map" + (levelIndex + 1);
+    enemies = []; // Очищаем список врагов текущего уровня
+    
+    if (enemiesData[levelKey]) {
+        enemiesData[levelKey].forEach(data => {
+            enemies.push(new Enemy(data.x, data.y, data.tileSize, data.path));
+        });
+    }
+}
 
 
 canvas.width = maze.cols * tileSize;
@@ -26,10 +39,11 @@ window.addEventListener("keyup", (e) => {
 
 function nextLevel() {
     currentLevelIndex++;
-
+    
     if (currentLevelIndex < allLevels.length) {
         maze = new Maze(allLevels[currentLevelIndex], tileSize);
-
+        loadEnemies(currentLevelIndex);
+        
         const startPos = maze.getStartPos();
 
         player.gridX = startPos.x;
@@ -41,13 +55,14 @@ function nextLevel() {
         canvas.height = maze.rows * tileSize;
 
     } else {
-        alert("Поздравляем! Вы прошли все уровни!");
+        alert("Поздравляю! Вы прошли игру!");
         currentLevelIndex = 0; 
-        gameLoop();
     }
 }
 
+
 function update() {
+    // передвижение персонажа
     let dx = 0;
     let dy = 0;
 
@@ -59,6 +74,11 @@ function update() {
     if (dx !== 0 || dy !== 0) {
         player.move(dx, dy, maze);
     }
+
+    // обновление состояний врагов
+    enemies.forEach(enemy => {
+        enemy.update(player, maze);
+    });
 
     const exit = maze.getExitPos();
     if (player.gridX === exit.x && player.gridY === exit.y) {
@@ -75,6 +95,9 @@ function gameLoop() {
 
     maze.draw(ctx);
     player.draw(ctx);
+    enemies.forEach(enemy => {
+        enemy.draw(ctx);
+    });
 
     requestAnimationFrame(gameLoop); 
 }
