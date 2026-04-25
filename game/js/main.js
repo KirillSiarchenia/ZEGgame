@@ -62,7 +62,7 @@ function nextLevel() {
 
 
 function update() {
-    // передвижение персонажа
+    // упаравление | kierowanie
     let dx = 0;
     let dy = 0;
 
@@ -75,7 +75,7 @@ function update() {
         player.move(dx, dy, maze);
     }
 
-    // обновление состояний врагов
+    // Появление противников | pojawienie przeciwników
     enemies.forEach(enemy => {
         enemy.update(player, maze);
     });

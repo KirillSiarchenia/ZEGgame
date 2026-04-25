@@ -28,7 +28,6 @@ class Player {
 
     // движение персонажа | ruch postaci
     move(dx, dy, maze) {
-        // проверка на законченное движение | sprawdzanie czy ruch został skończony
         if (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize) {
             if (!maze.isWall(this.gridX + dx, this.gridY + dy)) {
                 this.gridX += dx;
