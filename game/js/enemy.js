@@ -43,31 +43,35 @@ class Enemy {
             case 'chase':
                 this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
                 this.checkAttack(player);
+                console.log("state: chase")
                 break;
-
-            case 'searching':
-                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
-                if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) {
-                    this.searchTimer++;
-                    if (this.searchTimer > 120) this.state = 'returning';
-                }
-                break;
-
-            case 'returning':
-                this.moveTowards(this.spawnPoint.x, this.spawnPoint.y, maze);
-                if (this.gridX === this.spawnPoint.x && this.gridY === this.spawnPoint.y) {
-                    this.state = 'patrol';
-                }
-                break;
-
-            case 'patrol':
-                if (this.patrolPath.length > 0) {
-                    let target = this.patrolPath[this.pathIndex];
-                    this.moveTowards(target.x, target.y, maze);
-                    if (this.gridX === target.x && this.gridY === target.y) {
-                        this.pathIndex = (this.pathIndex + 1) % this.patrolPath.length;
+                
+                case 'searching':
+                    this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
+                    if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) {
+                        this.searchTimer++;
+                        if (this.searchTimer > 120) this.state = 'returning';
                     }
-                }
+                    console.log("state: searching")
+                    break;
+                    
+                    case 'returning':
+                        this.moveTowards(this.spawnPoint.x, this.spawnPoint.y, maze);
+                        if (this.gridX === this.spawnPoint.x && this.gridY === this.spawnPoint.y) {
+                            this.state = 'patrol';
+                        }
+                        console.log("state: returning")
+                        break;
+                        
+                        case 'patrol':
+                            if (this.patrolPath.length > 0) {
+                                let target = this.patrolPath[this.pathIndex];
+                                this.moveTowards(target.x, target.y, maze);
+                                if (this.gridX === target.x && this.gridY === target.y) {
+                                    this.pathIndex = (this.pathIndex + 1) % this.patrolPath.length;
+                                }
+                            }
+                            console.log("state: patrol")
                 break;
         }
         
@@ -93,35 +97,79 @@ class Enemy {
                 if (maze.isWall(x, ty)) return false;
             }
         }
+        
         return true;
     }
 
     // Вспомогательный метод для плавного движения пиксельных координат
     smoothMove() {
-        let targetX = this.gridX * this.tileSize;
-        let targetY = this.gridY * this.tileSize;
+    let targetX = this.gridX * this.tileSize;
+    let targetY = this.gridY * this.tileSize;
 
-        if (this.x < targetX) this.x += this.speed;
-        if (this.x > targetX) this.x -= this.speed;
-        if (this.y < targetY) this.y += this.speed;
-        if (this.y > targetY) this.y -= this.speed;
+    if (Math.abs(this.x - targetX) < this.speed) {
+        this.x = targetX;
+    } else {
+        this.x += (this.x < targetX) ? this.speed : -this.speed;
     }
+
+    if (Math.abs(this.y - targetY) < this.speed) {
+        this.y = targetY;
+    } else {
+        this.y += (this.y < targetY) ? this.speed : -this.speed;
+    }
+}
 
     moveTowards(targetX, targetY, maze) {
-        // Простая логика: если мы не в целевой клетке, делаем шаг
-        if (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize) {
-            let dx = 0, dy = 0;
-            if (this.gridX < targetX) dx = 1;
-            else if (this.gridX > targetX) dx = -1;
-            else if (this.gridY < targetY) dy = 1;
-            else if (this.gridY > targetY) dy = -1;
+    const targetPxX = this.gridX * this.tileSize;
+    const targetPxY = this.gridY * this.tileSize;
 
-            if (!maze.isWall(this.gridX + dx, this.gridY + dy)) {
-                this.gridX += dx;
-                this.gridY += dy;
-            }
+    // Принимаем решение только в центре клетки
+    if (this.x === targetPxX && this.y === targetPxY) {
+        let dx = 0;
+        let dy = 0;
+
+        // 1. Пытаемся идти по горизонтали (X)
+        if (this.gridX < targetX) dx = 1;
+        else if (this.gridX > targetX) dx = -1;
+
+        // 2. Если по X стена или мы уже на нужной широте, пытаемся по вертикали (Y)
+        if (dx !== 0 && maze.isWall(this.gridX + dx, this.gridY)) {
+            dx = 0; // Обнуляем X, так как там стена
+            if (this.gridY < targetY) dy = 1;
+            else if (this.gridY > targetY) dy = -1;
+        } else if (dx === 0) { // Если по X идти не нужно, идем по Y
+            if (this.gridY < targetY) dy = 1;
+            else if (this.gridY > targetY) dy = -1;
+        }
+
+        // 3. Финальная проверка выбранного пути
+        if (!maze.isWall(this.gridX + dx, this.gridY + dy)) {
+            this.gridX += dx;
+            this.gridY += dy;
+        } else {
+            // 4. "Аварийный" обход: если и основное, и запасное направление закрыты
+            // Пробуем пойти в любую свободную сторону, которая приближает нас к цели
+            this.tryAlternativeMove(targetX, targetY, maze);
         }
     }
+}
+
+// Дополнительный метод для поиска альтернативного пути, если уткнулись в угол
+tryAlternativeMove(targetX, targetY, maze) {
+    const directions = [
+        { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
+        { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
+    ];
+
+    for (let dir of directions) {
+        if (!maze.isWall(this.gridX + dir.dx, this.gridY + dir.dy)) {
+            // Проверяем, не отдаляет ли нас этот шаг слишком сильно (опционально)
+            this.gridX += dir.dx;
+            this.gridY += dir.dy;
+            break; 
+        }
+    }
+}
 
     checkAttack(player) {
         // Если враг находится в той же или соседней клетке
