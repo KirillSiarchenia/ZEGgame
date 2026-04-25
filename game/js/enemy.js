@@ -3,26 +3,29 @@ class Enemy {
         this.gridX = x;
         this.gridY = y;
         this.tileSize = tileSize;
-        this.lastPlayerPos = null; // Память о игроке
-        this.searchTimer = 0;      // Таймер стояния на месте
         
-        // Пиксельные координаты для плавной отрисовки (как у игрока)
         this.x = x * tileSize;
         this.y = y * tileSize;
         
-        this.speed = 3; // Враги обычно чуть медленнее игрока
+        this.speed = 3; // musi być podzielna przez tileSize
         
-        // Патрулирование
-        this.patrolPath = path; // Массив точек типа [{x: 1, y: 1}, {x: 5, y: 1}]
+        this.state = 'patrol'; 
+        this.patrolPath = path; 
         this.pathIndex = 0;
         this.spawnPoint = { x, y };
+        
+        this.lastPlayerPos = null; 
+        this.searchTimer = 0;
+        this.lastAttack = 0;
 
-        // Состояния: 'patrol', 'chase', 'returning'
-        this.state = 'patrol'; 
+        // Переменные для хранения рассчитанного пути (A*)
+        this.currentPath = [];
+        this.finalTargetX = null;
+        this.finalTargetY = null;
     }
 
     get currentVisionRange() {
-        // Если мы уже гонимся или ищем, "слух" нам не нужен, мы работаем по памяти/зрению
+        // Радиус "слуха" работает только в патруле
         return this.state === 'patrol' ? 3 : 0;
     }
 
@@ -30,153 +33,118 @@ class Enemy {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
 
+        // 1. ОПРЕДЕЛЕНИЕ СОСТОЯНИЯ (МОЗГ)
         if (canSee || (dist <= this.currentVisionRange)) {
             this.state = 'chase';
             this.lastPlayerPos = { x: player.gridX, y: player.gridY };
             this.searchTimer = 0; 
-        }
+        } 
         else if (this.state === 'chase' && !canSee) {
             this.state = 'searching';
         }
 
+        // 2. ВЫПОЛНЕНИЕ ЛОГИКИ СОСТОЯНИЙ
         switch (this.state) {
             case 'chase':
                 this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
                 this.checkAttack(player);
-                console.log("state: chase")
                 break;
                 
-                case 'searching':
-                    this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
-                    if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) {
-                        this.searchTimer++;
-                        if (this.searchTimer > 120) this.state = 'returning';
+            case 'searching':
+                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
+                // Если дошли до последней точки, где видели игрока — ждем
+                if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) {
+                    this.searchTimer++;
+                    if (this.searchTimer > 120) {
+                        this.state = 'returning';
                     }
-                    console.log("state: searching")
-                    break;
-                    
-                    case 'returning':
-                        this.moveTowards(this.spawnPoint.x, this.spawnPoint.y, maze);
-                        if (this.gridX === this.spawnPoint.x && this.gridY === this.spawnPoint.y) {
-                            this.state = 'patrol';
-                        }
-                        console.log("state: returning")
-                        break;
-                        
-                        case 'patrol':
-                            if (this.patrolPath.length > 0) {
-                                let target = this.patrolPath[this.pathIndex];
-                                this.moveTowards(target.x, target.y, maze);
-                                if (this.gridX === target.x && this.gridY === target.y) {
-                                    this.pathIndex = (this.pathIndex + 1) % this.patrolPath.length;
-                                }
-                            }
-                            console.log("state: patrol")
+                }
+                break;
+                
+            case 'returning':
+                this.moveTowards(this.spawnPoint.x, this.spawnPoint.y, maze);
+                if (this.gridX === this.spawnPoint.x && this.gridY === this.spawnPoint.y) {
+                    this.state = 'patrol';
+                }
+                break;
+                
+            case 'patrol':
+                if (this.patrolPath.length > 0) {
+                    let target = this.patrolPath[this.pathIndex];
+                    this.moveTowards(target.x, target.y, maze);
+                    if (this.gridX === target.x && this.gridY === target.y) {
+                        this.pathIndex = (this.pathIndex + 1) % this.patrolPath.length;
+                    }
+                }
                 break;
         }
-        
+
         this.smoothMove();
-        // Сверху прочеканныый код       
+    }
+
+    // Использование глобального объекта Pathfinding из pathfinding.js
+    moveTowards(targetX, targetY, maze) {
+        const targetPxX = this.gridX * this.tileSize;
+        const targetPxY = this.gridY * this.tileSize;
+
+        // Принимаем решение только когда стоим ровно в клетке
+        if (this.x === targetPxX && this.y === targetPxY) {
+            
+            // Если цель изменилась или пути нет — пересчитываем A*
+            if (!this.currentPath || this.currentPath.length === 0 || 
+                this.finalTargetX !== targetX || this.finalTargetY !== targetY) {
+                
+                this.finalTargetX = targetX;
+                this.finalTargetY = targetY;
+                // ВЫЗОВ ИЗ ВНЕШНЕГО ФАЙЛА pathfinding.js
+                this.currentPath = Pathfinding.findPath(this.gridX, this.gridY, targetX, targetY, maze);
+            }
+
+            // Если путь найден, делаем следующий шаг
+            if (this.currentPath && this.currentPath.length > 0) {
+                let nextStep = this.currentPath.shift(); 
+                this.gridX = nextStep.x;
+                this.gridY = nextStep.y;
+            }
+        }
     }
 
     hasLineOfSight(tx, ty, maze) {
-        // Для простоты проверим только прямые линии (горизонталь/вертикаль)
         if (this.gridX !== tx && this.gridY !== ty) return false;
 
-        // Проверяем, нет ли стен на пути луча
-        if (this.gridX === tx) { // Вертикальный луч
+        if (this.gridX === tx) { // Вертикаль
             const start = Math.min(this.gridY, ty);
             const end = Math.max(this.gridY, ty);
             for (let y = start + 1; y < end; y++) {
                 if (maze.isWall(tx, y)) return false;
             }
-        } else { // Горизонтальный луч
+        } else { // Горизонталь
             const start = Math.min(this.gridX, tx);
             const end = Math.max(this.gridX, tx);
             for (let x = start + 1; x < end; x++) {
                 if (maze.isWall(x, ty)) return false;
             }
         }
-        
         return true;
     }
 
-    // Вспомогательный метод для плавного движения пиксельных координат
     smoothMove() {
-    let targetX = this.gridX * this.tileSize;
-    let targetY = this.gridY * this.tileSize;
+        let targetX = this.gridX * this.tileSize;
+        let targetY = this.gridY * this.tileSize;
 
-    if (Math.abs(this.x - targetX) < this.speed) {
-        this.x = targetX;
-    } else {
-        this.x += (this.x < targetX) ? this.speed : -this.speed;
+        // Используем Math.min/max, чтобы не проскочить цель при некратных скоростях
+        if (this.x < targetX) this.x = Math.min(this.x + this.speed, targetX);
+        else if (this.x > targetX) this.x = Math.max(this.x - this.speed, targetX);
+        
+        if (this.y < targetY) this.y = Math.min(this.y + this.speed, targetY);
+        else if (this.y > targetY) this.y = Math.max(this.y - this.speed, targetY);
     }
-
-    if (Math.abs(this.y - targetY) < this.speed) {
-        this.y = targetY;
-    } else {
-        this.y += (this.y < targetY) ? this.speed : -this.speed;
-    }
-}
-
-    moveTowards(targetX, targetY, maze) {
-    const targetPxX = this.gridX * this.tileSize;
-    const targetPxY = this.gridY * this.tileSize;
-
-    // Принимаем решение только в центре клетки
-    if (this.x === targetPxX && this.y === targetPxY) {
-        let dx = 0;
-        let dy = 0;
-
-        // 1. Пытаемся идти по горизонтали (X)
-        if (this.gridX < targetX) dx = 1;
-        else if (this.gridX > targetX) dx = -1;
-
-        // 2. Если по X стена или мы уже на нужной широте, пытаемся по вертикали (Y)
-        if (dx !== 0 && maze.isWall(this.gridX + dx, this.gridY)) {
-            dx = 0; // Обнуляем X, так как там стена
-            if (this.gridY < targetY) dy = 1;
-            else if (this.gridY > targetY) dy = -1;
-        } else if (dx === 0) { // Если по X идти не нужно, идем по Y
-            if (this.gridY < targetY) dy = 1;
-            else if (this.gridY > targetY) dy = -1;
-        }
-
-        // 3. Финальная проверка выбранного пути
-        if (!maze.isWall(this.gridX + dx, this.gridY + dy)) {
-            this.gridX += dx;
-            this.gridY += dy;
-        } else {
-            // 4. "Аварийный" обход: если и основное, и запасное направление закрыты
-            // Пробуем пойти в любую свободную сторону, которая приближает нас к цели
-            this.tryAlternativeMove(targetX, targetY, maze);
-        }
-    }
-}
-
-// Дополнительный метод для поиска альтернативного пути, если уткнулись в угол
-tryAlternativeMove(targetX, targetY, maze) {
-    const directions = [
-        { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
-        { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
-    ];
-
-    for (let dir of directions) {
-        if (!maze.isWall(this.gridX + dir.dx, this.gridY + dir.dy)) {
-            // Проверяем, не отдаляет ли нас этот шаг слишком сильно (опционально)
-            this.gridX += dir.dx;
-            this.gridY += dir.dy;
-            break; 
-        }
-    }
-}
 
     checkAttack(player) {
-        // Если враг находится в той же или соседней клетке
         if (Math.abs(this.gridX - player.gridX) <= 1 && Math.abs(this.gridY - player.gridY) <= 1) {
-            if (!this.lastAttack || Date.now() - this.lastAttack > 1000) {
+            if (Date.now() - this.lastAttack > 1000) {
                 player.hp -= 1;
-                console.log(player.hp);
+                console.log("Player HP:", player.hp);
                 this.lastAttack = Date.now();
             }
         }
@@ -187,7 +155,15 @@ tryAlternativeMove(targetX, targetY, maze) {
     }
 
     draw(ctx) {
-        ctx.fillStyle = this.state === 'chase' ? "red" : "orange";
+        // Цвет зависит от состояния: Погоня - красный, Поиск - желтый, Патруль/Возврат - оранжевый
+        const stateColors = {
+            'chase': 'red',
+            'searching': 'yellow',
+            'returning': 'orange',
+            'patrol': 'orange'
+        };
+        
+        ctx.fillStyle = stateColors[this.state];
         ctx.fillRect(this.x + 8, this.y + 8, this.tileSize - 16, this.tileSize - 16);
     }
 }
