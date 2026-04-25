@@ -81,7 +81,6 @@ class Enemy {
                         this.searchDirs = [];
                     }
                 }
-                console.log("state: searching");
                 break;
                 
             case 'returning':

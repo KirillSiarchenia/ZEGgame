@@ -9,6 +9,7 @@ loadEnemies(currentLevelIndex);
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
 
+
 function loadEnemies(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
     enemies = []; // Очищаем список врагов текущего уровня
@@ -85,6 +86,11 @@ function update() {
         if (player.x === player.gridX * tileSize && player.y === player.gridY * tileSize) {
             nextLevel();
         }
+    }
+
+    if (player.hp !== UI.lastHp) {
+        UI.updateHealth(player.hp);
+        UI.lastHp = player.hp;
     }
 }
 
