@@ -23,6 +23,10 @@ class Enemy {
         this.currentPath = [];
         this.finalTargetX = null;
         this.finalTargetY = null;
+
+        this.searchDirs = [];      
+        this.framesPerLook = 40;   
+        this.maxSearchFrames = 0;
     }
 
     get currentVisionRange() {
