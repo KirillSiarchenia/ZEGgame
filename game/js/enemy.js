@@ -17,6 +17,7 @@ class Enemy {
         this.spawnPoint = { x, y };
         
         this.lastPlayerPos = null; 
+        this.visionRange = 2;
         this.searchTimer = 0;
         this.lastAttack = 0;
 
@@ -29,15 +30,10 @@ class Enemy {
         this.maxSearchFrames = 0;
     }
 
-    get currentVisionRange() {
-        // Слышит, только в 'patrol' | słyszy tylko w 'patrol'
-        return this.state === 'patrol' ? 2 : 0;
-    }
-
     update(player, maze) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
-        const canHear = (dist <= this.currentVisionRange) && player.isMoving;
+        const canHear = (dist <= this.visionRange) && player.isMoving;
 
         // выбор состояния | wybór stanu
         if (canSee || canHear) {
@@ -52,8 +48,17 @@ class Enemy {
         // 2. логика состояний | logika stanów
         switch (this.state) {
             case 'chase':
-                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
-                this.checkAttack(player);
+                const dx = Math.abs(this.gridX - player.gridX);
+                const dy = Math.abs(this.gridY - player.gridY);
+
+                const isAdjacent = (dx + dy === 1);
+                const isFinishedMoving = (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize);
+
+                if(isAdjacent && isFinishedMoving){
+                    this.checkAttack(player, maze);
+                } else {
+                    this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
+                }
                 break;
                 
             case 'searching':
@@ -107,6 +112,8 @@ class Enemy {
     
     // легендарный а* вступает в игру
     moveTowards(targetX, targetY, maze, player) {
+        if (this.lastAttack && Date.now() - this.lastAttack < 1000) return; 
+
         const targetPxX = this.gridX * this.tileSize;
         const targetPxY = this.gridY * this.tileSize;
 
@@ -123,7 +130,7 @@ class Enemy {
                 let nextStep = this.currentPath[0];
 
                 const isPlayerThere = (nextStep.x === player.gridX && nextStep.y === player.gridY);
-                const isOtherEnemyThere = allEnemies.some(e => e !== this && e.gridX === nextStep.x && e.gridY === nextStep.y);
+                const isOtherEnemyThere = enemies.some(e => e !== this && e.gridX === nextStep.x && e.gridY === nextStep.y);
 
                 if (!isPlayerThere && !isOtherEnemyThere) {
                     this.currentPath.shift();
@@ -141,42 +148,42 @@ class Enemy {
         }
     }
         
-        // функция для поиска(помогает выбрать в какие стороны смотреть) | metoda dla 'searching'(pomoga wybrać gdzie ma szukać)
-        getAvailableDirections(maze) {
-            const directions = [
-                { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
-                { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
-            ];
-            return directions.filter(d => !maze.isWall(this.gridX + d.dx, this.gridY + d.dy));
-        }
+    // функция для поиска(помогает выбрать в какие стороны смотреть) | metoda dla 'searching'(pomoga wybrać gdzie ma szukać)
+    getAvailableDirections(maze) {
+        const directions = [
+            { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
+            { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
+        ];
+        return directions.filter(d => !maze.isWall(this.gridX + d.dx, this.gridY + d.dy));
+    }
         
         // видит ли | czy widzi 
-        hasLineOfSight(tx, ty, maze) {
+    hasLineOfSight(tx, ty, maze) {
             
-            if (this.gridX !== tx && this.gridY !== ty) return false;
+        if (this.gridX !== tx && this.gridY !== ty) return false;
             
-            const diffX = tx - this.gridX;
-            const diffY = ty - this.gridY;
+        const diffX = tx - this.gridX;
+        const diffY = ty - this.gridY;
             
-            if (this.dirX !== 0 && Math.sign(diffX) !== Math.sign(this.dirX)) return false;
-            if (this.dirY !== 0 && Math.sign(diffY) !== Math.sign(this.dirY)) return false;
+        if (this.dirX !== 0 && Math.sign(diffX) !== Math.sign(this.dirX)) return false;
+        if (this.dirY !== 0 && Math.sign(diffY) !== Math.sign(this.dirY)) return false;
             
-            if (this.gridX === tx) {
-                const start = Math.min(this.gridY, ty);
-                const end = Math.max(this.gridY, ty);
-                for (let y = start + 1; y < end; y++) {
-                    if (maze.isWall(tx, y)) return false;
-                }
-            } else {
-                const start = Math.min(this.gridX, tx);
-                const end = Math.max(this.gridX, tx);
-                for (let x = start + 1; x < end; x++) {
-                    if (maze.isWall(x, ty)) return false;
-                }
+        if (this.gridX === tx) {
+            const start = Math.min(this.gridY, ty);
+            const end = Math.max(this.gridY, ty);
+            for (let y = start + 1; y < end; y++) {
+                if (maze.isWall(tx, y)) return false;
             }
-            
-            return true;
+        } else {
+            const start = Math.min(this.gridX, tx);
+            const end = Math.max(this.gridX, tx);
+            for (let x = start + 1; x < end; x++) {
+                if (maze.isWall(x, ty)) return false;
+            }
         }
+            
+        return true;
+    }
     
     // плавное передвижение(опять) | płynny ruch 
     smoothMove() {
@@ -191,13 +198,12 @@ class Enemy {
     }
 
     // атака | atak
-    checkAttack(player) {
-        if (Math.abs(this.gridX - player.gridX) <= 1 && Math.abs(this.gridY - player.gridY) <= 1) {
-            if (Date.now() - this.lastAttack > 1000) {
-                player.hp -= 1;
-                console.log("Player HP:", player.hp);
-                this.lastAttack = Date.now();
-            }
+    checkAttack(player, maze) {
+        const now = Date.now();
+        if (!this.lastAttack || now - this.lastAttack > 1500) {
+            player.hp -= 1;
+            this.lastAttack = now;
+            player.applyKnockback(this.gridX, this.gridY, maze);
         }
     }
 

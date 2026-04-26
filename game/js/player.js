@@ -16,6 +16,33 @@ class Player {
     return this.x !== this.gridX * this.tileSize || this.y !== this.gridY * this.tileSize;
 }
 
+    // отдача после удара врага | odrzut po ataku przeciwnika
+    applyKnockback(enemyGridX, enemyGridY, maze) {
+    this.knockbackTimer = Date.now() + 400;
+
+    let dx = this.gridX - enemyGridX;
+    let dy = this.gridY - enemyGridY;
+
+    // Если стоят в одной клетке, откидываем в случайную сторону или вниз
+    if (dx === 0 && dy === 0) dy = 1;
+
+    const stepX = Math.sign(dx);
+    const stepY = Math.sign(dy);
+
+    const distance = 2; 
+    for (let i = 0; i < distance; i++) {
+        let nextX = this.gridX + stepX;
+        let nextY = this.gridY + stepY;
+
+        if (!maze.isWall(nextX, nextY)) {
+            this.gridX = nextX;
+            this.gridY = nextY;
+        } else {
+            break; 
+        }
+    }
+}
+
     // отрисовка персонажа | rysowanie postaci
     draw(ctx) {
 
@@ -33,12 +60,14 @@ class Player {
 
     // движение персонажа | ruch postaci
     move(dx, dy, maze, enemies) {        
+        if (this.knockbackTimer > Date.now()) {
+            return;
+        }
         if (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize) {
             const nextX = this.gridX + dx;
             const nextY = this.gridY + dy;
 
-            const isWall = maze.isWall(nextX, nextY);
-            
+            const isWall = maze.isWall(nextX, nextY);            
             const isEnemyThere = enemies.some(enemy => enemy.gridX === nextX && enemy.gridY === nextY);
 
             if (!isWall && !isEnemyThere) {
