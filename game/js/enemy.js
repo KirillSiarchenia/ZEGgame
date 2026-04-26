@@ -37,9 +37,10 @@ class Enemy {
     update(player, maze) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
+        const canHear = (dist <= this.currentVisionRange) && player.isMoving;
 
         // выбор состояния | wybór stanu
-        if (canSee || (dist <= this.currentVisionRange)) {
+        if (canSee || canHear) {
             this.state = 'chase';
             this.lastPlayerPos = { x: player.gridX, y: player.gridY };
             this.searchTimer = 0; 

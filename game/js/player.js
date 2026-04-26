@@ -11,6 +11,11 @@ class Player {
         this.hp = 3;
     }
 
+    // проверка движения(для "слуха" врагов) | sprawdzanie ruchu(dla przeciwników)
+    get isMoving() {
+    return this.x !== this.gridX * this.tileSize || this.y !== this.gridY * this.tileSize;
+}
+
     // отрисовка персонажа | rysowanie postaci
     draw(ctx) {
 
