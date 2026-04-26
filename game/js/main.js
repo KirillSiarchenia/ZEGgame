@@ -73,7 +73,7 @@ function update() {
     else if (keys["d"] || keys["arrowright"] || keys["в"]) dx = 1;
 
     if (dx !== 0 || dy !== 0) {
-        player.move(dx, dy, maze);
+        player.move(dx, dy, maze, enemies);
     }
 
     // Появление противников | pojawienie przeciwników

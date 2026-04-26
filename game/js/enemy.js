@@ -25,7 +25,7 @@ class Enemy {
         this.finalTargetY = null;
 
         this.searchDirs = [];      
-        this.framesPerLook = 40;   
+        this.framesPerLook = 60;   
         this.maxSearchFrames = 0;
     }
 
@@ -52,18 +52,18 @@ class Enemy {
         // 2. логика состояний | logika stanów
         switch (this.state) {
             case 'chase':
-                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
+                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
                 this.checkAttack(player);
                 break;
                 
             case 'searching':
-                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze);
+                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
 
                 if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) {
                     
                     if (this.searchTimer === 0) {
                         this.searchDirs = this.getAvailableDirections(maze);
-                        this.framesPerLook = 40; 
+                        this.framesPerLook = 60; 
                         this.maxSearchFrames = this.searchDirs.length * this.framesPerLook;
                     }
 
@@ -85,7 +85,7 @@ class Enemy {
                 break;
                 
             case 'returning':
-                this.moveTowards(this.spawnPoint.x, this.spawnPoint.y, maze);
+                this.moveTowards(this.spawnPoint.x, this.spawnPoint.y, maze, player);
                 if (this.gridX === this.spawnPoint.x && this.gridY === this.spawnPoint.y) {
                     this.state = 'patrol';
                 }
@@ -94,7 +94,7 @@ class Enemy {
             case 'patrol':
                 if (this.patrolPath.length > 0) {
                     let target = this.patrolPath[this.pathIndex];
-                    this.moveTowards(target.x, target.y, maze);
+                    this.moveTowards(target.x, target.y, maze, player);
                     if (this.gridX === target.x && this.gridY === target.y) {
                         this.pathIndex = (this.pathIndex + 1) % this.patrolPath.length;
                     }
@@ -106,31 +106,40 @@ class Enemy {
     }
     
     // легендарный а* вступает в игру
-    moveTowards(targetX, targetY, maze) {
+    moveTowards(targetX, targetY, maze, player) {
         const targetPxX = this.gridX * this.tileSize;
         const targetPxY = this.gridY * this.tileSize;
-        
+
         if (this.x === targetPxX && this.y === targetPxY) {
-            
             if (!this.currentPath || this.currentPath.length === 0 || 
                 this.finalTargetX !== targetX || this.finalTargetY !== targetY) {
-                    
-                    this.finalTargetX = targetX;
-                    this.finalTargetY = targetY;
-                    this.currentPath = Pathfinding.findPath(this.gridX, this.gridY, targetX, targetY, maze);
-                }
                 
-                if (this.currentPath && this.currentPath.length > 0) {
-                    let nextStep = this.currentPath.shift(); 
+                this.finalTargetX = targetX;
+                this.finalTargetY = targetY;
+                this.currentPath = Pathfinding.findPath(this.gridX, this.gridY, targetX, targetY, maze);
+            }
+
+            if (this.currentPath && this.currentPath.length > 0) {
+                let nextStep = this.currentPath[0];
+
+                const isPlayerThere = (nextStep.x === player.gridX && nextStep.y === player.gridY);
+                const isOtherEnemyThere = allEnemies.some(e => e !== this && e.gridX === nextStep.x && e.gridY === nextStep.y);
+
+                if (!isPlayerThere && !isOtherEnemyThere) {
+                    this.currentPath.shift();
                     
                     this.dirX = nextStep.x - this.gridX;
                     this.dirY = nextStep.y - this.gridY;
-                    
+
                     this.gridX = nextStep.x;
                     this.gridY = nextStep.y;
+                } else {
+                    this.dirX = nextStep.x - this.gridX;
+                    this.dirY = nextStep.y - this.gridY;
                 }
             }
         }
+    }
         
         // функция для поиска(помогает выбрать в какие стороны смотреть) | metoda dla 'searching'(pomoga wybrać gdzie ma szukać)
         getAvailableDirections(maze) {
@@ -162,12 +171,12 @@ class Enemy {
                 const start = Math.min(this.gridX, tx);
                 const end = Math.max(this.gridX, tx);
                 for (let x = start + 1; x < end; x++) {
-                if (maze.isWall(x, ty)) return false;
+                    if (maze.isWall(x, ty)) return false;
+                }
             }
+            
+            return true;
         }
-        
-        return true;
-    }
     
     // плавное передвижение(опять) | płynny ruch 
     smoothMove() {

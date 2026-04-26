@@ -32,11 +32,18 @@ class Player {
     }
 
     // движение персонажа | ruch postaci
-    move(dx, dy, maze) {
+    move(dx, dy, maze, enemies) {        
         if (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize) {
-            if (!maze.isWall(this.gridX + dx, this.gridY + dy)) {
-                this.gridX += dx;
-                this.gridY += dy;
+            const nextX = this.gridX + dx;
+            const nextY = this.gridY + dy;
+
+            const isWall = maze.isWall(nextX, nextY);
+            
+            const isEnemyThere = enemies.some(enemy => enemy.gridX === nextX && enemy.gridY === nextY);
+
+            if (!isWall && !isEnemyThere) {
+                this.gridX = nextX;
+                this.gridY = nextY;
             }
         }
     }
