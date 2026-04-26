@@ -23,7 +23,27 @@ function loadEnemies(levelIndex) {
     }
 }
 
+function drawFogOfWar(ctx, player, camera) {
+    ctx.save();
 
+    const lightRadius = 250; 
+    
+    const screenX = player.x + (player.tileSize / 2) - camera.x;
+    const screenY = player.y + (player.tileSize / 2) - camera.y;
+
+    const gradient = ctx.createRadialGradient(
+        screenX, screenY, lightRadius * 0.4, 
+        screenX, screenY, lightRadius
+    );
+
+    gradient.addColorStop(0, "rgba(0, 0, 0, 0)"); 
+    gradient.addColorStop(1, "rgba(0, 0, 0, 1)"); 
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.restore();
+}
 
 const player = new Player(startPos.x, startPos.y, tileSize);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
@@ -124,6 +144,8 @@ function gameLoop() {
     enemies.forEach(enemy => enemy.draw(ctx));
 
     ctx.restore(); 
+
+    drawFogOfWar(ctx, player, camera);
 
     requestAnimationFrame(gameLoop); 
 }
