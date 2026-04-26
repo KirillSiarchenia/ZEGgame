@@ -24,8 +24,6 @@ const UI = {
             
             container.appendChild(heart);
         }
-        // Отладка: если сердец не видно, эта строка покажет, создались ли они в коде
-        console.log("UI Updated: HP is", currentHp); 
     },
 
     showGameOver() {

@@ -3,11 +3,13 @@ const ctx = canvas.getContext("2d");
 const allLevels = [maps.map1, maps.map2, maps.map3];
 let currentLevelIndex = 0;
 let enemies = [];
-
+canvas.width = 1280;
+canvas.height = 720;
 let maze = new Maze(allLevels[currentLevelIndex], tileSize);
 loadEnemies(currentLevelIndex);
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
+
 
 
 function loadEnemies(levelIndex) {
@@ -22,10 +24,9 @@ function loadEnemies(levelIndex) {
 }
 
 
-canvas.width = maze.cols * tileSize;
-canvas.height = maze.rows * tileSize;
 
 const player = new Player(startPos.x, startPos.y, tileSize);
+const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 
 // зажата ли клавиша | czy przycisk jest wciśnięty
 const keys = {};
@@ -37,6 +38,19 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
 });
+
+function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    if (typeof camera !== 'undefined') {
+        camera.width = canvas.width;
+        camera.height = canvas.height;
+    }
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 function nextLevel() {
     currentLevelIndex++;
@@ -52,9 +66,9 @@ function nextLevel() {
         player.x = startPos.x * tileSize;
         player.y = startPos.y * tileSize;
 
-        canvas.width = maze.cols * tileSize;
-        canvas.height = maze.rows * tileSize;
-
+        camera.mapWidth = maze.cols * tileSize;
+        camera.mapHeight = maze.rows * tileSize;
+        camera.focusOn(player.x, player.y);
     } else {
         alert("Поздравляю! Вы прошли игру!");
         currentLevelIndex = 0; 
@@ -95,15 +109,21 @@ function update() {
 }
 
 function gameLoop() {
-    update();
+    update(); 
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    camera.update(player.x, player.y);
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    camera.apply(ctx);
 
     maze.draw(ctx);
     player.draw(ctx);
-    enemies.forEach(enemy => {
-        enemy.draw(ctx);
-    });
+    enemies.forEach(enemy => enemy.draw(ctx));
+
+    ctx.restore(); 
 
     requestAnimationFrame(gameLoop); 
 }
