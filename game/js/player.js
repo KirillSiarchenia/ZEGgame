@@ -43,17 +43,16 @@ class Player {
     }
 }
 
-    // отрисовка персонажа | rysowanie postaci
-    draw(ctx) {
-
-        // плавное передвижение | płynny ruch
+    update(){
         let targetX = this.gridX * this.tileSize;
         let targetY = this.gridY * this.tileSize;
         if (this.x < targetX) this.x = Math.min(this.x + this.speed, targetX);
         if (this.x > targetX) this.x = Math.max(this.x - this.speed, targetX);
         if (this.y < targetY) this.y = Math.min(this.y + this.speed, targetY);
         if (this.y > targetY) this.y = Math.max(this.y - this.speed, targetY);
-        
+    }
+    // отрисовка персонажа | rysowanie postaci
+    draw(ctx) {
         ctx.fillStyle = "blue";        
         ctx.fillRect(this.x + 5, this.y + 5, this.tileSize - 10, this.tileSize - 10);
     }

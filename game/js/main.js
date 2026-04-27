@@ -1,3 +1,11 @@
+const GameState = {
+    MAZE: 'MAZE',
+    ROOM: 'ROOM',
+    TRANSITION: 'TRANSITION'
+};
+let currentState = GameState.MAZE;
+let transitionAlpha = 0;
+let roomManager = new RoomManager();
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const allLevels = [maps.map1, maps.map2, maps.map3];
@@ -14,7 +22,7 @@ const exitPos = maze.getExitPos();
 
 function loadEnemies(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
-    enemies = []; // Очищаем список врагов текущего уровня
+    enemies = []; 
     
     if (enemiesData[levelKey]) {
         enemiesData[levelKey].forEach(data => {
@@ -22,11 +30,11 @@ function loadEnemies(levelIndex) {
         });
     }
 }
-
+// туман войны | mgła
 function drawFogOfWar(ctx, player, camera) {
     ctx.save();
 
-    const lightRadius = 250; 
+    const lightRadius = 300; 
     
     const screenX = player.x + (player.tileSize / 2) - camera.x;
     const screenY = player.y + (player.tileSize / 2) - camera.y;
@@ -72,6 +80,7 @@ function resizeCanvas(){
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
+// Мы уже приехали? | aktualizacja poziomów
 function nextLevel() {
     currentLevelIndex++;
     
@@ -95,8 +104,50 @@ function nextLevel() {
     }
 }
 
+function exitRoom() {
+    const directions = [
+        { x: 0, y: 1 }, { x: 0, y: -1 }, 
+        { x: 1, y: 0 }, { x: -1, y: 0 }
+    ];
+
+    for (let d of directions) {
+        let nx = player.gridX + d.x;
+        let ny = player.gridY + d.y;
+        
+        if (maze.grid[ny] && maze.grid[ny][nx] === 0) {
+            player.gridX = nx;
+            player.gridY = ny;
+            player.x = nx * player.tileSize;
+            player.y = ny * player.tileSize;
+            break; 
+        }
+    }
+
+    currentState = GameState.MAZE;
+    transitionAlpha = 1; 
+}
+
+function startTransitionToRoom() {
+    currentState = GameState.TRANSITION;
+    transitionAlpha = 0;
+}
+
+function handleTransition() {
+    if (currentState === GameState.TRANSITION) {
+        transitionAlpha += 0.05; // Скорость затемнения
+        if (transitionAlpha >= 1) {
+            transitionAlpha = 1;
+            currentState = GameState.ROOM;
+            roomManager.enter("map" + (currentLevelIndex + 1), player.gridX, player.gridY);
+        }
+    } else if (transitionAlpha > 0) {
+        transitionAlpha -= 0.05; // Проявление (Fade in)
+        if (transitionAlpha < 0) transitionAlpha = 0;
+    }
+}
 
 function update() {
+    if (currentState !== GameState.MAZE) return;
     // упаравление | kierowanie
     let dx = 0;
     let dy = 0;
@@ -108,6 +159,13 @@ function update() {
 
     if (dx !== 0 || dy !== 0) {
         player.move(dx, dy, maze, enemies);
+    }
+
+    const cellValue = maze.grid[player.gridY][player.gridX];
+    if (cellValue === 3) {
+        if (!player.isMoving) {
+            startTransitionToRoom();
+        }
     }
 
     // Появление противников | pojawienie przeciwników
@@ -128,24 +186,48 @@ function update() {
     }
 }
 
+canvas.addEventListener("mousedown", (e) => {
+    if (currentState !== GameState.ROOM) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    const result = roomManager.handleMouseClick(mx, my);
+    
+    if (result === "EXIT") {
+        exitRoom();
+    }
+});
+
 function gameLoop() {
     update(); 
-
+    player.update();
     camera.update(player.x, player.y);
-
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    
     ctx.save();
     camera.apply(ctx);
-
     maze.draw(ctx);
-    player.draw(ctx);
     enemies.forEach(enemy => enemy.draw(ctx));
-
+    player.draw(ctx);
     ctx.restore(); 
+    
+    // ctx.fillStyle = "black";
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawFogOfWar(ctx, player, camera);
+    // drawFogOfWar(ctx, player, camera);
+
+    if (currentState === GameState.ROOM) {
+        // Отрисовка комнаты (статичная, без камеры)
+        roomManager.draw(ctx, canvas.width, canvas.height);
+    }
+
+    // Слой затемнения поверх всего
+    handleTransition();
+    if (transitionAlpha > 0) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${transitionAlpha})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
     requestAnimationFrame(gameLoop); 
 }
