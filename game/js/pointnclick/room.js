@@ -28,8 +28,10 @@ class RoomManager {
         ctx.fillRect(0, 0, w, h);
 
         v.objects.forEach(o => {
-            ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-            ctx.fillRect(o.x * (w/1280), o.y * (h/720), o.w * (w/1280), o.h * (h/720));
+            if (o.visible !== false) { 
+                ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.fillRect(o.rx * w, o.ry * h, o.rw * w, o.rh * h);
+            }
         });
 
         ctx.fillStyle = "rgba(255, 255, 255, 0.1)";

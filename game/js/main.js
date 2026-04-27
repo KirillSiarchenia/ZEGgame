@@ -201,21 +201,24 @@ canvas.addEventListener("mousedown", (e) => {
 });
 
 function gameLoop() {
-    update(); 
-    player.update();
-    camera.update(player.x, player.y);
-    
-    ctx.save();
-    camera.apply(ctx);
-    maze.draw(ctx);
-    enemies.forEach(enemy => enemy.draw(ctx));
-    player.draw(ctx);
-    ctx.restore(); 
-    
-    // ctx.fillStyle = "black";
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // drawFogOfWar(ctx, player, camera);
+    if (currentState === GameState.MAZE || currentState === GameState.TRANSITION){
+        update(); 
+        player.update();
+        camera.update(player.x, player.y);
+        
+        ctx.save();
+        camera.apply(ctx);
+        maze.draw(ctx);
+        enemies.forEach(enemy => enemy.draw(ctx));
+        player.draw(ctx);
+        ctx.restore(); 
+        
+
+        drawFogOfWar(ctx, player, camera);
+    }
 
     if (currentState === GameState.ROOM) {
         // Отрисовка комнаты (статичная, без камеры)
