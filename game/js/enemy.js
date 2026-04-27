@@ -17,23 +17,19 @@ class Enemy {
         this.spawnPoint = { x, y };
         
         this.lastPlayerPos = null; 
-        this.visionRange = 2;
+        this.hearRange = 2;
         this.searchTimer = 0;
         this.lastAttack = 0;
 
         this.currentPath = [];
         this.finalTargetX = null;
         this.finalTargetY = null;
-
-        this.searchDirs = [];      
-        this.framesPerLook = 60;   
-        this.maxSearchFrames = 0;
     }
 
     update(player, maze) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
-        const canHear = (dist <= this.visionRange) && player.isMoving;
+        const canHear = (dist <= this.hearRange) && player.isMoving;
 
         // выбор состояния | wybór stanu
         if (canSee || canHear) {
@@ -82,19 +78,13 @@ class Enemy {
                     }
 
                     if (this.searchTimer >= this.maxSearchFrames) {
-                        this.state = 'returning';
+                        this.state = 'patrol';
                         this.searchTimer = 0;
                         this.searchDirs = [];
                     }
                 }
                 break;
                 
-            case 'returning':
-                this.moveTowards(this.spawnPoint.x, this.spawnPoint.y, maze, player);
-                if (this.gridX === this.spawnPoint.x && this.gridY === this.spawnPoint.y) {
-                    this.state = 'patrol';
-                }
-                break;
                 
             case 'patrol':
                 if (this.patrolPath.length > 0) {
@@ -213,7 +203,7 @@ class Enemy {
     }
 
     draw(ctx) {
-        const stateColors = { 'chase': 'red', 'searching': 'yellow', 'returning': 'orange', 'patrol': 'orange' };
+        const stateColors = { 'chase': 'red', 'searching': 'yellow', 'patrol': 'orange' };
         ctx.fillStyle = stateColors[this.state];
         ctx.fillRect(this.x + 8, this.y + 8, this.tileSize - 16, this.tileSize - 16);
 
