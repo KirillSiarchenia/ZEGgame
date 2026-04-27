@@ -1,54 +1,61 @@
 class RoomManager {
     constructor() {
-        this.currentRoom = null;
-        this.view = "center"; 
-        this.nav = {
-            left: { x: 0, y: 200, w: 100, h: 320, next: "left", back: "center" },
-            right: { x: 1180, y: 200, w: 100, h: 320, next: "right", back: "center" },
-            exit: { x: 440, y: 620, w: 400, h: 100 }
+        this.room = null;
+        this.view = "center";
+        // Коэффициенты: x, y, ширина, высота в долях от 0 до 1
+        this.relNav = {
+            left:  { rx: 0,    ry: 0.25, rw: 0.1, rh: 0.5 },
+            right: { rx: 0.9,  ry: 0.25, rw: 0.1, rh: 0.5 },
+            exit:  { rx: 0.3,  ry: 0.85, rw: 0.4, rh: 0.12 }
         };
     }
 
     enter(mapId, gx, gy) {
-        this.currentRoom = roomsData[mapId]?.[`${gx},${gy}`] || this.defaultRoom();
+        this.room = roomsData[mapId]?.[`${gx},${gy}`] || this.default();
         this.view = "center";
     }
 
+    // Вспомогательный метод для получения реальных пикселей из относительных
+    getBox(key, w, h) {
+        const b = this.relNav[key];
+        return { x: b.rx * w, y: b.ry * h, w: b.rw * w, h: b.rh * h };
+    }
+
     draw(ctx, w, h) {
-        if (!this.currentRoom) return;
-        const v = this.currentRoom.views[this.view];
-        
+        if (!this.room) return;
+        const v = this.room.views[this.view];
         ctx.fillStyle = v.bg;
         ctx.fillRect(0, 0, w, h);
 
-        // Отрисовка объектов
         v.objects.forEach(o => {
             ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-            ctx.fillRect(o.x, o.y, o.w, o.h);
+            ctx.fillRect(o.x * (w/1280), o.y * (h/720), o.w * (w/1280), o.h * (h/720));
         });
 
-        // Навигация
-        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
         if (this.view === "center") {
-            ["left", "right", "exit"].forEach(k => ctx.fillRect(this.nav[k].x, this.nav[k].y, this.nav[k].w, this.nav[k].h));
+            for (let k in this.relNav) {
+                const b = this.getBox(k, w, h);
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+            }
         } else {
-            const side = this.view === "left" ? "right" : "left";
-            ctx.fillRect(this.nav[side].x, this.nav[side].y, this.nav[side].w, this.nav[side].h);
+            const back = this.view === "left" ? "right" : "left";
+            const b = this.getBox(back, w, h);
+            ctx.fillRect(b.x, b.y, b.w, b.h);
         }
     }
 
-    handleMouseClick(mx, my) {
+    handleMouseClick(mx, my, w, h) {
         if (this.view === "center") {
-            if (this.isInside(mx, my, this.nav.left)) this.view = "left";
-            else if (this.isInside(mx, my, this.nav.right)) this.view = "right";
-            else if (this.isInside(mx, my, this.nav.exit)) return "EXIT";
+            if (this.isIn(mx, my, this.getBox("left", w, h))) this.view = "left";
+            else if (this.isIn(mx, my, this.getBox("right", w, h))) this.view = "right";
+            else if (this.isIn(mx, my, this.getBox("exit", w, h))) return "EXIT";
         } else {
-            const side = this.view === "left" ? "right" : "left";
-            if (this.isInside(mx, my, this.nav[side])) this.view = "center";
+            const back = this.view === "left" ? "right" : "left";
+            if (this.isIn(mx, my, this.getBox(back, w, h))) this.view = "center";
         }
     }
 
-    isInside = (mx, my, r) => mx > r.x && mx < r.x + r.w && my > r.y && my < r.y + r.h;
-
-    defaultRoom = () => ({ views: { center: { bg: "#222", objects: [] }, left: { bg: "#111", objects: [] }, right: { bg: "#333", objects: [] } } });
+    isIn = (mx, my, r) => mx > r.x && mx < r.x + r.w && my > r.y && my < r.y + r.h;
+    default = () => ({ views: { center: { bg: "#111", objects: [] }, left: { bg: "#000", objects: [] }, right: { bg: "#222", objects: [] } } });
 }

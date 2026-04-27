@@ -193,7 +193,7 @@ canvas.addEventListener("mousedown", (e) => {
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
-    const result = roomManager.handleMouseClick(mx, my);
+    const result = roomManager.handleMouseClick(mx, my, canvas.width, canvas.height);
     
     if (result === "EXIT") {
         exitRoom();
