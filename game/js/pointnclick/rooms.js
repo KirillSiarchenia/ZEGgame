@@ -1,10 +1,9 @@
 const roomsData = {
-    // Пример для первой комнаты
     "map1": {
-        "0,6": { // Координаты двери в первой карте (массив maps.js)
+        "0,6": {
             views: {
                 center: {
-                    bg: "#2c3e50", // Цвет или путь к картинке
+                    bg: "#2c3e50",
                     objects: [
                         { id: "table", x: 400, y: 400, w: 200, h: 100, type: "decoration" },
                         { id: "chest", x: 100, y: 450, w: 80, h: 60, type: "container" }

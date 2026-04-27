@@ -2,7 +2,6 @@ class RoomManager {
     constructor() {
         this.room = null;
         this.view = "center";
-        // Коэффициенты: x, y, ширина, высота в долях от 0 до 1
         this.relNav = {
             left:  { rx: 0,    ry: 0.25, rw: 0.1, rh: 0.5 },
             right: { rx: 0.9,  ry: 0.25, rw: 0.1, rh: 0.5 },
@@ -15,7 +14,6 @@ class RoomManager {
         this.view = "center";
     }
 
-    // Вспомогательный метод для получения реальных пикселей из относительных
     getBox(key, w, h) {
         const b = this.relNav[key];
         return { x: b.rx * w, y: b.ry * h, w: b.rw * w, h: b.rh * h };

@@ -26,6 +26,21 @@ const UI = {
         }
     },
 
+    renderInventory(items) {
+        const invContainer = document.getElementById('inventory-slots');
+        if (!invContainer) return;
+
+        invContainer.innerHTML = ''; 
+
+        items.forEach(item => {
+            const slot = document.createElement('div');
+            slot.className = 'inv-slot filled';
+            slot.title = item.name; // Подсказка при наведении
+            slot.style.backgroundImage = `url(${item.icon})`; // Если будут картинки
+            invContainer.appendChild(slot);
+        });
+    },
+
     showGameOver() {
         alert("Игра окончена!");
         location.reload();
