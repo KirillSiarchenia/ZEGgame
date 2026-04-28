@@ -155,13 +155,16 @@ function startTransitionToRoom() {
 
 function handleTransition() {
     if (currentState === GameState.TRANSITION) {
-        transitionAlpha += 0.05; // Скорость затемнения
+        transitionAlpha += 0.05;
         if (transitionAlpha >= 1) {
             transitionAlpha = 1;
             setGameState(GameState.ROOM);
-            roomManager.enter("map" + (currentLevelIndex + 1), player.gridX, player.gridY);
+            
+            const roomID = maze.grid[player.gridY][player.gridX]; 
+            
+            roomManager.enter(roomID, player.gridX, player.gridY);
         }
-    } else if (transitionAlpha > 0) {
+    }else if (transitionAlpha > 0) {
         transitionAlpha -= 0.05; // Проявление (Fade in)
         if (transitionAlpha < 0) transitionAlpha = 0;
     }
@@ -238,7 +241,7 @@ function gameLoop() {
         ctx.restore(); 
         
 
-        drawFogOfWar(ctx, player, camera);
+        // drawFogOfWar(ctx, player, camera);
     }
 
     if (currentState === GameState.ROOM) {
