@@ -18,7 +18,11 @@ loadEnemies(currentLevelIndex);
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
 window.onload = () => {
-    Inventory.updateUI();
+    const btn = document.getElementById('inventory-btn');
+    if (btn) {
+        btn.addEventListener('click', () => UI.toggleInventory());
+    }
+    UI.setInventoryBtnVisibility(false);
 };
 
 
@@ -84,13 +88,12 @@ function resizeCanvas(){
 function setGameState(newState) {
     currentState = newState;
     
-    const inv = document.getElementById('inventory-container');
-    if (!inv) return;
-
-    if (newState === GameState.ROOM) {
-        inv.style.display = 'flex';
-    } else {
-        inv.style.display = 'none';
+    if (typeof UI !== 'undefined' && UI.setInventoryBtnVisibility) {
+        if (newState === GameState.ROOM) {
+            UI.setInventoryBtnVisibility(true);
+        } else {
+            UI.setInventoryBtnVisibility(false);
+        }
     }
 }
 
@@ -154,8 +157,8 @@ function handleTransition() {
     if (currentState === GameState.TRANSITION) {
         transitionAlpha += 0.05; // Скорость затемнения
         if (transitionAlpha >= 1) {
-            setGameState(GameState.ROOM);
             transitionAlpha = 1;
+            setGameState(GameState.ROOM);
             roomManager.enter("map" + (currentLevelIndex + 1), player.gridX, player.gridY);
         }
     } else if (transitionAlpha > 0) {

@@ -10,8 +10,17 @@
     <div id="ui-container">
         <div id="health-bar"></div>
 
-        <div id="inventory-container">
-            <div id="inventory-slots"></div>
+        <button id="inventory-btn">Ekwipunek</button>
+    </div>
+
+    <div id="inventory-modal" class="hidden">
+        <div class="inventory-content">
+            <div class="inventory-header">
+                <h2>Ekwipunek</h2>
+                <button class="close-btn" onclick="UI.toggleInventory()">X</button>
+            </div>
+            <div id="inventory-slots">
+                </div>
         </div>
     </div>
     
@@ -28,7 +37,7 @@
     <script src="js\maze\pathfinding.js"></script>
     <script src="js\maze\enemy.js"></script>
     <script src="js\maze\player.js"></script>
-    <script src="js\ui.js"></script>
+    <script src="js\ui.js"></script> 
     <script src="js\maze\camera.js"></script>
     <script src="js\main.js"></script>
 </body>
