@@ -183,7 +183,7 @@ function update() {
     }
 
     const cellValue = maze.grid[player.gridY][player.gridX];
-    if (cellValue === 3) {
+    if (cellValue >= 11) {
         if (!player.isMoving) {
             startTransitionToRoom();
         }

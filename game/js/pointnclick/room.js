@@ -9,10 +9,11 @@ class RoomManager {
         };
     }
 
-    enter(mapId, gx, gy) {
-        this.room = roomsData[mapId]?.[`${gx},${gy}`] || this.default();
-        this.view = "center";
-    }
+    enter(roomID, x, y) {
+    this.view = "center";
+    
+    this.room = roomsData[roomID];
+}
 
     getBox(key, w, h) {
         const b = this.relNav[key];
