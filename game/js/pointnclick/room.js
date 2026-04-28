@@ -20,14 +20,14 @@ class RoomManager {
     }
 
     draw(ctx, w, h) {
-        if (!this.room) return;
+        if (!this.room|| !this.room.views[this.view]) return;
         const v = this.room.views[this.view];
-        ctx.fillStyle = v.bg;
+        ctx.fillStyle = v.bg || "#000";
         ctx.fillRect(0, 0, w, h);
 
         v.objects.forEach(o => {
             if (o.visible !== false) { 
-                ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.fillStyle = o.color || "white";
                 ctx.fillRect(o.rx * w, o.ry * h, o.rw * w, o.rh * h);
             }
         });
@@ -46,6 +46,23 @@ class RoomManager {
     }
 
     handleMouseClick(mx, my, w, h) {
+        const v = this.room.views[this.view];
+        if (!v) return;
+
+        if (v.objects) {
+            for (let o of v.objects) {
+                if (o.visible === false) continue;
+                if (mx > o.rx * w && mx < (o.rx + o.rw) * w && 
+                    my > o.ry * h && my < (o.ry + o.rh) * h) {
+                    
+                    if (ObjectLogic[o.logicType]) {
+                        ObjectLogic[o.logicType](o);
+                    }
+                    return "OBJECT_CLICKED";
+                }
+            }
+        }
+        
         if (this.view === "center") {
             if (this.isIn(mx, my, this.getBox("left", w, h))) this.view = "left";
             else if (this.isIn(mx, my, this.getBox("right", w, h))) this.view = "right";

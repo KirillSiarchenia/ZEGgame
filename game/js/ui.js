@@ -34,9 +34,14 @@ const UI = {
 
         items.forEach(item => {
             const slot = document.createElement('div');
-            slot.className = 'inv-slot filled';
-            slot.title = item.name; // Подсказка при наведении
-            slot.style.backgroundImage = `url(${item.icon})`; // Если будут картинки
+            slot.className = 'inv-slot';
+            slot.style.width = '50px';
+            slot.style.height = '50px';
+            slot.style.margin = '5px';
+            
+            slot.style.backgroundColor = item.color || 'gray';
+            slot.style.border = '1px solid white';
+            
             invContainer.appendChild(slot);
         });
     },

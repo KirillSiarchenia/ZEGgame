@@ -44,19 +44,33 @@ canvas {
 }
 
 #inventory-container {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
+    display: none;
     background: rgba(0, 0, 0, 0.7);
     padding: 10px;
     border: 2px solid #555;
+    z-index: 100;
 }
+
+#inventory-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
 .inv-slot {
-    width: 50px;
-    height: 50px;
-    border: 1px solid #444;
-    margin: 0 5px;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
     background-size: cover;
+    background-position: center;
 }

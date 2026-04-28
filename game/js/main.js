@@ -17,6 +17,9 @@ let maze = new Maze(allLevels[currentLevelIndex], tileSize);
 loadEnemies(currentLevelIndex);
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
+window.onload = () => {
+    Inventory.updateUI();
+};
 
 
 
@@ -77,6 +80,20 @@ function resizeCanvas(){
     }
 }
 
+// пока что только ограничивает инвентарь в лабиринте || na razie  tylko nie pokacuje ekwipunek w labiryncie
+function setGameState(newState) {
+    currentState = newState;
+    
+    const inv = document.getElementById('inventory-container');
+    if (!inv) return;
+
+    if (newState === GameState.ROOM) {
+        inv.style.display = 'flex';
+    } else {
+        inv.style.display = 'none';
+    }
+}
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
@@ -104,6 +121,7 @@ function nextLevel() {
     }
 }
 
+// находит где встать игроку при выходу из комнаты | znajduje miejsce dla gracza po wyjściu z pokoju
 function exitRoom() {
     const directions = [
         { x: 0, y: 1 }, { x: 0, y: -1 }, 
@@ -123,7 +141,7 @@ function exitRoom() {
         }
     }
 
-    currentState = GameState.MAZE;
+    setGameState(GameState.MAZE);
     transitionAlpha = 1; 
 }
 
@@ -136,8 +154,8 @@ function handleTransition() {
     if (currentState === GameState.TRANSITION) {
         transitionAlpha += 0.05; // Скорость затемнения
         if (transitionAlpha >= 1) {
+            setGameState(GameState.ROOM);
             transitionAlpha = 1;
-            currentState = GameState.ROOM;
             roomManager.enter("map" + (currentLevelIndex + 1), player.gridX, player.gridY);
         }
     } else if (transitionAlpha > 0) {
@@ -221,11 +239,9 @@ function gameLoop() {
     }
 
     if (currentState === GameState.ROOM) {
-        // Отрисовка комнаты (статичная, без камеры)
         roomManager.draw(ctx, canvas.width, canvas.height);
     }
 
-    // Слой затемнения поверх всего
     handleTransition();
     if (transitionAlpha > 0) {
         ctx.fillStyle = `rgba(0, 0, 0, ${transitionAlpha})`;

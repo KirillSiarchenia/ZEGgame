@@ -5,9 +5,10 @@ const ObjectLogic = {
             return;
         }
 
-        console.log("Ловушка! Вы получили урон.");
         player.hp -= 1; 
+        console.log("Ловушка! Вы получили урон.", player.hp);
         obj.state = 'triggered';
+        UI.updateHealth(player.hp);
         
         if (player.hp <= 0) {
             console.log("Игра окончена");
@@ -17,16 +18,13 @@ const ObjectLogic = {
     pickup: (obj) => {
         if (obj.state === 'collected') return;
 
-        console.log(`Вы подобрали: ${obj.name || "предмет"}`);
-        
-        if (typeof Inventory !== 'undefined') {
-            Inventory.addItem(obj.itemData);
-        } else {
-            if (!player.inventory) player.inventory = [];
-            player.inventory.push(obj.itemData || obj.id);
-        }
+        Inventory.addItem({
+            id: obj.id,
+            name: obj.name,
+            color: obj.color
+        });
 
-        obj.state = 'collected'; 
-        obj.visible = false;     
+        obj.state = 'collected';
+        obj.visible = false;
     }
 };
