@@ -17,7 +17,7 @@ class Enemy {
         this.spawnPoint = { x, y };
         
         this.lastPlayerPos = null; 
-        this.hearRange = 2.9;
+        this.hearRange = 2.5;
         this.searchTimer = 0;
         this.lastAttack = 0;
 
