@@ -10,10 +10,29 @@ class RoomManager {
     }
 
     enter(roomID, x, y) {
-    this.view = "center";
+        this.view = "center";
     
-    this.room = roomsData[roomID];
-}
+        if (roomsData && roomsData[roomID]) {
+            this.room = JSON.parse(JSON.stringify(roomsData[roomID])); // Глубокое копирование, чтобы не портить оригинал
+            
+            // "Склеиваем" объекты комнаты с библиотекой
+            for (let viewKey in this.room.views) {
+                const view = this.room.views[viewKey];
+                if (view.objects) {
+                    view.objects = view.objects.map(obj => {
+                        const libData = ObjectsLibrary[obj.libId];
+                        if (libData) {
+                            // Объединяем координаты из комнаты и свойства из библиотеки
+                            return { ...libData, ...obj };
+                        }
+                        return obj;
+                    });
+                }
+            }
+        } else {
+            this.room = roomsData["default"];
+        }
+    }
 
     getBox(key, w, h) {
         const b = this.relNav[key];

@@ -158,8 +158,9 @@ function handleTransition() {
         transitionAlpha += 0.05; // Скорость затемнения
         if (transitionAlpha >= 1) {
             transitionAlpha = 1;
+            const roomID = maze.grid[player.gridY][player.gridX];
             setGameState(GameState.ROOM);
-            roomManager.enter("map" + (currentLevelIndex + 1), player.gridX, player.gridY);
+            roomManager.enter(roomID, player.gridX, player.gridY);
         }
     } else if (transitionAlpha > 0) {
         transitionAlpha -= 0.05; // Проявление (Fade in)
@@ -238,7 +239,7 @@ function gameLoop() {
         ctx.restore(); 
         
 
-        drawFogOfWar(ctx, player, camera);
+        // drawFogOfWar(ctx, player, camera);
     }
 
     if (currentState === GameState.ROOM) {
