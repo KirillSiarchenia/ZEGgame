@@ -13,11 +13,17 @@ const ObjectsLibrary = {
         description: "Острые металлические колья. Лучше к ним не прикасаться.",
         examineText: "На кончиках видна засохшая кровь..."
     },
-    "gold_coin": {
+    "maze_coin": {
         name: "Золотая монета",
-        color: "gold",
-        logicType: "pickup",
-        description: "Блестящая монета древней чеканки.",
-        examineText: "На аверсе изображен какой-то забытый король."
+        color: "#ffd700",
+        logicType: "maze_pickup", // Новый тип логики
+        scoreValue: 10
+    },
+    "maze_medkit": {
+        name: "Аптечка",
+        color: "#ff4444",
+        logicType: "maze_pickup",
+        hpValue: 1
     }
 };
+

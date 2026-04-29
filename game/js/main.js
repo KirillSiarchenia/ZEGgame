@@ -11,10 +11,10 @@ const ctx = canvas.getContext("2d");
 const allLevels = [maps.map1, maps.map2, maps.map3];
 let currentLevelIndex = 0;
 let enemies = [];
-canvas.width = 1280;
-canvas.height = 720;
+let currentMazeItems = [];
 let maze = new Maze(allLevels[currentLevelIndex], tileSize);
 loadEnemies(currentLevelIndex);
+loadMazeItems(currentLevelIndex);
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
 window.onload = () => {
@@ -24,8 +24,6 @@ window.onload = () => {
     }
     UI.setInventoryBtnVisibility(false);
 };
-
-
 
 function loadEnemies(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
@@ -37,6 +35,19 @@ function loadEnemies(levelIndex) {
         });
     }
 }
+
+function loadMazeItems(levelIndex) {
+    const levelKey = "map" + (levelIndex + 1);
+    currentMazeItems = [];
+    
+    if (mazeItemsData[levelKey]) {
+        mazeItemsData[levelKey].forEach(data => {
+            const libData = ObjectsLibrary[data.libId];
+            currentMazeItems.push({ ...libData, ...data, collected: false });
+        });
+    }
+}
+
 // туман войны | mgła
 function drawFogOfWar(ctx, player, camera) {
     ctx.save();
@@ -107,6 +118,7 @@ function nextLevel() {
     if (currentLevelIndex < allLevels.length) {
         maze = new Maze(allLevels[currentLevelIndex], tileSize);
         loadEnemies(currentLevelIndex);
+        loadMazeItems(currentLevelIndex);
         
         const startPos = maze.getStartPos();
 
@@ -155,17 +167,26 @@ function startTransitionToRoom() {
 
 function handleTransition() {
     if (currentState === GameState.TRANSITION) {
-        transitionAlpha += 0.05; // Скорость затемнения
+        transitionAlpha += 0.05;
         if (transitionAlpha >= 1) {
             transitionAlpha = 1;
             const roomID = maze.grid[player.gridY][player.gridX];
             setGameState(GameState.ROOM);
             roomManager.enter(roomID, player.gridX, player.gridY);
         }
-    } else if (transitionAlpha > 0) {
+    }else if (transitionAlpha > 0) {
         transitionAlpha -= 0.05; // Проявление (Fade in)
         if (transitionAlpha < 0) transitionAlpha = 0;
     }
+}
+
+function checkMazeItemPickup() {
+    currentMazeItems.forEach(item => {
+        if (!item.collected && player.gridX === item.x && player.gridY === item.y) {
+            item.collected = true;
+            Inventory.addItem({ name: item.name, color: item.color });
+        }
+    });
 }
 
 function update() {
@@ -229,16 +250,30 @@ function gameLoop() {
     if (currentState === GameState.MAZE || currentState === GameState.TRANSITION){
         update(); 
         player.update();
+        checkMazeItemPickup();
         camera.update(player.x, player.y);
         
         ctx.save();
         camera.apply(ctx);
+
         maze.draw(ctx);
+        currentMazeItems.forEach(item => {
+            if (!item.collected) {
+                ctx.fillStyle = item.color || "gold";
+                ctx.beginPath();
+                ctx.arc(
+                    item.x * tileSize + tileSize / 2, 
+                    item.y * tileSize + tileSize / 2, 
+                    10, 0, Math.PI * 2
+                );
+                ctx.fill();
+            }
+        });
         enemies.forEach(enemy => enemy.draw(ctx));
         player.draw(ctx);
+
         ctx.restore(); 
         
-
         // drawFogOfWar(ctx, player, camera);
     }
 
