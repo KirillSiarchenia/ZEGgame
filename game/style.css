@@ -16,9 +16,11 @@ canvas {
     top: 20px;
     left: 20px;
     z-index: 10;
+    width: 100%;
     pointer-events: none; 
 }
 
+/*ниже здоровье | niżej zdrowie*/
 #health-bar {
     display: flex;
     gap: 10px;
@@ -43,6 +45,7 @@ canvas {
     transform: scale(0.8);
 }
 
+/*ниже инвентарь | niżej ekwipunek*/
 #inventory-btn {
     margin-top: 60px;
     margin-left: 20px;
@@ -106,4 +109,37 @@ canvas {
     justify-content: center;
 }
 
+/*ниже расходники | niżej consumable*/
+#consumables-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.consumable-btn {
+    width: 60px;
+    height: 60px;
+    top: 20px;
+    right: 20px; 
+    margin-bottom: 5px;
+    background: #333;
+    border: 2px solid #ffd700;
+    color: white;
+    cursor: pointer;
+    font-size: 10px;
+    display: block;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1001;
+}
+
+.consumable-btn:hover { background: #444; }
+
 .hidden { display: none !important; }
+.hidden-ui { display: none !important; }

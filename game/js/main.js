@@ -95,16 +95,27 @@ function resizeCanvas(){
     }
 }
 
-// пока что только ограничивает инвентарь в лабиринте || na razie  tylko nie pokacuje ekwipunek w labiryncie
+// отвечает за интерфейс в разных состояниях игры | odpowiada za ui w różnych stanach gry
 function setGameState(newState) {
     currentState = newState;
+    const consPanel = document.getElementById('consumables-panel');
     
-    if (typeof UI !== 'undefined' && UI.setInventoryBtnVisibility) {
-        if (newState === GameState.ROOM) {
-            UI.setInventoryBtnVisibility(true);
-        } else {
-            UI.setInventoryBtnVisibility(false);
-        }
+    if (newState === GameState.MAZE) {
+        UI.setInventoryBtnVisibility(false);
+        if (consPanel)
+            {
+                consPanel.classList.remove('hidden-ui'); 
+                console.log("Панель активна");               
+            } 
+        UI.updateConsumables(Inventory.items); 
+
+    } else if (newState === GameState.ROOM) {
+        UI.setInventoryBtnVisibility(true);
+        if (consPanel) consPanel.classList.add('hidden-ui'); 
+        UI.renderInventory(Inventory.items);
+    } else {
+        UI.setInventoryBtnVisibility(false);
+        if (consPanel) consPanel.classList.add('hidden-ui');
     }
 }
 
@@ -184,7 +195,13 @@ function checkMazeItemPickup() {
     currentMazeItems.forEach(item => {
         if (!item.collected && player.gridX === item.x && player.gridY === item.y) {
             item.collected = true;
-            Inventory.addItem({ name: item.name, color: item.color });
+            
+            const libData = ObjectsLibrary[item.libId]; 
+            
+            if (libData) {
+                Inventory.addItem({ ...libData });
+                console.log(`Подобрано: ${libData.name}`);
+            }
         }
     });
 }

@@ -22,8 +22,9 @@ const ObjectsLibrary = {
     "maze_medkit": {
         name: "Аптечка",
         color: "#ff4444",
+        isConsumable: true,
         logicType: "maze_pickup",
-        hpValue: 1
+        effect: 'heal'
     }
 };
 

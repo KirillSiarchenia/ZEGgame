@@ -16,15 +16,22 @@ const ObjectLogic = {
     },
 
     pickup: (obj) => {
-        if (obj.state === 'collected') return;
+    if (obj.state === 'collected') return;
 
-        Inventory.addItem({
-            id: obj.id,
-            name: obj.name,
-            color: obj.color
-        });
+    obj.state = 'collected';
+    obj.visible = false;
 
-        obj.state = 'collected';
-        obj.visible = false;
+    const currentRoomID = maze.grid[player.gridY][player.gridX];
+    
+    if (roomsData[currentRoomID]) {
+        for (let viewKey in roomsData[currentRoomID].views) {
+            let view = roomsData[currentRoomID].views[viewKey];
+            if (view.objects) {
+                view.objects = view.objects.filter(o => o.libId !== obj.libId);
+            }
+        }
     }
+
+    Inventory.addItem(obj);
+}
 };

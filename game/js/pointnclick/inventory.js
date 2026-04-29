@@ -2,21 +2,21 @@ const Inventory = {
     items: [],
 
     addItem(item) {
-        this.items.push(item);
-        this.updateUI();
-        return true;
+        const instance = { ...item, instanceId: Date.now() + Math.random() };
+        this.items.push(instance);
+        
+        if (currentState === GameState.MAZE) {
+            UI.updateConsumables(this.items);
+        }
+        UI.renderInventory(Inventory.items);
     },
 
     has(itemId) {
         return this.items.some(item => item.id === itemId);
     },
 
-    removeItem(itemId) {
-        const index = this.items.findIndex(item => item.id === itemId);
-        if (index !== -1) {
-            this.items.splice(index, 1);
-            this.updateUI();
-        }
+    removeItem(instanceId) {
+        this.items = this.items.filter(i => i.instanceId !== instanceId);
     },
 
     updateUI() {
