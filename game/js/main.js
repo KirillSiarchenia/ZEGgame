@@ -260,20 +260,16 @@ canvas.addEventListener("mousedown", (e) => {
     }
 });
 
-function gameLoop() {
+function drawAll() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (currentState === GameState.MAZE || currentState === GameState.TRANSITION){
-        update(); 
-        player.update();
-        checkMazeItemPickup();
-        camera.update(player.x, player.y);
-        
+    if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
         ctx.save();
-        camera.apply(ctx);
+        camera.apply(ctx); 
 
-        maze.draw(ctx);
+        maze.draw(ctx);   
+
         currentMazeItems.forEach(item => {
             if (!item.collected) {
                 ctx.fillStyle = item.color || "gold";
@@ -286,23 +282,34 @@ function gameLoop() {
                 ctx.fill();
             }
         });
-        enemies.forEach(enemy => enemy.draw(ctx));
-        player.draw(ctx);
 
-        ctx.restore(); 
-        
-        // drawFogOfWar(ctx, player, camera);
+        enemies.forEach(enemy => enemy.draw(ctx)); 
+        player.draw(ctx);                          
+
+        ctx.restore();
     }
-
+    
     if (currentState === GameState.ROOM) {
-        roomManager.draw(ctx, canvas.width, canvas.height);
+        roomManager.draw(ctx, canvas.width, canvas.height); 
     }
 
-    handleTransition();
     if (transitionAlpha > 0) {
         ctx.fillStyle = `rgba(0, 0, 0, ${transitionAlpha})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+}
+
+function gameLoop() {
+    if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
+        update();             
+        player.update();     
+        checkMazeItemPickup();
+        camera.update(player.x, player.y);
+    }
+    
+    handleTransition();       
+
+    drawAll();
 
     requestAnimationFrame(gameLoop); 
 }
