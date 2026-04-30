@@ -13,7 +13,7 @@ const ObjectsLibrary = {
     "maze_coin": {
         name: "Золотая монета",
         color: "#ffd700",
-        logicType: "maze_pickup", // Новый тип логики
+        logicType: "maze_pickup", 
         examineText: "Старинная...",
         scoreValue: 10
     },

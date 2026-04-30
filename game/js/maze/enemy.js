@@ -41,7 +41,7 @@ class Enemy {
             this.state = 'searching';
         }
 
-        // 2. логика состояний | logika stanów
+        // логика состояний | logika stanów
         switch (this.state) {
             case 'chase':
                 const dx = Math.abs(this.gridX - player.gridX);

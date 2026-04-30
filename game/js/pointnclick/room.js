@@ -13,16 +13,14 @@ class RoomManager {
         this.view = "center";
     
         if (roomsData && roomsData[roomID]) {
-            this.room = JSON.parse(JSON.stringify(roomsData[roomID])); // Глубокое копирование, чтобы не портить оригинал
+            this.room = JSON.parse(JSON.stringify(roomsData[roomID])); 
             
-            // "Склеиваем" объекты комнаты с библиотекой
             for (let viewKey in this.room.views) {
                 const view = this.room.views[viewKey];
                 if (view.objects) {
                     view.objects = view.objects.map(obj => {
                         const libData = ObjectsLibrary[obj.libId];
                         if (libData) {
-                            // Объединяем координаты из комнаты и свойства из библиотеки
                             return { ...libData, ...obj };
                         }
                         return obj;

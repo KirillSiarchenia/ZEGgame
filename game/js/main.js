@@ -284,6 +284,8 @@ function drawAll() {
         player.draw(ctx);                          
 
         ctx.restore();
+
+        drawFogOfWar(ctx, player, camera)
     }
     
     if (currentState === GameState.ROOM) {

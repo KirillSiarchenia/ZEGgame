@@ -56,14 +56,14 @@ const UI = {
         menu.style.position = 'fixed';
         menu.style.left = mouseEvent.clientX + 'px';
         menu.style.top = mouseEvent.clientY + 'px';
-        menu.style.zIndex = '5001'; // На 1 выше, чем само меню
+        menu.style.zIndex = '5001'; 
 
         const useBtn = document.createElement('button');
         useBtn.innerText = "Использовать";
-        useBtn.style.pointerEvents = "auto"; // Принудительно включаем клики
+        useBtn.style.pointerEvents = "auto"; 
         useBtn.onclick = (e) => {
             e.preventDefault();
-            e.stopPropagation(); // Останавливаем всплытие, чтобы инвентарь не поймал клик
+            e.stopPropagation();
             this.useItem(item);
             menu.remove();
         };
@@ -82,9 +82,7 @@ const UI = {
         menu.appendChild(examineBtn);
         document.body.appendChild(menu);
 
-        // Закрытие меню: используем mousedown вместо click для скорости
         const closeMenu = (e) => {
-            // Если кликнули не по кнопке внутри меню — удаляем меню
             if (!menu.contains(e.target)) {
                 menu.remove();
                 document.removeEventListener('mousedown', closeMenu);
@@ -94,7 +92,6 @@ const UI = {
         setTimeout(() => document.addEventListener('mousedown', closeMenu), 50);
     },
 
-    // отрисовка инвентаря | rysowanie ekwipunku
     renderInventory(items) {
         const container = document.getElementById('inventory-slots');
         if (!container) return;
@@ -105,9 +102,8 @@ const UI = {
             slot.className = 'inv-slot';
             slot.style.backgroundColor = item.color || 'gray';
             
-            // ПЕРЕДАЕМ СОБЫТИЕ (e), чтобы получить координаты клика
             slot.onclick = (e) => {
-                e.stopPropagation(); // Чтобы клик не провалился глубже
+                e.stopPropagation(); 
                 this.showItemActions(item, e);
             };
             
@@ -143,16 +139,13 @@ const UI = {
         typeWriter();
 
         const handleInteraction = (e) => {
-            // Останавливаем выполнение, если это правая кнопка мыши или что-то подобное
             if (e.type === 'mousedown' && e.button !== 0) return;
 
             if (this.isTyping) {
-                // 1. Если печатаем — завершаем немедленно
                 clearTimeout(this.typingTimer);
                 content.innerText = text;
                 this.isTyping = false;
             } else {
-                // 2. Если текст уже выведен — закрываем окно
                 box.classList.add('hidden');
                 window.removeEventListener('keydown', handleInteraction);
                 window.removeEventListener('mousedown', handleInteraction);
