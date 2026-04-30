@@ -3,20 +3,18 @@ const ObjectsLibrary = {
         name: "Красный ключ",
         color: "red",
         logicType: "pickup",
-        description: "Старый тяжелый ключ, покрытый ржавчиной. Выглядит важно.",
         examineText: "На нем выгравировано: 'Сектор А'."
     },
     "trap_spikes": {
         name: "Шипы",
         color: "#555",
         logicType: "trap",
-        description: "Острые металлические колья. Лучше к ним не прикасаться.",
-        examineText: "На кончиках видна засохшая кровь..."
     },
     "maze_coin": {
         name: "Золотая монета",
         color: "#ffd700",
         logicType: "maze_pickup", // Новый тип логики
+        examineText: "Старинная...",
         scoreValue: 10
     },
     "maze_medkit": {
@@ -24,6 +22,7 @@ const ObjectsLibrary = {
         color: "#ff4444",
         isConsumable: true,
         logicType: "maze_pickup",
+        examineText: "Это может мне помочь",
         effect: 'heal'
     }
 };

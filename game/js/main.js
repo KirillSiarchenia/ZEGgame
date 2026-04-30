@@ -102,11 +102,8 @@ function setGameState(newState) {
     
     if (newState === GameState.MAZE) {
         UI.setInventoryBtnVisibility(false);
-        if (consPanel)
-            {
-                consPanel.classList.remove('hidden-ui'); 
-                console.log("Панель активна");               
-            } 
+        if (consPanel) consPanel.classList.remove('hidden-ui'); 
+         
         UI.updateConsumables(Inventory.items); 
 
     } else if (newState === GameState.ROOM) {

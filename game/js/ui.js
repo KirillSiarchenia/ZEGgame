@@ -46,6 +46,54 @@ const UI = {
         modal.classList.toggle('hidden');
     },
 
+    showItemActions(item, mouseEvent) {
+        const oldMenu = document.getElementById('item-context-menu');
+        if (oldMenu) oldMenu.remove();
+
+        const menu = document.createElement('div');
+        menu.id = 'item-context-menu';
+        
+        menu.style.position = 'fixed';
+        menu.style.left = mouseEvent.clientX + 'px';
+        menu.style.top = mouseEvent.clientY + 'px';
+        menu.style.zIndex = '5001'; // На 1 выше, чем само меню
+
+        const useBtn = document.createElement('button');
+        useBtn.innerText = "Использовать";
+        useBtn.style.pointerEvents = "auto"; // Принудительно включаем клики
+        useBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // Останавливаем всплытие, чтобы инвентарь не поймал клик
+            this.useItem(item);
+            menu.remove();
+        };
+
+        const examineBtn = document.createElement('button');
+        examineBtn.innerText = "Осмотреть";
+        examineBtn.style.pointerEvents = "auto";
+        examineBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.showMessage(item.examineText || "Ничего особенного.");
+            menu.remove();
+        };
+
+        menu.appendChild(useBtn);
+        menu.appendChild(examineBtn);
+        document.body.appendChild(menu);
+
+        // Закрытие меню: используем mousedown вместо click для скорости
+        const closeMenu = (e) => {
+            // Если кликнули не по кнопке внутри меню — удаляем меню
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('mousedown', closeMenu);
+            }
+        };
+        
+        setTimeout(() => document.addEventListener('mousedown', closeMenu), 50);
+    },
+
     // отрисовка инвентаря | rysowanie ekwipunku
     renderInventory(items) {
         const container = document.getElementById('inventory-slots');
@@ -57,14 +105,64 @@ const UI = {
             slot.className = 'inv-slot';
             slot.style.backgroundColor = item.color || 'gray';
             
-            if (item.isConsumable) {
-                slot.style.cursor = 'pointer';
-                slot.onclick = () => this.useItem(item);
-                slot.title = "Нажмите, чтобы использовать";
-            }
+            // ПЕРЕДАЕМ СОБЫТИЕ (e), чтобы получить координаты клика
+            slot.onclick = (e) => {
+                e.stopPropagation(); // Чтобы клик не провалился глубже
+                this.showItemActions(item, e);
+            };
             
             container.appendChild(slot);
         });
+    },
+
+    isTyping: false,
+    typingTimer: null,
+
+    showMessage(text) {
+        const box = document.getElementById('msg-box');
+        const content = document.getElementById('msg-content');
+        if (!box || !content) return;
+
+        box.classList.remove('hidden');
+        content.innerText = "";
+        
+        this.isTyping = true;
+        let i = 0;
+        const speed = 40;
+
+        const typeWriter = () => {
+            if (i < text.length) {
+                content.innerText += text.charAt(i);
+                i++;
+                this.typingTimer = setTimeout(typeWriter, speed);
+            } else {
+                this.isTyping = false;
+            }
+        };
+
+        typeWriter();
+
+        const handleInteraction = (e) => {
+            // Останавливаем выполнение, если это правая кнопка мыши или что-то подобное
+            if (e.type === 'mousedown' && e.button !== 0) return;
+
+            if (this.isTyping) {
+                // 1. Если печатаем — завершаем немедленно
+                clearTimeout(this.typingTimer);
+                content.innerText = text;
+                this.isTyping = false;
+            } else {
+                // 2. Если текст уже выведен — закрываем окно
+                box.classList.add('hidden');
+                window.removeEventListener('keydown', handleInteraction);
+                window.removeEventListener('mousedown', handleInteraction);
+            }
+        };
+
+        setTimeout(() => {
+            window.addEventListener('keydown', handleInteraction);
+            window.addEventListener('mousedown', handleInteraction);
+        }, 100);
     },
 
     // рисует расходники | rysuje consumables
