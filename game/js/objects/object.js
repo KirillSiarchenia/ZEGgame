@@ -1,17 +1,26 @@
 const ObjectLogic = {
     trap: (obj) => {
-        if (obj.state === 'triggered') {
-            console.log("Ловушка уже пуста.");
-            return;
-        }
+        if (obj.state === 'triggered') return; // Если уже сработала, ничего не делаем
 
-        player.hp -= 1; 
-        console.log("Ловушка! Вы получили урон.", player.hp);
-        obj.state = 'triggered';
+        player.hp -= 1;
         UI.updateHealth(player.hp);
         
-        if (player.hp <= 0) {
-            console.log("Игра окончена");
+        obj.state = 'triggered';
+        obj.color = "#444"; 
+
+        const currentRoomID = maze.grid[player.gridY][player.gridX];
+        const globalRoom = roomsData[currentRoomID];
+
+        if (globalRoom) {
+            for (let viewKey in globalRoom.views) {
+                let view = globalRoom.views[viewKey];
+                if (view.objects) {
+                    const globalTrap = view.objects.find(o => o.libId === obj.libId);
+                    if (globalTrap) {
+                        globalTrap.state = 'triggered'; 
+                    }
+                }
+            }
         }
     },
 
