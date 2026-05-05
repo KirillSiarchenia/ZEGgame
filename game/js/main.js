@@ -71,6 +71,7 @@ function drawFogOfWar(ctx, player, camera) {
     ctx.restore();
 }
 
+
 const player = new Player(startPos.x, startPos.y, tileSize);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 
@@ -94,6 +95,22 @@ function resizeCanvas(){
         camera.height = canvas.height;
     }
 }
+
+let hasTriedRunning = false;
+
+function checkRunningHint(e) {
+    if ((e.key === "Shift") && !hasTriedRunning) {
+        
+        UI.showMessage("Стены и шаги едва выдерживают, что уж говорить о беге.");
+        
+        hasTriedRunning = true;
+        
+        window.removeEventListener("keydown", checkRunningHint);
+    }
+}
+
+// Регистрируем слушатель событий
+window.addEventListener("keydown", checkRunningHint);
 
 // отвечает за интерфейс в разных состояниях игры | odpowiada za ui w różnych stanach gry
 function setGameState(newState) {

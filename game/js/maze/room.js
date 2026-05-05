@@ -110,7 +110,6 @@ class RoomManager {
             return "OBJECT_CLICKED";
         }
 
-        // ВАЖНО: Если в руках предмет, навигация игнорируется (не меняем view)[cite: 7]
         if (UI.selectedItemForUse) return "MISSED_UI";
 
         if (target.type === 'EXIT') return "EXIT";
