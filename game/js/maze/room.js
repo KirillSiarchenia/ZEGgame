@@ -63,28 +63,62 @@ class RoomManager {
         }
     }
 
-    handleMouseClick(mx, my, w, h) {
+    getClickTarget(mx, my, w, h) {
         const v = this.room.views[this.view];
         if (!v) return null;
 
         if (v.objects) {
             for (let o of v.objects) {
-                if (o.visible === false) continue;
-                if (mx > o.rx * w && mx < (o.rx + o.rw) * w && 
+                if (o.visible !== false &&
+                    mx > o.rx * w && mx < (o.rx + o.rw) * w && 
                     my > o.ry * h && my < (o.ry + o.rh) * h) {
-                    
-                    if (UI.selectedItemForUse) {
-                        this.handleObjectClick(o); 
-                        return "ITEM_USED"; 
-                    }
-                    
-                    if (ObjectLogic[o.logicType]) {
-                        ObjectLogic[o.logicType](o);
-                    }
-                    return "OBJECT_CLICKED";
+                    return { type: 'OBJECT', data: o };
                 }
             }
         }
+
+        if (this.view === "center") {
+            const exit = this.getBox("exit", w, h);
+            if (this.isIn(mx, my, exit)) return { type: 'EXIT' };
+
+            const left = this.getBox("left", w, h);
+            if (this.isIn(mx, my, left)) return { type: 'NAV_LEFT' };
+
+            const right = this.getBox("right", w, h);
+            if (this.isIn(mx, my, right)) return { type: 'NAV_RIGHT' };
+        } else {
+            const left = this.getBox("left", w, h);
+            const right = this.getBox("right", w, h);
+            if (this.isIn(mx, my, left) || this.isIn(mx, my, right)) return { type: 'NAV_BACK' };
+        }
+
+        return null;
+    }
+
+    handleMouseClick(mx, my, w, h) {
+        const target = this.getClickTarget(mx, my, w, h);
+        if (!target) return null;
+
+        if (target.type === 'OBJECT') {
+            if (UI.selectedItemForUse) {
+                this.handleObjectClick(target.data);
+                return "ITEM_USED";
+            }
+            if (ObjectLogic[target.data.logicType]) {
+                ObjectLogic[target.data.logicType](target.data);
+            }
+            return "OBJECT_CLICKED";
+        }
+
+        // ВАЖНО: Если в руках предмет, навигация игнорируется (не меняем view)[cite: 7]
+        if (UI.selectedItemForUse) return "MISSED_UI";
+
+        if (target.type === 'EXIT') return "EXIT";
+        
+        if (target.type === 'NAV_LEFT') { this.view = "left"; return "NAVIGATED"; }
+        if (target.type === 'NAV_RIGHT') { this.view = "right"; return "NAVIGATED"; }
+        if (target.type === 'NAV_BACK') { this.view = "center"; return "NAVIGATED"; }
+
         return null;
     }
 

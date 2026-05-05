@@ -254,8 +254,7 @@ function update() {
 }
 
 canvas.addEventListener("mousedown", (e) => {
-    if (UI.isMessageActive) return; 
-    if (currentState !== GameState.ROOM) return; 
+    if (UI.isMessageActive || currentState !== GameState.ROOM) return;
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
