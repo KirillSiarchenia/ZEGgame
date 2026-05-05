@@ -254,16 +254,25 @@ function update() {
 }
 
 canvas.addEventListener("mousedown", (e) => {
-    if (currentState !== GameState.ROOM || UI.isMessageActive) return;
+    if (UI.isMessageActive) return; 
+    if (currentState !== GameState.ROOM) return; 
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
     const result = roomManager.handleMouseClick(mx, my, canvas.width, canvas.height);
-    
-    if (result === "EXIT") {
-        exitRoom();
+
+    if (UI.selectedItemForUse) {
+        if (result !== "ITEM_USED") {
+            UI.showMessage("Это здесь неприменимо.");
+            UI.selectedItemForUse = null;
+            UI.resetCursor();
+        }
+    } else {
+        if (result === "EXIT") {
+            exitRoom();
+        }
     }
 });
 

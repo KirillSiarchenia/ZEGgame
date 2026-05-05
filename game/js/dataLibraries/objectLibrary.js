@@ -22,6 +22,7 @@ const ObjectsLibrary = {
     crate: {
         id: 'crate',
         name: 'Ящик',
+        logicType: "maze_pickup", 
         examineText: "Тяжёлый ящик",
         useOnTarget: 'pressure_button',
         action: (target) => {
@@ -36,6 +37,7 @@ const ObjectsLibrary = {
     stone: {
         id: 'stone',
         name: 'Камень',
+        logicType: "pickup", 
         examineText: "Увесистый. На эти ходячие трупы не хватит, но что-то он разобьёт.",
         useOnTarget: 'pressure_button',
         action: (target) => {

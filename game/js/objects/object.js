@@ -1,16 +1,14 @@
 const ObjectLogic = {
     trap: (obj) => {
-        if (obj.state === 'triggered') return; // Если уже сработала, ничего не делаем
+        if (obj.state === 'triggered') return;
 
         player.hp -= 1;
         UI.updateHealth(player.hp);
         
+        // изменяет состояние ловушки | zmienia stan pułapki
         obj.state = 'triggered';
-        obj.color = "#444"; 
-
         const currentRoomID = maze.grid[player.gridY][player.gridX];
         const globalRoom = roomsData[currentRoomID];
-
         if (globalRoom) {
             for (let viewKey in globalRoom.views) {
                 let view = globalRoom.views[viewKey];
@@ -23,7 +21,8 @@ const ObjectLogic = {
             }
         }
     },
-
+    
+    // логика подбора предметов |
     pickup: (obj) => {
     if (obj.state === 'collected') return;
 

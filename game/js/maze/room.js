@@ -65,13 +65,18 @@ class RoomManager {
 
     handleMouseClick(mx, my, w, h) {
         const v = this.room.views[this.view];
-        if (!v) return;
+        if (!v) return null;
 
         if (v.objects) {
             for (let o of v.objects) {
                 if (o.visible === false) continue;
                 if (mx > o.rx * w && mx < (o.rx + o.rw) * w && 
                     my > o.ry * h && my < (o.ry + o.rh) * h) {
+                    
+                    if (UI.selectedItemForUse) {
+                        this.handleObjectClick(o); 
+                        return "ITEM_USED"; 
+                    }
                     
                     if (ObjectLogic[o.logicType]) {
                         ObjectLogic[o.logicType](o);
@@ -80,14 +85,22 @@ class RoomManager {
                 }
             }
         }
-        
-        if (this.view === "center") {
-            if (this.isIn(mx, my, this.getBox("left", w, h))) this.view = "left";
-            else if (this.isIn(mx, my, this.getBox("right", w, h))) this.view = "right";
-            else if (this.isIn(mx, my, this.getBox("exit", w, h))) return "EXIT";
-        } else {
-            const back = this.view === "left" ? "right" : "left";
-            if (this.isIn(mx, my, this.getBox(back, w, h))) this.view = "center";
+        return null;
+    }
+
+
+    handleObjectClick(obj) {
+        if (UI.selectedItemForUse) {
+            const item = UI.selectedItemForUse;
+
+            if (item.useOnTarget === obj.id || item.useOnTarget === obj.libId) {
+                Inventory.removeItem(item.instanceId);
+            } else {
+                UI.showMessage("Точно нет.");
+            }
+            
+            UI.selectedItemForUse = null; 
+            UI.resetCursor(); 
         }
     }
 
