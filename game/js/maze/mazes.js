@@ -29,6 +29,20 @@ class Maze
         }
     }   
 
+    checkRoomEntry(targetX, targetY) {
+        const cellValue = this.grid[targetY][targetX];
+        
+        if (cellValue >= 11) {
+            const room = roomsData[cellValue];
+            
+            if (room && room.isLocked) {
+                UI.showMessage("Дверь заперта.");
+                return false;
+            }
+        }
+        return true;
+    }
+
     // отрисовка лабиринта | rysowanie labiryntu 
     draw(ctx) {
         for (let y = 0; y < this.rows; y++) {

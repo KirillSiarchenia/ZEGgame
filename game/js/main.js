@@ -205,7 +205,7 @@ function checkMazeItemPickup() {
 
 function update() {
     if (currentState !== GameState.MAZE) return;
-    // упаравление | kierowanie
+    // управление | kierowanie
     let dx = 0;
     let dy = 0;
 
@@ -214,21 +214,31 @@ function update() {
     else if (keys["a"] || keys["arrowleft"] || keys["ф"]) dx = -1;
     else if (keys["d"] || keys["arrowright"] || keys["в"]) dx = 1;
 
-    if (dx !== 0 || dy !== 0) {
-        player.move(dx, dy, maze, enemies);
-    }
 
-    const cellValue = maze.grid[player.gridY][player.gridX];
-    if (cellValue >= 11) {
-        if (!player.isMoving) {
-            startTransitionToRoom();
+    if ((dx !== 0 || dy !== 0) && !player.isMoving) {
+        const targetX = player.gridX + dx;
+        const targetY = player.gridY + dy;
+        
+        if (maze.grid[targetY] !== undefined && maze.grid[targetY][targetX] !== undefined) {
+            const targetCell = maze.grid[targetY][targetX];
+
+            if (targetCell >= 11) {
+                if (maze.checkRoomEntry(targetX, targetY)) {
+                    player.move(dx, dy, maze, enemies);
+                } 
+            } else {
+                player.move(dx, dy, maze, enemies);
+            }
         }
     }
 
+    const cellValue = maze.grid[player.gridY][player.gridX];
+    if (cellValue >= 11 && !player.isMoving) {
+        startTransitionToRoom();
+    }
+
     // Появление противников | pojawienie przeciwników
-    enemies.forEach(enemy => {
-        enemy.update(player, maze);
-    });
+    enemies.forEach(enemy => enemy.update(player, maze));
 
     const exit = maze.getExitPos();
     if (player.gridX === exit.x && player.gridY === exit.y) {
@@ -305,8 +315,9 @@ function gameLoop() {
         checkMazeItemPickup();
         camera.update(player.x, player.y);
     }
+        
+        handleTransition();
     
-    handleTransition();       
 
     drawAll();
 
