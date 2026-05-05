@@ -1,5 +1,9 @@
 const UI = {
     healthBar: document.getElementById("health-bar"),
+    isMessageActive: false,
+    selectedItemForUse: null,
+    isTyping: false,
+    typingTimer: null,
         
     lastHp: -1,
     
@@ -46,6 +50,7 @@ const UI = {
         modal.classList.toggle('hidden');
     },
 
+    // контекстное меню | 
     showItemActions(item, mouseEvent) {
         const oldMenu = document.getElementById('item-context-menu');
         if (oldMenu) oldMenu.remove();
@@ -111,8 +116,6 @@ const UI = {
         });
     },
 
-    isTyping: false,
-    typingTimer: null,
 
     showMessage(text) {
         const box = document.getElementById('msg-box');
@@ -120,6 +123,7 @@ const UI = {
         if (!box || !content) return;
 
         box.classList.remove('hidden');
+        this.isMessageActive = true;
         content.innerText = "";
         
         this.isTyping = true;
@@ -147,6 +151,7 @@ const UI = {
                 this.isTyping = false;
             } else {
                 box.classList.add('hidden');
+                this.isMessageActive = false;
                 window.removeEventListener('keydown', handleInteraction);
                 window.removeEventListener('mousedown', handleInteraction);
             }
@@ -190,17 +195,34 @@ const UI = {
             Inventory.removeItem(item.instanceId); 
             this.updateConsumables(Inventory.items);
             this.renderInventory(Inventory.items);  
+            this.showMessage("я похавал"); // пока что для отладки 
+            return;
         }
+        const modal = document.getElementById('inventory-modal');
+        if (modal) modal.classList.add('hidden');
 
+        this.selectedItemForUse = item;        
+        this.updateCursor(item.color);
+    },
+    updateCursor(color) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 32;
+        canvas.height = 32;
+        const ctx = canvas.getContext('2d');
+        
+        // Рисуем иконку предмета вместо курсора
+        ctx.fillStyle = color || 'white';
+        ctx.fillRect(4, 4, 24, 24);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(4, 4, 24, 24);
+
+        const url = canvas.toDataURL();
+        document.body.style.cursor = `url(${url}) 12 12, auto`;
     },
 
-    showGameOver() {
-        alert("Игра окончена!");
-        location.reload();
+    resetCursor() {
+        document.body.style.cursor = 'default';
+        this.selectedItemForUse = null;
     },
-
-    showWin() {
-        alert("Поздравляю! Вы прошли все лабиринты!");
-        location.reload();
-    }
 };

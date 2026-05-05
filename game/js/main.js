@@ -204,7 +204,7 @@ function checkMazeItemPickup() {
 }
 
 function update() {
-    if (currentState !== GameState.MAZE) return;
+    if (currentState !== GameState.MAZE || UI.isMessageActive) return;
     // управление | kierowanie
     let dx = 0;
     let dy = 0;
@@ -254,7 +254,7 @@ function update() {
 }
 
 canvas.addEventListener("mousedown", (e) => {
-    if (currentState !== GameState.ROOM) return;
+    if (currentState !== GameState.ROOM || UI.isMessageActive) return;
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
@@ -309,15 +309,16 @@ function drawAll() {
 }
 
 function gameLoop() {
-    if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
-        update();             
-        player.update();     
-        checkMazeItemPickup();
-        camera.update(player.x, player.y);
-    }
+    if(!UI.isMessageActive){
+        if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
+            update();             
+            player.update();     
+            checkMazeItemPickup();
+            camera.update(player.x, player.y);
+        }
         
         handleTransition();
-    
+    }
 
     drawAll();
 
