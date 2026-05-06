@@ -118,37 +118,31 @@ class RoomManager {
 
 
     handleObjectClick(obj) {
-    if (!UI.selectedItemForUse) return;
+        if (!UI.selectedItemForUse) return;
 
-    const item = UI.selectedItemForUse;
-    let finalMessage = "Это здесь неприменимо."; 
-    let shouldDelete = false; 
-
-    if (item.useOnTarget === obj.id || item.useOnTarget === obj.id) {
-        finalMessage = "Предмет использован.";
-        shouldDelete = true; 
+        const item = UI.selectedItemForUse;
+        let finalMessage = t.messages.not_applicable; // "Это здесь неприменимо"
+        let shouldDelete = false;
 
         if (typeof item.action === "function") {
             const response = item.action(obj);
 
-            if (typeof response === "object" && response !== null) {
-                finalMessage = response.message || finalMessage;
-                shouldDelete = (response.deleteItem !== undefined) ? response.deleteItem : true;
-            } else if (typeof response === "string") {
-                finalMessage = response;
-            }
+            if (response && typeof response === "object") {
+                finalMessage = response.message || "Код говно";
+                shouldDelete = response.deleteItem || false;
+
+                if (shouldDelete) {
+                    Inventory.removeItem(item.instanceId);
+                    UI.updateConsumables(Inventory.items);
+                    UI.renderInventory(Inventory.items);
+                }
+            } 
         }
 
-        if (shouldDelete) {
-            Inventory.removeItem(item.instanceId);
-        }
-    } 
-
-    UI.showMessage(finalMessage);
-
-    UI.selectedItemForUse = null; 
-    UI.resetCursor();
-}
+        UI.showMessage(finalMessage);
+        UI.selectedItemForUse = null;
+        UI.resetCursor();
+    }
 
     isIn = (mx, my, r) => mx > r.x && mx < r.x + r.w && my > r.y && my < r.y + r.h;
     default = () => ({ views: { center: { bg: "#111", objects: [] }, left: { bg: "#000", objects: [] }, right: { bg: "#222", objects: [] } } });

@@ -44,6 +44,8 @@ const UI = {
 
     // вкл/выкл инвентаря | włącza/wyłącza ekwipunek
     toggleInventory() {
+        if (this.isMessageActive) return;
+
         const modal = document.getElementById('inventory-modal');
         if (!modal) return;
         
@@ -64,7 +66,7 @@ const UI = {
         menu.style.zIndex = '5001'; 
 
         const useBtn = document.createElement('button');
-        useBtn.innerText = "Использовать";
+        useBtn.innerText = t.ui.use;
         useBtn.style.pointerEvents = "auto"; 
         useBtn.onclick = (e) => {
             e.preventDefault();
@@ -74,12 +76,12 @@ const UI = {
         };
 
         const examineBtn = document.createElement('button');
-        examineBtn.innerText = "Осмотреть";
+        examineBtn.innerText = t.ui.examine;
         examineBtn.style.pointerEvents = "auto";
         examineBtn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            this.showMessage(item.examineText || "Ничего особенного.");
+            this.showMessage(t.itemDescription[item.id] || "???");
             menu.remove();
         };
 
@@ -108,7 +110,9 @@ const UI = {
             slot.style.backgroundColor = item.color || 'gray';
             
             slot.onclick = (e) => {
-                e.stopPropagation(); 
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.isMessageActive) return;
                 this.showItemActions(item, e);
             };
             
@@ -124,8 +128,10 @@ const UI = {
         const content = document.getElementById('msg-content');
         if (!box || !content) return;
 
+        if (this.typingTimer) clearTimeout(this.typingTimer);
+
         box.classList.remove('hidden');
-        this.isMessageActive = true;
+        this.isMessageActive = true; 
         content.innerText = "";
         
         this.isTyping = true;
@@ -145,24 +151,41 @@ const UI = {
         typeWriter();
 
         const handleInteraction = (e) => {
-            if (e.type === 'mousedown' && e.button !== 0) return;
+            // Полная блокировка события для всех остальных
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
-            if (this.isTyping) {
-                clearTimeout(this.typingTimer);
-                content.innerText = text;
-                this.isTyping = false;
-            } else {
-                box.classList.add('hidden');
-                this.isMessageActive = false;
-                window.removeEventListener('keydown', handleInteraction);
-                window.removeEventListener('mousedown', handleInteraction);
+            if (e.button !== 0) return; 
+
+            // mousedown просто поглощаем, чтобы он не прошел в main.js
+            if (e.type === 'mousedown') return;
+
+            // Вся логика только на отпускании кнопки
+            if (e.type === 'mouseup') {
+                if (this.isTyping) {
+                    clearTimeout(this.typingTimer);
+                    content.innerText = text;
+                    this.isTyping = false;
+                } else {
+                    box.classList.add('hidden');
+                    
+                    window.removeEventListener('mousedown', handleInteraction, true);
+                    window.removeEventListener('mouseup', handleInteraction, true);
+
+                    // Небольшая задержка перед разблокировкой игры
+                    setTimeout(() => { 
+                        this.isMessageActive = false; 
+                    }, 100);
+                }
             }
         };
 
+        // Слушаем на фазе захвата (true), чтобы перехватить клик раньше канваса
         setTimeout(() => {
-            window.addEventListener('keydown', handleInteraction);
-            window.addEventListener('mousedown', handleInteraction);
-        }, 100);
+            window.addEventListener('mousedown', handleInteraction, true);
+            window.addEventListener('mouseup', handleInteraction, true);
+        }, 50);
     },
 
     // рисует расходники | rysuje consumables
@@ -179,11 +202,16 @@ const UI = {
 
         consumables.forEach(item => {
             const btn = document.createElement('button');
+            const displayName = t.itemName[item.id] || item.id;
             btn.className = 'consumable-btn';
             btn.style.backgroundColor = item.color || 'gray';
-            btn.innerText = item.name;
+            btn.innerText = displayName;
             
-            btn.onclick = () => this.useItem(item);
+            btn.onclick = () => {
+                if (this.isMessageActive) return;
+                this.useItem(item);
+            }
+                
             
             panel.appendChild(btn);
         });
@@ -197,7 +225,7 @@ const UI = {
             Inventory.removeItem(item.instanceId); 
             this.updateConsumables(Inventory.items);
             this.renderInventory(Inventory.items);  
-            this.showMessage("я похавал"); // пока что для отладки 
+            this.showMessage(t.ui.hp_up); // пока что для отладки 
             return;
         }
         const modal = document.getElementById('inventory-modal');

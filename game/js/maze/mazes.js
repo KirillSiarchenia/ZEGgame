@@ -38,7 +38,7 @@ class Maze
             const room = roomsData[cellValue];
             
             if (room && room.isLocked) {
-                UI.showMessage("Дверь заперта.");
+                UI.showMessage(t.messages.room_locked);
                 return false;
             }
         }
@@ -50,7 +50,7 @@ class Maze
     if (targetX === exit.x && targetY === exit.y) {
         const hasKey = Inventory.items.some(it => it.id === 'rusty_key');
         if (!hasKey) {
-            UI.showMessage("Выход заперт на ржавый замок. Нужен ключ.");
+            UI.showMessage(t.messages.exit_locked);
             return false;
         }
     }

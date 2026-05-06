@@ -4,6 +4,36 @@ const GameState = {
     ROOM: 'ROOM',
     TRANSITION: 'TRANSITION'
 };
+
+const allLanguages = {
+    'ru': langRU, 
+    'pl': langPL
+};
+
+let currentLang = localStorage.getItem('game_lang') || 'ru';
+let t = allLanguages[currentLang];
+
+function updateStaticUI() {
+    const playBtn = document.getElementById('btn-play');
+    const langBtn = document.getElementById('btn-lang');
+    const invBtn = document.getElementById('inventory-btn');
+    const invHeader = document.querySelector('.inventory-header h2');
+    
+    if (playBtn) playBtn.innerText = t.menu.play;
+    if (langBtn) langBtn.innerText = t.menu.language;
+    if (invBtn) invBtn.innerText = t.ui.inventory; 
+    if (invHeader) invHeader.innerText = t.ui.inventory;
+}
+
+function setLanguage(langCode) {
+    if (allLanguages[langCode]) {
+        currentLang = langCode;
+        t = allLanguages[langCode];
+        localStorage.setItem('game_lang', langCode);
+        updateStaticUI();
+    }
+}
+
 let currentState = GameState.MENU;
 let transitionAlpha = 0;
 let roomManager = new RoomManager();
@@ -27,6 +57,8 @@ const exitPos = maze.getExitPos();
 const player = new Player(startPos.x, startPos.y, tileSize);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 window.onload = () => {
+    updateStaticUI();
+
     const playBtn = document.getElementById('btn-play');
     const langBtn = document.getElementById('btn-lang');
     const mainMenu = document.getElementById('main-menu');
@@ -37,7 +69,8 @@ window.onload = () => {
     });
 
     langBtn.addEventListener('click', () => {
-        console.log("Switch language");
+        const nextLang = (currentLang === 'ru') ? 'pl' : 'ru';
+        setLanguage(nextLang);
     });
 
     const invBtn = document.getElementById('inventory-btn');
@@ -121,10 +154,8 @@ let hasTriedRunning = false;
 function checkRunningHint(e) {
     if ((e.key === "Shift") && !hasTriedRunning && player.isMoving) {
         
-        UI.showMessage("Стены и шаги едва выдерживают, что уж говорить о беге.");
-        
-        hasTriedRunning = true;
-        
+        UI.showMessage(t.messages.running_hint);        
+        hasTriedRunning = true;        
         window.removeEventListener("keydown", checkRunningHint);
     }
 }
@@ -220,21 +251,26 @@ function handleTransition() {
             roomManager.enter(roomID, player.gridX, player.gridY);
         }
     }else if (transitionAlpha > 0) {
-        transitionAlpha -= 0.05; // Проявление (Fade in)
+        transitionAlpha -= 0.05;
         if (transitionAlpha < 0) transitionAlpha = 0;
     }
 }
 
-function checkMazeItemPickup() {
+function checkMazeItemPickup(gridX, gridY) {
     currentMazeItems.forEach(item => {
-        if (!item.collected && player.gridX === item.x && player.gridY === item.y) {
-            item.collected = true;
+        if (!item.collected && gridX === item.x && gridY === item.y) {
             
             const libData = ObjectsLibrary[item.id]; 
             
             if (libData) {
+                item.collected = true;
                 Inventory.addItem({ ...libData });
-                console.log(`Подобрано: ${libData.name}`);
+                
+                const pickUpMessage = (t.itemPickUp && t.itemPickUp[item.id]) 
+                    ? t.itemPickUp[item.id] 
+                    : item.id + " подобран"; 
+
+                UI.showMessage(pickUpMessage);
             }
         }
     });
@@ -289,27 +325,37 @@ function update() {
     }
 }
 
-canvas.addEventListener("mousedown", (e) => {
-    if (UI.isMessageActive || currentState !== GameState.ROOM) return;
+canvas.addEventListener("mouseup", (e) => {
+    // 1. Если сообщение уже было активно (например, от другого действия) — игнорим
+    if (UI.isMessageActive) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+
+    if (UI.isMenuOpen) return;
+    if (currentState !== GameState.ROOM) return;
+
+    // Только левая кнопка мыши
+    if (e.button !== 0) return;
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
+    // Вызываем логику комнаты
     const result = roomManager.handleMouseClick(mx, my, canvas.width, canvas.height);
 
     if (UI.selectedItemForUse) {
         if (result !== "ITEM_USED") {
-            UI.showMessage("Это здесь неприменимо.");
+            UI.showMessage(t.messages.not_applicable);
             UI.selectedItemForUse = null;
             UI.resetCursor();
         }
-    } else {
-        if (result === "EXIT") {
-            exitRoom();
-        }
+    } else if (result === "EXIT") {
+        exitRoom();
     }
-});
+}, true);
 
 function drawAll() {
     ctx.fillStyle = "black";
@@ -362,7 +408,11 @@ function gameLoop() {
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
             update();             
             player.update();     
-            checkMazeItemPickup();
+
+            if (!player.isMoving) {
+                checkMazeItemPickup(player.gridX, player.gridY); 
+            }
+
             camera.update(player.x, player.y);
         }
         

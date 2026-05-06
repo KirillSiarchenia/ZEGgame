@@ -48,14 +48,12 @@ const ObjectLogic = {
             if (target.hasKey) {
                 Inventory.addItem(ObjectsLibrary['rusty_key']);
                 target.hasKey = false; 
-                UI.showMessage("Вы покопались в обломках ящика на кнопке и нашли ржавый ключ!");
+                UI.showMessage(t.interactions.found_key);
             } else {
-                UI.showMessage("Кнопка завалена обломками, здесь больше ничего нет.");
+                UI.showMessage(t.interactions.empty_crate);
             }
-        } else if (target.state === 'with_crate') {
-            UI.showMessage("Ящик плотно стоит на кнопке. Руками его не открыть.");
-        } else {
-            UI.showMessage("Нажимная плита. Что она делает?");
+        } else if (target.state === "empty") {
+            UI.showMessage(t.interactions.button_examine);
         }
     },
 };
