@@ -7,10 +7,18 @@
     <link rel="stylesheet" href="ui/style.css">
 </head>
 <body>
+    
+    <div id="main-menu" class="overlay-menu">
+        <h1>LABYRINTH</h1>
+        <div class="menu-buttons">
+            <button id="btn-play">ИГРАТЬ</button>
+            <button id="btn-lang">ЯЗЫК: RU</button>
+        </div>
+    </div>
+
     <div id="ui-container">
         <div id="health-bar"></div>
         <div id="consumables-panel" class="hidden-ui"></div>
-        
         <button id="inventory-btn">Ekwipunek</button>
     </div>
 
@@ -25,14 +33,12 @@
                 <h2>Ekwipunek</h2>
                 <button class="close-btn" onclick="UI.toggleInventory()">X</button>
             </div>
-            <div id="inventory-slots">
-                </div>
+            <div id="inventory-slots"></div>
         </div>
     </div>
-    
 
     <canvas id="gameCanvas"></canvas>
-
+    
     <script src="js/dataLibraries/maps.js"></script>
     <script src="js/dataLibraries/enemies.js"></script>
     <script src="js/maze/mazes.js"></script>

@@ -20,6 +20,51 @@ canvas {
     pointer-events: none; 
 }
 
+.overlay-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.overlay-menu h1 {
+    color: #fff;
+    font-family: 'serif';
+    font-size: 5rem;
+    letter-spacing: 15px;
+    margin-bottom: 50px;
+    text-shadow: 0 0 20px #ff0000;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.menu-buttons button {
+    padding: 15px 50px;
+    font-size: 1.5rem;
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.menu-buttons button:hover {
+    background: #444;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
 /*ниже здоровье | niżej zdrowie*/
 #health-bar {
     display: flex;
@@ -177,12 +222,12 @@ canvas {
 }
 
 #item-context-menu {
-    position: fixed; /* Изменено на fixed */
+    position: fixed;
     background: #222;
-    border: 2px solid #ff4444; /* В стиле инвентаря */
+    border: 2px solid #ff4444;
     display: flex;
     flex-direction: column;
-    z-index: 5000; /* Выше модального окна */
+    z-index: 5000; 
     box-shadow: 5px 5px 0px black;
     min-width: 120px;
 }

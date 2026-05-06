@@ -1,26 +1,48 @@
 const GameState = {
+    MENU: 'MENU',
     MAZE: 'MAZE',
     ROOM: 'ROOM',
     TRANSITION: 'TRANSITION'
 };
-let currentState = GameState.MAZE;
+let currentState = GameState.MENU;
 let transitionAlpha = 0;
 let roomManager = new RoomManager();
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+
 const allLevels = [maps.map1, maps.map2, maps.map3];
+
 let currentLevelIndex = 0;
 let enemies = [];
 let currentMazeItems = [];
+
 let maze = new Maze(allLevels[currentLevelIndex], tileSize);
 loadEnemies(currentLevelIndex);
 loadMazeItems(currentLevelIndex);
+
 const startPos = maze.getStartPos();
 const exitPos = maze.getExitPos();
+
+const player = new Player(startPos.x, startPos.y, tileSize);
+const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 window.onload = () => {
-    const btn = document.getElementById('inventory-btn');
-    if (btn) {
-        btn.addEventListener('click', () => UI.toggleInventory());
+    const playBtn = document.getElementById('btn-play');
+    const langBtn = document.getElementById('btn-lang');
+    const mainMenu = document.getElementById('main-menu');
+
+    playBtn.addEventListener('click', () => {
+        mainMenu.classList.add('hidden-ui'); 
+        setGameState(GameState.MAZE);        
+    });
+
+    langBtn.addEventListener('click', () => {
+        console.log("Switch language");
+    });
+
+    const invBtn = document.getElementById('inventory-btn');
+    if (invBtn) {
+        invBtn.addEventListener('click', () => UI.toggleInventory());
     }
     UI.setInventoryBtnVisibility(false);
 };
@@ -72,8 +94,6 @@ function drawFogOfWar(ctx, player, camera) {
 }
 
 
-const player = new Player(startPos.x, startPos.y, tileSize);
-const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 
 // зажата ли клавиша | czy przycisk jest wciśnięty
 const keys = {};
@@ -333,6 +353,11 @@ function drawAll() {
 }
 
 function gameLoop() {
+    if (currentState === GameState.MENU) {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
     if(!UI.isMessageActive){
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
             update();             
@@ -342,9 +367,9 @@ function gameLoop() {
         }
         
         handleTransition();
+        drawAll();
     }
 
-    drawAll();
 
     requestAnimationFrame(gameLoop); 
 }
