@@ -118,6 +118,8 @@ const UI = {
 
 
     showMessage(text) {
+        if(!text) text = "...";
+
         const box = document.getElementById('msg-box');
         const content = document.getElementById('msg-content');
         if (!box || !content) return;
@@ -210,7 +212,6 @@ const UI = {
         canvas.height = 32;
         const ctx = canvas.getContext('2d');
         
-        // Рисуем иконку предмета вместо курсора
         ctx.fillStyle = color || 'white';
         ctx.fillRect(4, 4, 24, 24);
         ctx.strokeStyle = 'white';

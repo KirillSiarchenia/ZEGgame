@@ -10,27 +10,22 @@ class RoomManager {
     }
 
     enter(roomID, x, y) {
-        this.view = "center";
-    
-        if (roomsData && roomsData[roomID]) {
-            this.room = JSON.parse(JSON.stringify(roomsData[roomID])); 
-            
-            for (let viewKey in this.room.views) {
-                const view = this.room.views[viewKey];
-                if (view.objects) {
-                    view.objects = view.objects.map(obj => {
-                        const libData = ObjectsLibrary[obj.libId];
-                        if (libData) {
-                            return { ...libData, ...obj };
-                        }
-                        return obj;
-                    });
-                }
+    this.view = "center";
+
+    if (roomsData && roomsData[roomID]) {
+        this.room = roomsData[roomID]; 
+        
+        for (let viewKey in this.room.views) {
+            const view = this.room.views[viewKey];
+            if (view.objects) {
+                view.objects = view.objects.map(obj => {
+                    const libData = ObjectsLibrary[obj.id];
+                    return (libData) ? { ...libData, ...obj } : obj;
+                });
             }
-        } else {
-            this.room = roomsData["default"];
         }
     }
+}
 
     getBox(key, w, h) {
         const b = this.relNav[key];
@@ -123,19 +118,37 @@ class RoomManager {
 
 
     handleObjectClick(obj) {
-        if (UI.selectedItemForUse) {
-            const item = UI.selectedItemForUse;
+    if (!UI.selectedItemForUse) return;
 
-            if (item.useOnTarget === obj.id || item.useOnTarget === obj.libId) {
-                Inventory.removeItem(item.instanceId);
-            } else {
-                UI.showMessage("Точно нет.");
+    const item = UI.selectedItemForUse;
+    let finalMessage = "Это здесь неприменимо."; 
+    let shouldDelete = false; 
+
+    if (item.useOnTarget === obj.id || item.useOnTarget === obj.id) {
+        finalMessage = "Предмет использован.";
+        shouldDelete = true; 
+
+        if (typeof item.action === "function") {
+            const response = item.action(obj);
+
+            if (typeof response === "object" && response !== null) {
+                finalMessage = response.message || finalMessage;
+                shouldDelete = (response.deleteItem !== undefined) ? response.deleteItem : true;
+            } else if (typeof response === "string") {
+                finalMessage = response;
             }
-            
-            UI.selectedItemForUse = null; 
-            UI.resetCursor(); 
         }
-    }
+
+        if (shouldDelete) {
+            Inventory.removeItem(item.instanceId);
+        }
+    } 
+
+    UI.showMessage(finalMessage);
+
+    UI.selectedItemForUse = null; 
+    UI.resetCursor();
+}
 
     isIn = (mx, my, r) => mx > r.x && mx < r.x + r.w && my > r.y && my < r.y + r.h;
     default = () => ({ views: { center: { bg: "#111", objects: [] }, left: { bg: "#000", objects: [] }, right: { bg: "#222", objects: [] } } });

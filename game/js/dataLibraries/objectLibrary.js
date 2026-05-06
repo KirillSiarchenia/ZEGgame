@@ -30,7 +30,7 @@ const ObjectsLibrary = {
                 target.state = 'with_crate';
                 roomsData["12"].isLocked = false;
                 
-                return "Что за звук? Вроде что-то открылось";
+                return {message: "Что за звук? Вроде что-то открылось", deleteItem: true};
             }
         }
     },
@@ -43,13 +43,22 @@ const ObjectsLibrary = {
         action: (target) => {
             if (target.state === 'with_crate') {
                 target.state = 'broken';
-                return "Ящик разбит.";
+                console.log(target.state);
+                return {message: "Ящик разбит.", deleteItem: false};
             }
         }
     },
     pressure_button: { 
         id: 'pressure_button', 
         state: 'empty', 
+        hasKey: true,
+        logicType: 'button_logic',
     },
+    rusty_key: {
+        id: 'rusty_key',
+        name: 'Ржавый ключ',
+        color: '#8B4513',
+        examineText: "Старый, покрытый ржавчиной ключ. Выглядит хрупким."
+    }
 };
 

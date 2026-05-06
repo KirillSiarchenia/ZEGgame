@@ -30,6 +30,8 @@ class Maze
     }   
 
     checkRoomEntry(targetX, targetY) {
+
+
         const cellValue = this.grid[targetY][targetX];
         
         if (cellValue >= 11) {
@@ -42,6 +44,18 @@ class Maze
         }
         return true;
     }
+
+    checkExitEntry(targetX, targetY) {
+    const exit = this.getExitPos();
+    if (targetX === exit.x && targetY === exit.y) {
+        const hasKey = Inventory.items.some(it => it.id === 'rusty_key');
+        if (!hasKey) {
+            UI.showMessage("Выход заперт на ржавый замок. Нужен ключ.");
+            return false;
+        }
+    }
+    return true;
+}
 
     // отрисовка лабиринта | rysowanie labiryntu 
     draw(ctx) {

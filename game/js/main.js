@@ -42,7 +42,7 @@ function loadMazeItems(levelIndex) {
     
     if (mazeItemsData[levelKey]) {
         mazeItemsData[levelKey].forEach(data => {
-            const libData = ObjectsLibrary[data.libId];
+            const libData = ObjectsLibrary[data.id];
             currentMazeItems.push({ ...libData, ...data, collected: false });
         });
     }
@@ -99,7 +99,7 @@ function resizeCanvas(){
 let hasTriedRunning = false;
 
 function checkRunningHint(e) {
-    if ((e.key === "Shift") && !hasTriedRunning) {
+    if ((e.key === "Shift") && !hasTriedRunning && player.isMoving) {
         
         UI.showMessage("Стены и шаги едва выдерживают, что уж говорить о беге.");
         
@@ -210,7 +210,7 @@ function checkMazeItemPickup() {
         if (!item.collected && player.gridX === item.x && player.gridY === item.y) {
             item.collected = true;
             
-            const libData = ObjectsLibrary[item.libId]; 
+            const libData = ObjectsLibrary[item.id]; 
             
             if (libData) {
                 Inventory.addItem({ ...libData });
@@ -237,13 +237,10 @@ function update() {
         const targetY = player.gridY + dy;
         
         if (maze.grid[targetY] !== undefined && maze.grid[targetY][targetX] !== undefined) {
-            const targetCell = maze.grid[targetY][targetX];
+            const canExit = maze.checkExitEntry(targetX, targetY);
+            const canEnterRoom = maze.checkRoomEntry(targetX, targetY);
 
-            if (targetCell >= 11) {
-                if (maze.checkRoomEntry(targetX, targetY)) {
-                    player.move(dx, dy, maze, enemies);
-                } 
-            } else {
+            if (canExit && canEnterRoom) {
                 player.move(dx, dy, maze, enemies);
             }
         }
@@ -260,6 +257,8 @@ function update() {
     const exit = maze.getExitPos();
     if (player.gridX === exit.x && player.gridY === exit.y) {
         if (player.x === player.gridX * tileSize && player.y === player.gridY * tileSize) {
+            const keyItem = Inventory.items.find(it => it.id === 'rusty_key');
+            Inventory.removeItem(keyItem.instanceId);
             nextLevel();
         }
     }

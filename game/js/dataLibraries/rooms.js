@@ -5,7 +5,7 @@ const roomsData = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { libId: "trap_spikes", rx: 0.2, ry: 0.7, rw: 0.05, rh: 0.05 },
+                    { id: "pressure_button", rx: 0.2, ry: 0.7, rw: 0.05, rh: 0.05 },
                 ]
             },
             left: {
@@ -17,5 +17,24 @@ const roomsData = {
                 objects: []
             }
         }
-    }
+    },
+    "12": {
+        isLocked: true,
+        views: {
+            center: {
+                bg: "#1a1a1a",
+                objects: []
+            },
+            left: {
+                bg: "#1a1a1a",
+                objects: [
+                    {id: "stone", rx: 0.2, ry: 0.7, rw: 0.05, rh: 0.05},
+                ]
+            },
+            right: {
+                bg: "#1a1a1a",
+                objects: []
+            }
+        }
+    },
 };
