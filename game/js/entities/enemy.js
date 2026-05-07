@@ -26,6 +26,10 @@ class Enemy {
         this.finalTargetY = null;
     }
 
+    get isMoving() {
+        return this.x !== this.gridX * this.tileSize || this.y !== this.gridY * this.tileSize;
+    }
+
     update(player, maze) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
@@ -60,7 +64,7 @@ class Enemy {
             case 'searching':
                 this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
 
-                if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) {
+                if ((this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) && !this.isMoving) {
                     
                     if (this.searchTimer === 0) {
                         this.searchDirs = this.getAvailableDirections(maze);
