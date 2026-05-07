@@ -46,7 +46,7 @@ loadMazeItems(currentLevelIndex);
 
 const startPos = maze.getStartPos();
 
-const player = new Player(startPos.x, startPos.y, tileSize);
+const player = new Player(startPos.x, startPos.y);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 window.onload = () => {
     updateStaticUI();
@@ -101,8 +101,8 @@ function drawFogOfWar(ctx, player, camera) {
 
     const lightRadius = 300; 
     
-    const screenX = player.x + (player.tileSize / 2) - camera.x;
-    const screenY = player.y + (player.tileSize / 2) - camera.y;
+    const screenX = player.x + (tileSize / 2) - camera.x;
+    const screenY = player.y + (tileSize / 2) - camera.y;
 
     const gradient = ctx.createRadialGradient(
         screenX, screenY, lightRadius * 0.4, 
@@ -217,8 +217,8 @@ function exitRoom() {
         if (maze.grid[ny] && maze.grid[ny][nx] === 0) {
             player.gridX = nx;
             player.gridY = ny;
-            player.x = nx * player.tileSize;
-            player.y = ny * player.tileSize;
+            player.x = nx * tileSize;
+            player.y = ny * tileSize;
             break; 
         }
     }

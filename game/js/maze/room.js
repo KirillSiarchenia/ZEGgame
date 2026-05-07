@@ -121,7 +121,7 @@ class RoomManager {
         if (!UI.selectedItemForUse) return;
 
         const item = UI.selectedItemForUse;
-        let finalMessage = t.messages.not_applicable; // "Это здесь неприменимо"
+        let finalMessage = t.messages.not_applicable;
         let shouldDelete = false;
 
         if (typeof item.action === "function") {

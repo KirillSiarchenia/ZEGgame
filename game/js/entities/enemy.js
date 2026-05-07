@@ -14,6 +14,7 @@ class Enemy {
         this.spawnPoint = { x, y };
         
         this.lastPlayerPos = null; 
+        this.playerLastDir = { dx: 0, dy: 0 };
         this.searchTimer = 0;
         this.lastAttack = 0;
 
@@ -35,52 +36,59 @@ class Enemy {
         if (canSee || canHear) {
             this.state = 'chase';
             this.lastPlayerPos = { x: player.gridX, y: player.gridY };
+            this.playerLastDir = { dx: player.lastMoveX, dy: player.lastMoveY };
             this.searchTimer = 0; 
         } 
         else if (this.state === 'chase' && !canSee) {
             this.state = 'searching';
+            this.searchingPhase = 'reachLocation';
         }
 
         // логика состояний | logika stanów
         switch (this.state) {
             case 'chase':
-                const dx = Math.abs(this.gridX - player.gridX);
-                const dy = Math.abs(this.gridY - player.gridY);
-
-                const isAdjacent = (dx + dy === 1);
-
-                if(isAdjacent && !this.isMoving){
+                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
+                if (Math.abs(this.gridX - player.gridX) + Math.abs(this.gridY - player.gridY) === 1 && !this.isMoving) {
                     this.checkAttack(player, maze);
-                } else {
-                    this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
                 }
                 break;
                 
             case 'searching':
-                this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
-
-                if ((this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) && !this.isMoving) {
+                if (this.searchingPhase === 'reachLocation') {
+                    // Идем к последней точке, где видели игрока
+                    this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
                     
+                    if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y && !this.isMoving) {
+                        // Когда дошли, переходим к фазе "заглянуть за угол"
+                        this.searchingPhase = 'checkCorner';
+                    }
+                } 
+                else if (this.searchingPhase === 'checkCorner') {
+                    // Пытаемся сделать шаг в том направлении, куда шел игрок
+                    const nextX = this.gridX + this.playerLastDir.dx;
+                    const nextY = this.gridY + this.playerLastDir.dy;
+
+                    if (!maze.isWall(nextX, nextY) && !this.isMoving) {
+                        this.gridX = nextX;
+                        this.gridY = nextY;
+                        // После этого шага переходим к обычному осмотру сторон
+                        this.searchingPhase = 'lookAround';
+                    } else {
+                        this.searchingPhase = 'lookAround';
+                    }
+                }
+                else if (this.searchingPhase === 'lookAround') {
+                    // Твоя работающая логика осмотра (без пути назад)
                     if (this.searchTimer === 0) {
                         const cameFromX = -this.dirX;
                         const cameFromY = -this.dirY;
-
-                        this.searchDirs = this.getAvailableDirections(maze).filter(dir => {
-                            return !(dir.dx === cameFromX && dir.dy === cameFromY);
-                        });
-
-                        if (this.searchDirs.length === 0) {
-                            this.searchDirs = this.getAvailableDirections(maze);
-                        }
-
-                        this.framesPerLook = ENEMY_CONFIG.LOOK_TIME; 
-                        this.maxSearchFrames = this.searchDirs.length * this.framesPerLook;
+                        this.searchDirs = this.getAvailableDirections(maze).filter(d => !(d.dx === cameFromX && d.dy === cameFromY));
+                        if (this.searchDirs.length === 0) this.searchDirs = this.getAvailableDirections(maze);
+                        this.maxSearchFrames = this.searchDirs.length * ENEMY_CONFIG.LOOK_TIME;
                     }
 
                     this.searchTimer++;
-
-                    let dirIndex = Math.floor(this.searchTimer / this.framesPerLook);
-
+                    let dirIndex = Math.floor(this.searchTimer / ENEMY_CONFIG.LOOK_TIME);
                     if (dirIndex < this.searchDirs.length) {
                         this.dirX = this.searchDirs[dirIndex].dx;
                         this.dirY = this.searchDirs[dirIndex].dy;
@@ -89,10 +97,9 @@ class Enemy {
                     if (this.searchTimer >= this.maxSearchFrames) {
                         this.state = 'patrol';
                         this.searchTimer = 0;
-                        this.searchDirs = [];
                     }
                 }
-                break
+                break;
                 
                 
             case 'patrol':

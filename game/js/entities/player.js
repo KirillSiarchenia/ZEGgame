@@ -1,12 +1,13 @@
 class Player {
-    constructor(x, y, tileSize) {
+    constructor(x, y) {
         this.gridX = x; 
         this.gridY = y;
-        this.tileSize = tileSize;
 
         this.x = x * tileSize;
         this.y = y * tileSize;
-        this.moveDir = { x: 0, y: 0 };
+
+        this.lastMoveX = 0; 
+        this.lastMoveY = 0;
 
         this.speed = 5;
         this.hp = 3;
@@ -14,7 +15,7 @@ class Player {
 
     // проверка движения(для "слуха" врагов) | sprawdzanie ruchu(dla przeciwników)
     get isMoving() {
-        return this.x !== this.gridX * this.tileSize || this.y !== this.gridY * this.tileSize;
+        return this.x !== this.gridX * tileSize || this.y !== this.gridY * tileSize;
     }
 
     // отдача после удара врага | odrzut po ataku przeciwnika
@@ -45,8 +46,8 @@ class Player {
 }
 
     update(){
-        let targetX = this.gridX * this.tileSize;
-        let targetY = this.gridY * this.tileSize;
+        let targetX = this.gridX * tileSize;
+        let targetY = this.gridY * tileSize;
         if (this.x < targetX) this.x = Math.min(this.x + this.speed, targetX);
         if (this.x > targetX) this.x = Math.max(this.x - this.speed, targetX);
         if (this.y < targetY) this.y = Math.min(this.y + this.speed, targetY);
@@ -54,23 +55,24 @@ class Player {
     }
     draw(ctx) {
         ctx.fillStyle = "blue";        
-        ctx.fillRect(this.x + 5, this.y + 5, this.tileSize - 10, this.tileSize - 10);
+        ctx.fillRect(this.x + 5, this.y + 5, tileSize - 10, tileSize - 10);
     }
 
     move(dx, dy, maze, enemies) {
         if (this.knockbackTimer > Date.now()) return;
 
-        if (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize) {
-            this.moveDir = { x: dx, y: dy };
-
+        if (this.x === this.gridX * tileSize && this.y === this.gridY * tileSize) {
             const nextX = this.gridX + dx;
             const nextY = this.gridY + dy;
 
-            if (!maze.isWall(nextX, nextY) && !enemies.some(e => e.gridX === nextX && e.gridY === nextY)) {
+            const isWall = maze.isWall(nextX, nextY);
+            const isEnemyThere = enemies.some(e => e.gridX === nextX && e.gridY === nextY);
+
+            if (!isWall && !isEnemyThere) {
                 this.gridX = nextX;
                 this.gridY = nextY;
-            } else {
-                this.moveDir = { x: 0, y: 0 };
+                this.lastMoveX = dx;
+                this.lastMoveY = dy;
             }
         }
     }

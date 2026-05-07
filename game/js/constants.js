@@ -19,7 +19,7 @@ const ENEMY_CONFIG = {
     HEAR_RANGE: 2.5,
     ATTACK_COOLDOWN: 1500, 
     KNOCKBACK_TIME: 1000, 
-    LOOK_TIME: 60,   
+    LOOK_TIME: 160,   
     EYE_OFFSET: 10    // В будущем убрать к чертям нахер нафиг
 };
 
