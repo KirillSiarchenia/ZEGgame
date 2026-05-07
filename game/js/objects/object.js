@@ -53,9 +53,12 @@ const ObjectLogic = {
                 player.hp -= 1;
                 UI.updateHealth(player.hp);
                 UI.showMessage(t.interactions.empty_crate);
+                target.state = 'damaged';
             }
         } else if (target.state === "empty") {
             UI.showMessage(t.interactions.button_examine);
+        } else if (target.state === 'damaged') {
+            UI.showMessage(t.interactions.button_damaged);
         }
     },
 };
