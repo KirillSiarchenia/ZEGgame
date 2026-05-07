@@ -50,6 +50,8 @@ const ObjectLogic = {
                 target.hasKey = false; 
                 UI.showMessage(t.interactions.found_key);
             } else {
+                player.hp -= 1;
+                UI.updateHealth(player.hp);
                 UI.showMessage(t.interactions.empty_crate);
             }
         } else if (target.state === "empty") {

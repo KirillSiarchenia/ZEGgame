@@ -31,11 +31,11 @@ const langPL = {
         rusty_key: "Типа польский",
     },
     itemName: {
-        maze_medkit: "Типа польский"
+        medkit: "Типа польский"
     },
     itemPickUp: {
         crate: "Типа польский",
-        maze_coin: "Типа польский",
-        maze_medkit: "Типа польский",
+        coin: "Типа польский",
+        medkit: "Типа польский",
     }
 }

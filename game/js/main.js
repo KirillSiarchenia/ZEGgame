@@ -52,7 +52,6 @@ loadEnemies(currentLevelIndex);
 loadMazeItems(currentLevelIndex);
 
 const startPos = maze.getStartPos();
-const exitPos = maze.getExitPos();
 
 const player = new Player(startPos.x, startPos.y, tileSize);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
@@ -160,7 +159,6 @@ function checkRunningHint(e) {
     }
 }
 
-// Регистрируем слушатель событий
 window.addEventListener("keydown", checkRunningHint);
 
 // отвечает за интерфейс в разных состояниях игры | odpowiada za ui w różnych stanach gry
@@ -277,7 +275,7 @@ function checkMazeItemPickup(gridX, gridY) {
 }
 
 function update() {
-    if (currentState !== GameState.MAZE || UI.isMessageActive) return;
+    if (currentState !== GameState.MAZE || UI.isMessageActive || UI.isPaused) return;
     // управление | kierowanie
     let dx = 0;
     let dy = 0;
@@ -326,8 +324,7 @@ function update() {
 }
 
 canvas.addEventListener("mouseup", (e) => {
-    // 1. Если сообщение уже было активно (например, от другого действия) — игнорим
-    if (UI.isMessageActive) {
+    if (UI.isMessageActive|| UI.isPaused) {
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -336,14 +333,12 @@ canvas.addEventListener("mouseup", (e) => {
     if (UI.isMenuOpen) return;
     if (currentState !== GameState.ROOM) return;
 
-    // Только левая кнопка мыши
     if (e.button !== 0) return;
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
-    // Вызываем логику комнаты
     const result = roomManager.handleMouseClick(mx, my, canvas.width, canvas.height);
 
     if (UI.selectedItemForUse) {
@@ -404,7 +399,7 @@ function gameLoop() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    if(!UI.isMessageActive){
+    if(!UI.isMessageActive && !UI.isPaused){
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
             update();             
             player.update();     

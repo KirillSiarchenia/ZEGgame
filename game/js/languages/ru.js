@@ -1,9 +1,11 @@
 const langRU = {
     menu: {
         play: "ИГРАТЬ",
-        continue: "ПРОДОЛЖИТЬ",
+        pause_title: "ПАУЗА",
+        resume: "ПРОДОЛЖИТЬ",
         settings: "НАСТРОЙКИ",
         language: "ЯЗЫК: РУССКИЙ",
+        restart: "ЗАНОВО",
     },
     messages: {
         exit_locked: "Эта дверь заперта на ключ.",
@@ -14,9 +16,8 @@ const langRU = {
     interactions: {
         crate_on_button: "Что за звук? Похоже что-то открылось.",
         stone_break_crate: "Ящик разбит!",
-        stone_useless: "Бесполезно бросать его просто так.",
-        found_key: "Насиловать меня в уши, да тут же ключ, вот так подфортило",
-        empty_crate: "Так только раз фортит блябуду",
+        found_key: "В этом ящике был ключ! Вот так ирония.",
+        empty_crate: "Ай! Кроме порезов тут больше ничего нет.",
         button_examine: "Кнопка... Что она делает...",
     },
     ui: {
@@ -31,11 +32,11 @@ const langRU = {
         rusty_key: "Старый, покрытый рыжим налётом ключ.",
     },
     itemName: {
-        maze_medkit: "Аптечка"
+        medkit: "Аптечка"
     },
     itemPickUp: {
         crate: "Ящик подобран",
-        maze_coin: "О, монетка",
-        maze_medkit: "Сегодня не умру",
+        coin: "О, монетка",
+        medkit: "Сегодня не умру",
     }
 }

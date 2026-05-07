@@ -13,8 +13,8 @@ class Player {
 
     // проверка движения(для "слуха" врагов) | sprawdzanie ruchu(dla przeciwników)
     get isMoving() {
-    return this.x !== this.gridX * this.tileSize || this.y !== this.gridY * this.tileSize;
-}
+        return this.x !== this.gridX * this.tileSize || this.y !== this.gridY * this.tileSize;
+    }
 
     // отдача после удара врага | odrzut po ataku przeciwnika
     applyKnockback(enemyGridX, enemyGridY, maze) {

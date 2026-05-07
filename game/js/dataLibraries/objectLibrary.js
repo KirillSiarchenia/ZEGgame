@@ -3,22 +3,21 @@ const ObjectsLibrary = {
         color: "#555",
         logicType: "trap",
     },
-    maze_coin: {
-        id: "maze_coin",
+    coin: {
+        id: "coin",
         color: "#ffd700",
-        logicType: "maze_pickup", 
-        scoreValue: 10
+        logicType: "pickup", 
     },
-    maze_medkit: {
-        id: "maze_medkit",
+    medkit: {
+        id: "medkit",
         color: "#ff4444",
         isConsumable: true,
-        logicType: "maze_pickup",
+        logicType: "pickup",
         effect: 'heal'
     },
     crate: {
         id: 'crate',
-        logicType: "maze_pickup", 
+        logicType: "pickup", 
         action: (obj) => {
             if (obj.id === "pressure_button" && obj.state === "empty") {
                 obj.state = 'with_crate';

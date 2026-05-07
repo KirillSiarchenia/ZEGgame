@@ -4,7 +4,7 @@ const UI = {
     selectedItemForUse: null,
     isTyping: false,
     typingTimer: null,
-        
+    isPaused: false,        
     lastHp: -1,
     
     // обработка хп | przetwarzanie zdrowia
@@ -109,8 +109,7 @@ const UI = {
             slot.className = 'inv-slot';
             slot.style.backgroundColor = item.color || 'gray';
             
-            slot.onclick = (e) => {
-                e.preventDefault();
+            slot.onmouseup = (e) => {
                 e.stopPropagation();
                 if (this.isMessageActive) return;
                 this.showItemActions(item, e);
@@ -151,29 +150,24 @@ const UI = {
         typeWriter();
 
         const handleInteraction = (e) => {
-            // Полная блокировка события для всех остальных
             e.preventDefault();
             e.stopPropagation();
             if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
             if (e.button !== 0) return; 
 
-            // mousedown просто поглощаем, чтобы он не прошел в main.js
             if (e.type === 'mousedown') return;
 
-            // Вся логика только на отпускании кнопки
-            if (e.type === 'mouseup') {
+            if (e.type === 'mouseup' && e.button === 0) {
                 if (this.isTyping) {
                     clearTimeout(this.typingTimer);
                     content.innerText = text;
                     this.isTyping = false;
                 } else {
-                    box.classList.add('hidden');
-                    
+                    box.classList.add('hidden');                    
                     window.removeEventListener('mousedown', handleInteraction, true);
                     window.removeEventListener('mouseup', handleInteraction, true);
 
-                    // Небольшая задержка перед разблокировкой игры
                     setTimeout(() => { 
                         this.isMessageActive = false; 
                     }, 100);
@@ -181,7 +175,6 @@ const UI = {
             }
         };
 
-        // Слушаем на фазе захвата (true), чтобы перехватить клик раньше канваса
         setTimeout(() => {
             window.addEventListener('mousedown', handleInteraction, true);
             window.addEventListener('mouseup', handleInteraction, true);
@@ -234,6 +227,7 @@ const UI = {
         this.selectedItemForUse = item;        
         this.updateCursor(item.color);
     },
+    
     updateCursor(color) {
         const canvas = document.createElement('canvas');
         canvas.width = 32;
@@ -254,4 +248,33 @@ const UI = {
         document.body.style.cursor = 'default';
         this.selectedItemForUse = null;
     },
+
+    togglePauseMenu() {
+    if (this.isMessageActive) return;
+
+        const pauseMenu = document.getElementById('pause-menu');
+        if (!pauseMenu) return;
+
+        const isHidden = pauseMenu.classList.toggle('hidden');
+        this.isPaused = !isHidden;
+
+        if (this.isPaused) {
+            const inv = document.getElementById('inventory-modal');
+            if (inv) inv.classList.add('hidden');
+        }
+    },
 };
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (UI.isMessageActive) return;
+
+        const inventory = document.getElementById('inventory-modal');
+        if (inventory && !inventory.classList.contains('hidden')) {
+            UI.toggleInventory();
+            return; 
+        }
+
+        UI.togglePauseMenu();
+    }
+});
