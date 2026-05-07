@@ -6,24 +6,14 @@ const allLanguages = {
 let currentLang = localStorage.getItem('game_lang') || 'ru';
 let t = allLanguages[currentLang];
 
-function updateStaticUI() {
-    const playBtn = document.getElementById('btn-play');
-    const langBtn = document.getElementById('btn-lang');
-    const invBtn = document.getElementById('inventory-btn');
-    const invHeader = document.querySelector('.inventory-header h2');
-    
-    if (playBtn) playBtn.innerText = t.menu.play;
-    if (langBtn) langBtn.innerText = t.menu.language;
-    if (invBtn) invBtn.innerText = t.ui.inventory; 
-    if (invHeader) invHeader.innerText = t.ui.inventory;
-}
+let settingsParent = 'main-menu'; 
 
 function setLanguage(langCode) {
     if (allLanguages[langCode]) {
         currentLang = langCode;
         t = allLanguages[langCode];
         localStorage.setItem('game_lang', langCode);
-        updateStaticUI();
+        UI.updateStaticTexts();
     }
 }
 
@@ -48,22 +38,11 @@ const startPos = maze.getStartPos();
 
 const player = new Player(startPos.x, startPos.y);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
+
+
 window.onload = () => {
-    updateStaticUI();
-
-    const playBtn = document.getElementById('btn-play');
-    const langBtn = document.getElementById('btn-lang');
-    const mainMenu = document.getElementById('main-menu');
-
-    playBtn.addEventListener('click', () => {
-        mainMenu.classList.add('hidden-ui'); 
-        setGameState(GameState.MAZE);        
-    });
-
-    langBtn.addEventListener('click', () => {
-        const nextLang = (currentLang === 'ru') ? 'pl' : 'ru';
-        setLanguage(nextLang);
-    });
+    UI.updateStaticTexts();
+    UI.initMenuEvents();
 
     const invBtn = document.getElementById('inventory-btn');
     if (invBtn) {

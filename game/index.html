@@ -13,18 +13,27 @@
 <body>
 
     <div id="main-menu" class="overlay-menu">
-        <h1>LABYRINTH</h1>
+        <h1 id="header-main">LABYRINTH</h1>
         <div class="menu-buttons">
             <button id="btn-play">ИГРАТЬ</button>
-            <button id="btn-lang">ЯЗЫК: RU</button>
+            <button id="btn-main-settings">НАСТРОЙКИ</button>
         </div>
     </div>
 
+    
+    <div id="settings-menu" class="overlay-menu hidden">
+        <h1 id="header-settings">НАСТРОЙКИ</h1>
+        <div class="menu-buttons">
+            <button id="btn-lang">ЯЗЫК: RU</button>
+            <button id="btn-settings-back">НАЗАД</button> 
+        </div>
+    </div>
+    
     <div id="pause-menu" class="overlay-menu hidden">
-        <h1>ПАУЗА</h1>
+        <h1 id="header-pause">ПАУЗА</h1>
         <div class="menu-buttons">
             <button id="btn-resume">ПРОДОЛЖИТЬ</button>
-            <button id="btn-lang">ЯЗЫК: RU</button>
+            <button id="btn-pause-settings">НАСТРОЙКИ</button>
             <button id="btn-to-main">В МЕНЮ</button>
         </div>
     </div>

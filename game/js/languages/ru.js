@@ -6,6 +6,8 @@ const langRU = {
         settings: "НАСТРОЙКИ",
         language: "ЯЗЫК: РУССКИЙ",
         restart: "ЗАНОВО",
+        back: "НАЗАД",
+        to_main: "В МЕНЮ",
     },
     messages: {
         exit_locked: "Эта дверь заперта на ключ.",

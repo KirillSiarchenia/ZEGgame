@@ -1,4 +1,5 @@
 const tileSize = 90;
+const lightRadius = 300;
 
 const GameState = { 
     MENU: 'MENU', 
