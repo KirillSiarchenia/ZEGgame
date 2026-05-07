@@ -31,29 +31,29 @@ class Enemy {
     update(player, maze) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
-        const canHear = (dist <= ENEMY_CONFIG.HEAR_RANGE) && player.isMoving;
+        let canHear = (dist <= ENEMY_CONFIG.HEAR_RANGE) && player.isMoving;
 
-        // 1. Если ВИДИМ
+        if (this.lastContactType === 'sight' && this.state !== 'patrol' && !canSee) {
+            canHear = false;
+        }
+
         if (canSee) {
             this.state = 'chase';
             this.lastPlayerPos = { x: player.gridX, y: player.gridY };
             this.lastContactType = 'sight';
             this.searchTimer = 0; 
         } 
-        // 2. Если НЕ видим, но СЛЫШИМ
         else if (canHear) {
             this.state = 'chase';
             this.lastPlayerPos = { x: player.gridX, y: player.gridY };
             this.lastContactType = 'sound';
             this.searchTimer = 0;
         }
-        // 3. Потеряли любой контакт
-        else if (this.state === 'chase' && !canSee && !canHear) {
+        else if (this.state === 'chase') {
             this.state = 'searching';
             this.searchingPhase = 'reachLocation';
 
             if (this.lastContactType === 'sight') {
-                // Если потеряли из виду — вычисляем инерцию
                 const dx = player.gridX - this.lastPlayerPos.x;
                 const dy = player.gridY - this.lastPlayerPos.y;
 
@@ -63,7 +63,6 @@ class Enemy {
                     this.playerLastDir = { dx: player.lastMoveX, dy: player.lastMoveY };
                 }
             } else {
-                // Если потеряли звук — инерции нет
                 this.playerLastDir = { dx: 0, dy: 0 };
             }
         }
@@ -81,11 +80,9 @@ class Enemy {
                     if (this.searchingPhase === 'reachLocation') {
                         if (this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) {
                             
-                            // Запускаем инерцию только если есть направление (то есть контакт был визуальным)
                             if ((this.playerLastDir.dx !== 0 || this.playerLastDir.dy !== 0) && this.tryInertiaStep(maze, player)) {
                                 this.searchingPhase = 'inertia';
                             } else {
-                                // Если шли на звук или уперлись в стену — сразу осматриваемся
                                 this.searchingPhase = 'lookAround';
                             }
                         } else {
@@ -158,6 +155,7 @@ class Enemy {
             this.state = 'patrol';
             this.searchTimer = 0;
             this.searchingPhase = null;
+            this.lastContactType = null; 
         }
     }
 
