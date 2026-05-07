@@ -6,6 +6,7 @@ class Player {
 
         this.x = x * tileSize;
         this.y = y * tileSize;
+        this.moveDir = { x: 0, y: 0 };
 
         this.speed = 5;
         this.hp = 3;
@@ -51,27 +52,25 @@ class Player {
         if (this.y < targetY) this.y = Math.min(this.y + this.speed, targetY);
         if (this.y > targetY) this.y = Math.max(this.y - this.speed, targetY);
     }
-    // отрисовка персонажа | rysowanie postaci
     draw(ctx) {
         ctx.fillStyle = "blue";        
         ctx.fillRect(this.x + 5, this.y + 5, this.tileSize - 10, this.tileSize - 10);
     }
 
-    // движение персонажа | ruch postaci
-    move(dx, dy, maze, enemies) {        
-        if (this.knockbackTimer > Date.now()) {
-            return;
-        }
+    move(dx, dy, maze, enemies) {
+        if (this.knockbackTimer > Date.now()) return;
+
         if (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize) {
+            this.moveDir = { x: dx, y: dy };
+
             const nextX = this.gridX + dx;
             const nextY = this.gridY + dy;
 
-            const isWall = maze.isWall(nextX, nextY);            
-            const isEnemyThere = enemies.some(enemy => enemy.gridX === nextX && enemy.gridY === nextY);
-
-            if (!isWall && !isEnemyThere) {
+            if (!maze.isWall(nextX, nextY) && !enemies.some(e => e.gridX === nextX && e.gridY === nextY)) {
                 this.gridX = nextX;
                 this.gridY = nextY;
+            } else {
+                this.moveDir = { x: 0, y: 0 };
             }
         }
     }

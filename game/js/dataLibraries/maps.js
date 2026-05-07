@@ -1,4 +1,3 @@
-const tileSize = 90; // na razie 90(planueje zwiększyć do 105)
 const maps = 
 {
     map1:

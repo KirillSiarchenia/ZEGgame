@@ -1,10 +1,3 @@
-const GameState = {
-    MENU: 'MENU',
-    MAZE: 'MAZE',
-    ROOM: 'ROOM',
-    TRANSITION: 'TRANSITION'
-};
-
 const allLanguages = {
     'ru': langRU, 
     'pl': langPL
@@ -85,7 +78,7 @@ function loadEnemies(levelIndex) {
     
     if (enemiesData[levelKey]) {
         enemiesData[levelKey].forEach(data => {
-            enemies.push(new Enemy(data.x, data.y, data.tileSize, data.path));
+            enemies.push(new Enemy(data.x, data.y, data.path));
         });
     }
 }
@@ -380,7 +373,7 @@ function drawAll() {
 
         ctx.restore();
 
-        drawFogOfWar(ctx, player, camera)
+        // drawFogOfWar(ctx, player, camera)
     }
     
     if (currentState === GameState.ROOM) {

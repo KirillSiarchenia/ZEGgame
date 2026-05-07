@@ -1,15 +1,12 @@
 class Enemy {
-    constructor(x, y, tileSize, path = []) {
+    constructor(x, y, path = []) {
         this.gridX = x;
         this.gridY = y;
         this.dirX = 0;
         this.dirY = 1;
-        this.tileSize = tileSize;
         
         this.x = x * tileSize;
         this.y = y * tileSize;
-        
-        this.speed = 3; // должна делиться на tileSize | musi być podzielna przez tileSize
         
         this.state = 'patrol'; 
         this.patrolPath = path; 
@@ -17,7 +14,6 @@ class Enemy {
         this.spawnPoint = { x, y };
         
         this.lastPlayerPos = null; 
-        this.hearRange = 2.5;
         this.searchTimer = 0;
         this.lastAttack = 0;
 
@@ -27,13 +23,13 @@ class Enemy {
     }
 
     get isMoving() {
-        return this.x !== this.gridX * this.tileSize || this.y !== this.gridY * this.tileSize;
+        return this.x !== this.gridX * tileSize || this.y !== this.gridY * tileSize;
     }
-
+    
     update(player, maze) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
-        const canHear = (dist <= this.hearRange) && player.isMoving;
+        const canHear = (dist <= ENEMY_CONFIG.HEAR_RANGE) && player.isMoving;
 
         // выбор состояния | wybór stanu
         if (canSee || canHear) {
@@ -52,9 +48,8 @@ class Enemy {
                 const dy = Math.abs(this.gridY - player.gridY);
 
                 const isAdjacent = (dx + dy === 1);
-                const isFinishedMoving = (this.x === this.gridX * this.tileSize && this.y === this.gridY * this.tileSize);
 
-                if(isAdjacent && isFinishedMoving){
+                if(isAdjacent && !this.isMoving){
                     this.checkAttack(player, maze);
                 } else {
                     this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
@@ -67,8 +62,18 @@ class Enemy {
                 if ((this.gridX === this.lastPlayerPos.x && this.gridY === this.lastPlayerPos.y) && !this.isMoving) {
                     
                     if (this.searchTimer === 0) {
-                        this.searchDirs = this.getAvailableDirections(maze);
-                        this.framesPerLook = 60; 
+                        const cameFromX = -this.dirX;
+                        const cameFromY = -this.dirY;
+
+                        this.searchDirs = this.getAvailableDirections(maze).filter(dir => {
+                            return !(dir.dx === cameFromX && dir.dy === cameFromY);
+                        });
+
+                        if (this.searchDirs.length === 0) {
+                            this.searchDirs = this.getAvailableDirections(maze);
+                        }
+
+                        this.framesPerLook = ENEMY_CONFIG.LOOK_TIME; 
                         this.maxSearchFrames = this.searchDirs.length * this.framesPerLook;
                     }
 
@@ -87,7 +92,7 @@ class Enemy {
                         this.searchDirs = [];
                     }
                 }
-                break;
+                break
                 
                 
             case 'patrol':
@@ -106,10 +111,10 @@ class Enemy {
     
     // легендарный а* вступает в игру
     moveTowards(targetX, targetY, maze, player) {
-        if (this.lastAttack && Date.now() - this.lastAttack < 1000) return; 
+        if (this.lastAttack && Date.now() - this.lastAttack < ENEMY_CONFIG.KNOCKBACK_TIME) return; 
 
-        const targetPxX = this.gridX * this.tileSize;
-        const targetPxY = this.gridY * this.tileSize;
+        const targetPxX = this.gridX * tileSize;
+        const targetPxY = this.gridY * tileSize;
 
         if (this.x === targetPxX && this.y === targetPxY) {
             if (!this.currentPath || this.currentPath.length === 0 || 
@@ -181,20 +186,20 @@ class Enemy {
     
     // плавное передвижение(опять) | płynny ruch 
     smoothMove() {
-        let targetX = this.gridX * this.tileSize;
-        let targetY = this.gridY * this.tileSize;
+        let targetX = this.gridX * tileSize;
+        let targetY = this.gridY * tileSize;
 
-        if (this.x < targetX) this.x = Math.min(this.x + this.speed, targetX);
-        else if (this.x > targetX) this.x = Math.max(this.x - this.speed, targetX);
+        if (this.x < targetX) this.x = Math.min(this.x + ENEMY_CONFIG.SPEED, targetX);
+        else if (this.x > targetX) this.x = Math.max(this.x - ENEMY_CONFIG.SPEED, targetX);
         
-        if (this.y < targetY) this.y = Math.min(this.y + this.speed, targetY);
-        else if (this.y > targetY) this.y = Math.max(this.y - this.speed, targetY);
+        if (this.y < targetY) this.y = Math.min(this.y + ENEMY_CONFIG.SPEED, targetY);
+        else if (this.y > targetY) this.y = Math.max(this.y - ENEMY_CONFIG.SPEED, targetY);
     }
 
     // атака | atak
     checkAttack(player, maze) {
         const now = Date.now();
-        if (!this.lastAttack || now - this.lastAttack > 1500) {
+        if (!this.lastAttack || now - this.lastAttack > ENEMY_CONFIG.ATTACK_COOLDOWN) {
             player.hp -= 1;
             this.lastAttack = now;
             player.applyKnockback(this.gridX, this.gridY, maze);
@@ -209,14 +214,14 @@ class Enemy {
     draw(ctx) {
         const stateColors = { 'chase': 'red', 'searching': 'yellow', 'patrol': 'orange' };
         ctx.fillStyle = stateColors[this.state];
-        ctx.fillRect(this.x + 8, this.y + 8, this.tileSize - 16, this.tileSize - 16);
+        ctx.fillRect(this.x + 8, this.y + 8, tileSize - 16, tileSize - 16);
 
         ctx.fillStyle = "black";
         let eyeSize = 4;
-        let offset = this.tileSize / 2 - eyeSize / 2;
+        let offset = tileSize / 2 - eyeSize / 2;
         ctx.fillRect(
-            this.x + offset + (this.dirX * 10), 
-            this.y + offset + (this.dirY * 10), 
+            this.x + offset + (this.dirX * ENEMY_CONFIG.EYE_OFFSET), 
+            this.y + offset + (this.dirY * ENEMY_CONFIG.EYE_OFFSET), 
             eyeSize, eyeSize
         );
     }

@@ -31,7 +31,6 @@ const ObjectsLibrary = {
     },
     stone: {
         id: 'stone',
-        name: 'Камень',
         logicType: "pickup", 
         action: (obj) => {
             if (obj.id === "pressure_button" && obj.state === "with_crate") {
@@ -51,7 +50,6 @@ const ObjectsLibrary = {
     },
     rusty_key: {
         id: 'rusty_key',
-        name: 'Ржавый ключ',
         color: '#8B4513',
     }
 };
