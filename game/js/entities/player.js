@@ -71,7 +71,17 @@ class Player {
             const nextY = this.gridY + dy;
 
             const isWall = maze.isWall(nextX, nextY);
-            const isEnemyThere = enemies.some(e => e.gridX === nextX && e.gridY === nextY);
+            
+            const isEnemyThere = enemies.some(e => {
+                if (e.gridX === nextX && e.gridY === nextY) return true;
+                
+                const eGridLeft = Math.floor(e.x / tileSize);
+                const eGridRight = Math.floor((e.x + tileSize - 1) / tileSize);
+                const eGridTop = Math.floor(e.y / tileSize);
+                const eGridBottom = Math.floor((e.y + tileSize - 1) / tileSize);
+
+                return nextX >= eGridLeft && nextX <= eGridRight && nextY >= eGridTop && nextY <= eGridBottom;
+            });
 
             if (!isWall && !isEnemyThere) {
                 this.gridX = nextX;

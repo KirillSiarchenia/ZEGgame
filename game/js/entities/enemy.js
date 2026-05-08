@@ -30,8 +30,13 @@ class Enemy {
     
     update(player, maze, dt) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
-        const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
+        let canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
         let canHear = (dist <= ENEMY_CONFIG.HEAR_RANGE) && player.isMoving;
+
+        const distGrid = Math.abs(this.gridX - player.gridX) + Math.abs(this.gridY - player.gridY);
+        if (distGrid <= 1) {
+            canSee = true; 
+        }
 
         if (this.lastContactType === 'sight' && this.state !== 'patrol' && !canSee) {
             canHear = false;
@@ -70,7 +75,7 @@ class Enemy {
         switch (this.state) {
             case 'chase':
                 this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
-                if (Math.abs(this.gridX - player.gridX) + Math.abs(this.gridY - player.gridY) === 1 && !this.isMoving) {
+                if (distGrid <= 1 && !this.isMoving) {
                     this.checkAttack(player, maze);
                 }
                 break;
@@ -123,8 +128,17 @@ class Enemy {
         const nextY = this.gridY + this.playerLastDir.dy;
 
         if (!maze.isWall(nextX, nextY)) {
+            const pGridLeft = Math.floor(player.x / tileSize);
+            const pGridRight = Math.floor((player.x + tileSize - 1) / tileSize);
+            const pGridTop = Math.floor(player.y / tileSize);
+            const pGridBottom = Math.floor((player.y + tileSize - 1) / tileSize);
+
+            const isPlayerThere = (nextX === player.gridX && nextY === player.gridY) || 
+                                  (nextX >= pGridLeft && nextX <= pGridRight && nextY >= pGridTop && nextY <= pGridBottom);
+
             const isOtherEnemyThere = enemies.some(e => e !== this && e.gridX === nextX && e.gridY === nextY);
-            if (!isOtherEnemyThere) {
+            
+            if (!isOtherEnemyThere && !isPlayerThere) {
                 this.gridX = nextX;
                 this.gridY = nextY;
                 this.dirX = this.playerLastDir.dx;
@@ -188,8 +202,24 @@ class Enemy {
             if (this.currentPath && this.currentPath.length > 0) {
                 let nextStep = this.currentPath[0];
 
-                const isPlayerThere = (nextStep.x === player.gridX && nextStep.y === player.gridY);
-                const isOtherEnemyThere = enemies.some(e => e !== this && e.gridX === nextStep.x && e.gridY === nextStep.y);
+                const pGridLeft = Math.floor(player.x / tileSize);
+                const pGridRight = Math.floor((player.x + tileSize - 1) / tileSize);
+                const pGridTop = Math.floor(player.y / tileSize);
+                const pGridBottom = Math.floor((player.y + tileSize - 1) / tileSize);
+
+                const isPlayerThere = (nextStep.x === player.gridX && nextStep.y === player.gridY) || 
+                                      (nextStep.x >= pGridLeft && nextStep.x <= pGridRight && nextStep.y >= pGridTop && nextStep.y <= pGridBottom);
+
+                const isOtherEnemyThere = enemies.some(e => {
+                    if (e === this) return false;
+                    if (e.gridX === nextStep.x && e.gridY === nextStep.y) return true;
+                    
+                    const eGridLeft = Math.floor(e.x / tileSize);
+                    const eGridRight = Math.floor((e.x + tileSize - 1) / tileSize);
+                    const eGridTop = Math.floor(e.y / tileSize);
+                    const eGridBottom = Math.floor((e.y + tileSize - 1) / tileSize);
+                    return nextStep.x >= eGridLeft && nextStep.x <= eGridRight && nextStep.y >= eGridTop && nextStep.y <= eGridBottom;
+                });
 
                 if (!isPlayerThere && !isOtherEnemyThere) {
                     this.currentPath.shift();
