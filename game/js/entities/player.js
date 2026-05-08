@@ -9,7 +9,6 @@ class Player {
         this.lastMoveX = 0; 
         this.lastMoveY = 0;
 
-        this.speed = tileSize * 0.15;
         this.hp = 3;
     }
 
@@ -49,13 +48,15 @@ class Player {
         }
     }
 
-    update(){
+    update(dt){
         let targetX = this.gridX * tileSize;
         let targetY = this.gridY * tileSize;
-        if (this.x < targetX) this.x = Math.min(this.x + this.speed, targetX);
-        if (this.x > targetX) this.x = Math.max(this.x - this.speed, targetX);
-        if (this.y < targetY) this.y = Math.min(this.y + this.speed, targetY);
-        if (this.y > targetY) this.y = Math.max(this.y - this.speed, targetY);
+        let step = PLAYER_CONFIG.SPEED * dt;
+
+        if (this.x < targetX) this.x = Math.min(this.x + step, targetX);
+        if (this.x > targetX) this.x = Math.max(this.x - step, targetX);
+        if (this.y < targetY) this.y = Math.min(this.y + step, targetY);
+        if (this.y > targetY) this.y = Math.max(this.y - step, targetY);
     }
     draw(ctx) {
         ctx.fillStyle = "blue";        

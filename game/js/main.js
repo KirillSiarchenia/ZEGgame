@@ -97,8 +97,6 @@ function drawFogOfWar(ctx, player, camera) {
     ctx.restore();
 }
 
-
-
 // зажата ли клавиша | czy przycisk jest wciśnięty
 const keys = {};
 
@@ -211,17 +209,19 @@ function startTransitionToRoom() {
     transitionAlpha = 0;
 }
 
-function handleTransition() {
+function handleTransition(dt) {
+    const fadeSpeed = 3.0; // Скорость затухания (полный переход за ~0.33 секунды)
+
     if (currentState === GameState.TRANSITION) {
-        transitionAlpha += 0.05;
+        transitionAlpha += fadeSpeed * dt;
         if (transitionAlpha >= 1) {
             transitionAlpha = 1;
             const roomID = maze.grid[player.gridY][player.gridX];
             setGameState(GameState.ROOM);
             roomManager.enter(roomID, player.gridX, player.gridY);
         }
-    }else if (transitionAlpha > 0) {
-        transitionAlpha -= 0.05;
+    } else if (transitionAlpha > 0) {
+        transitionAlpha -= fadeSpeed * dt;
         if (transitionAlpha < 0) transitionAlpha = 0;
     }
 }
@@ -246,7 +246,7 @@ function checkMazeItemPickup(gridX, gridY) {
     });
 }
 
-function update() {
+function update(dt) {
     if (currentState !== GameState.MAZE || UI.isMessageActive || UI.isPaused) return;
     // управление | kierowanie
     let dx = 0;
@@ -278,7 +278,7 @@ function update() {
     }
 
     // Появление противников | pojawienie przeciwników
-    enemies.forEach(enemy => enemy.update(player, maze));
+    enemies.forEach(enemy => enemy.update(player, maze, dt));
 
     const exit = maze.getExitPos();
     if (player.gridX === exit.x && player.gridY === exit.y) {
@@ -365,31 +365,40 @@ function drawAll() {
     }
 }
 
-function gameLoop() {
+let lastTime = performance.now();
+
+function gameLoop(timestamp = performance.now()) {
     if (currentState === GameState.MENU) {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    if(!UI.isMessageActive && !UI.isPaused){
+    // Вычисляем дельту времени в секундах
+    let dt = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
+
+    // Защита от "телепортации": если вкладка была неактивна, dt будет огромным. 
+    // Ограничим максимальный шаг до 0.1 сек (эквивалент 10 FPS)
+    if (dt > 0.1) dt = 0.1;
+
+    if (!UI.isMessageActive && !UI.isPaused) {
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
-            update();             
-            player.update();     
+            update(dt);             // Передаем dt в логику обновления
+            player.update(dt);     // Передаем dt игроку
 
             if (!player.isMoving) {
                 checkMazeItemPickup(player.gridX, player.gridY); 
             }
 
-            camera.update(player.x, player.y);
+            camera.update(player.x, player.y); // Если у камеры есть сглаживание движения, ей тоже можно передать dt
         }
         
-        handleTransition();
+        handleTransition(dt); // Передаем dt для плавной смены экранов
         drawAll();
     }
-
 
     requestAnimationFrame(gameLoop); 
 }
 
 
-gameLoop();
+requestAnimationFrame(gameLoop);

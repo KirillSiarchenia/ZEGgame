@@ -28,7 +28,7 @@ class Enemy {
         return this.x !== this.gridX * tileSize || this.y !== this.gridY * tileSize;
     }
     
-    update(player, maze) {
+    update(player, maze, dt) {
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         const canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
         let canHear = (dist <= ENEMY_CONFIG.HEAR_RANGE) && player.isMoving;
@@ -99,7 +99,7 @@ class Enemy {
                         }
                     }
                     else if (this.searchingPhase === 'lookAround') {
-                        this.handleLookAround(maze);
+                        this.handleLookAround(maze, dt);
                     }
                 }
                 break;
@@ -115,7 +115,7 @@ class Enemy {
                 break;
         }
 
-        this.smoothMove();
+        this.smoothMove(dt);
     }
 
     tryInertiaStep(maze, player) {
@@ -135,23 +135,24 @@ class Enemy {
         return false;
     }
 
-    handleLookAround(maze) {
+    handleLookAround(maze, dt) {
         if (this.searchTimer === 0) {
             const cameFromX = -this.dirX;
             const cameFromY = -this.dirY;
             this.searchDirs = this.getAvailableDirections(maze).filter(d => !(d.dx === cameFromX && d.dy === cameFromY));
             if (this.searchDirs.length === 0) this.searchDirs = this.getAvailableDirections(maze);
-            this.maxSearchFrames = this.searchDirs.length * ENEMY_CONFIG.LOOK_TIME;
+            this.maxSearchTime = this.searchDirs.length * ENEMY_CONFIG.LOOK_TIME;
         }
 
-        this.searchTimer++;
+        this.searchTimer += dt;
         let dirIndex = Math.floor(this.searchTimer / ENEMY_CONFIG.LOOK_TIME);
+
         if (dirIndex < this.searchDirs.length) {
             this.dirX = this.searchDirs[dirIndex].dx;
             this.dirY = this.searchDirs[dirIndex].dy;
         }
 
-        if (this.searchTimer >= this.maxSearchFrames) {
+        if (this.searchTimer >= this.maxSearchTime) {
             this.state = 'patrol';
             this.searchTimer = 0;
             this.searchingPhase = null;
@@ -239,15 +240,16 @@ class Enemy {
         return true;
     }
     
-    smoothMove() {
+    smoothMove(dt) {
         let targetX = this.gridX * tileSize;
         let targetY = this.gridY * tileSize;
+        let step = ENEMY_CONFIG.SPEED * dt;
 
-        if (this.x < targetX) this.x = Math.min(this.x + ENEMY_CONFIG.SPEED, targetX);
-        else if (this.x > targetX) this.x = Math.max(this.x - ENEMY_CONFIG.SPEED, targetX);
+        if (this.x < targetX) this.x = Math.min(this.x + step, targetX);
+        else if (this.x > targetX) this.x = Math.max(this.x - step, targetX);
         
-        if (this.y < targetY) this.y = Math.min(this.y + ENEMY_CONFIG.SPEED, targetY);
-        else if (this.y > targetY) this.y = Math.max(this.y - ENEMY_CONFIG.SPEED, targetY);
+        if (this.y < targetY) this.y = Math.min(this.y + step, targetY);
+        else if (this.y > targetY) this.y = Math.max(this.y - step, targetY);
     }
 
     checkAttack(player, maze) {
