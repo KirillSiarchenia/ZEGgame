@@ -37,7 +37,7 @@ const ObjectsLibrary = {
                 obj.state = 'broken';
                 return {
                     message: t.interactions.stone_break_crate,
-                    deleteItem: true
+                    deleteItem: false
                 };
             }
         }
