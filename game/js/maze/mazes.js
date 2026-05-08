@@ -82,4 +82,10 @@ class Maze
         return this.grid[y][x] === 1;
     }
 
+    isFreeCell(x, y) {
+        if (y < 0 || y >= this.rows || x < 0 || x >= this.cols) {
+            return false;
+        }
+        return this.grid[y][x] === 0;
+    }
 }

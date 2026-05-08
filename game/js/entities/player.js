@@ -9,7 +9,7 @@ class Player {
         this.lastMoveX = 0; 
         this.lastMoveY = 0;
 
-        this.speed = 5;
+        this.speed = tileSize * 0.15;
         this.hp = 3;
     }
 
@@ -20,30 +20,34 @@ class Player {
 
     // отдача после удара врага | odrzut po ataku przeciwnika
     applyKnockback(enemyGridX, enemyGridY, maze) {
-    this.knockbackTimer = Date.now() + 400;
+        this.knockbackTimer = Date.now() + 400;
 
-    let dx = this.gridX - enemyGridX;
-    let dy = this.gridY - enemyGridY;
+        let dx = this.gridX - enemyGridX;
+        let dy = this.gridY - enemyGridY;
 
-    // Если стоят в одной клетке, откидываем в случайную сторону или вниз
-    if (dx === 0 && dy === 0) dy = 1;
+        // Если стоят в одной клетке
+        if (dx === 0 && dy === 0) {
+            dy = 1;
+        }
 
-    const stepX = Math.sign(dx);
-    const stepY = Math.sign(dy);
+        const stepX = Math.sign(dx);
+        const stepY = Math.sign(dy);
 
-    const distance = 2; 
-    for (let i = 0; i < distance; i++) {
-        let nextX = this.gridX + stepX;
-        let nextY = this.gridY + stepY;
+        const distance = 2;
 
-        if (!maze.isWall(nextX, nextY)) {
-            this.gridX = nextX;
-            this.gridY = nextY;
-        } else {
-            break; 
+        for (let i = 0; i < distance; i++) {
+            const nextX = this.gridX + stepX;
+            const nextY = this.gridY + stepY;
+
+            // Теперь проверяем именно свободный проход
+            if (maze.isFreeCell(nextX, nextY)) {
+                this.gridX = nextX;
+                this.gridY = nextY;
+            } else {
+                break;
+            }
         }
     }
-}
 
     update(){
         let targetX = this.gridX * tileSize;
