@@ -1,41 +1,45 @@
 const langPL = {
     menu: {
-        play: "Типа польский",
-        continue: "Типа польский",
-        settings: "Типа польский",
-        language: "Типа польский",
+        play: "GRAJ",
+        pause_title: "PAUZA",
+        resume: "WZNÓW",
+        settings: "USTAWIENIA",
+        language: "JĘZYK: POLSKI",
+        restart: "OD NOWA",
+        back: "WRÓĆ",
+        to_main: "DO MENU",
     },
     messages: {
-        exit_locked: "Типа польский",
-        room_locked: "Типа польский",
-        running_hint: "Типа польский",
-        not_applicable: "Типа польский",
+        exit_locked: "Te drzwi są zamknięte na klucz.",
+        room_locked: "Coś blokuje drzwi. Nie da się wejść.",
+        running_hint: "Ściany i kroki ledwo to wytrzymują, a co dopiero bieg.",
+        not_applicable: "Nie można tego tutaj użyć",
     },
     interactions: {
-        crate_on_button: "Типа польский",
-        stone_break_crate: "Типа польский",
-        stone_useless: "Типа польский",
-        found_key: "Типа польский",
-        empty_crate: "Типа польский",
-        button_examine: "Типа польский",
+        crate_on_button: "Co to był za dźwięk? Chyba coś się otworzyło.",
+        stone_break_crate: "Skrzynia rozbita!",
+        found_key: "W tej skrzyni był klucz. Jak ironicznie.",
+        empty_crate: "Au! Poza drzazgami nic tu nie ma.",
+        button_examine: "Przycisk... Ciekawe co robi...",
+        button_damaged: "Więcej tego nie dotknę"
     },
     ui: {
-        inventory: "Типа польский",
-        examine: "Типа польский",
-        use: "Типа польский",
-        hp_up: "Типа польский",
+        inventory: "Ekwipunek",
+        examine: "obejrzyj",
+        use: "użyj",
+        hp_up: "Czuję się lepiej",
     },
     itemDescription: {
-        crate: "Типа польский",
-        stone: "Типа польский",
-        rusty_key: "Типа польский",
+        crate: "Ciężka skrzynia",
+        stone: "Solidny ciężar. Na te chodzące trupy nie wystarczy, ale coś rozbije.",
+        rusty_key: "Stary klucz pokryty rdzawym nalotem.",
     },
     itemName: {
-        medkit: "Типа польский"
+        medkit: "Apteczka"
     },
     itemPickUp: {
-        crate: "Типа польский",
-        coin: "Типа польский",
-        medkit: "Типа польский",
+        crate: "Podniesiono skrzynię",
+        coin: "O, moneta",
+        medkit: "Jeszcze dziś nie umrę",
     }
 }
