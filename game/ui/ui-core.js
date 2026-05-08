@@ -44,10 +44,12 @@ const UI = {
 
         const url = canvas.toDataURL();
         document.body.style.cursor = `url(${url}) 12 12, auto`;
+        document.body.classList.add('cursor-locked');
     },
 
     resetCursor() {
         document.body.style.cursor = 'default';
+        document.body.classList.remove('cursor-locked');
         this.selectedItemForUse = null;
     },
 };

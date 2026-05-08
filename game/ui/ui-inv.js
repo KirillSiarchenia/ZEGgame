@@ -11,7 +11,7 @@ Object.assign(UI, {
 
     // вкл/выкл инвентаря | włącza/wyłącza ekwipunek
     toggleInventory() {
-        if (this.isMessageActive) return;
+        if (this.isMessageActive || this.selectedItemForUse) return;
 
         const modal = document.getElementById('inventory-modal');
         if (!modal) return;
@@ -78,7 +78,7 @@ Object.assign(UI, {
             
             slot.onmouseup = (e) => {
                 e.stopPropagation();
-                if (this.isMessageActive) return;
+                if (this.isMessageActive || this.selectedItemForUse) return;
                 this.showItemActions(item, e);
             };
             
@@ -105,7 +105,7 @@ Object.assign(UI, {
             btn.innerText = displayName;
             
             btn.onclick = () => {
-                if (this.isMessageActive) return;
+                if (this.isMessageActive || this.selectedItemForUse) return;
                 this.useItem(item);
             }
                 
