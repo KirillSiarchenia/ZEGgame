@@ -8,6 +8,9 @@ const langRU = {
         restart: "ЗАНОВО",
         back: "НАЗАД",
         to_main: "В МЕНЮ",
+        confirm_exit: "ВЕРНУТЬСЯ В МЕНЮ?",   
+        yes: "ДА",
+        no: "НЕТ",     
     },
     messages: {
         exit_locked: "Эта дверь заперта на ключ.",

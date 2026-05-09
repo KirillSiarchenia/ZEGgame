@@ -1,20 +1,25 @@
 const allLanguages = {
     'ru': langRU, 
-    'pl': langPL
+    'pl': langPL,
 };
 
 let currentLang = localStorage.getItem('game_lang') || 'ru';
 let t = allLanguages[currentLang];
-
-let settingsParent = 'main-menu'; 
 
 function setLanguage(langCode) {
     if (allLanguages[langCode]) {
         currentLang = langCode;
         t = allLanguages[langCode];
         localStorage.setItem('game_lang', langCode);
-        UI.updateStaticTexts();
+        UI.updateStaticTexts(); 
     }
+}
+
+function toggleNextLanguage() {
+    const langKeys = Object.keys(allLanguages);
+    let currentIndex = langKeys.indexOf(currentLang);
+    let nextIndex = (currentIndex + 1) % langKeys.length;
+    setLanguage(langKeys[nextIndex]);
 }
 
 let currentState = GameState.MENU;
@@ -50,6 +55,80 @@ window.onload = () => {
     }
     UI.setInventoryBtnVisibility(false);
 };
+
+window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        const confirmModal = document.getElementById('confirm-modal');
+        if (confirmModal && !confirmModal.classList.contains('hidden')) {
+            confirmModal.classList.add('hidden');
+            return;
+        }
+        
+        if (UI.isMessageActive) {
+            UI.closeMessage(false); 
+            return;
+        }
+
+        const ctxMenu = document.getElementById('item-context-menu');
+        if (ctxMenu) { ctxMenu.remove(); return; }
+
+        if (UI.selectedItemForUse) { UI.resetCursor(); return; }
+
+        const settingsMenu = document.getElementById('settings-menu');
+        if (settingsMenu && !settingsMenu.classList.contains('hidden')) {
+            settingsMenu.classList.add('hidden');
+            document.getElementById(UI.settingsParent).classList.remove('hidden');
+            return;
+        }
+
+        const invModal = document.getElementById('inventory-modal');
+        if (invModal && !invModal.classList.contains('hidden')) {
+            UI.toggleInventory();
+            return;
+        }
+
+        if (currentState !== GameState.MENU) UI.togglePauseMenu();
+    }
+
+    if (e.key) keys[e.key.toLowerCase()] = true;
+});
+
+window.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+});
+
+canvas.addEventListener("mouseup", (e) => {
+    if (UI.isMessageActive || UI.isPaused) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+
+    if (UI.isMenuOpen) return;
+    if (currentState !== GameState.ROOM) return;
+
+    if (e.button !== 0) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    const result = roomManager.handleMouseClick(mx, my, canvas.width, canvas.height);
+
+    if (UI.selectedItemForUse) {
+        if (result !== "ITEM_USED") {
+            UI.showMessage(t.messages.not_applicable);
+            UI.selectedItemForUse = null;
+            UI.resetCursor();
+        }
+    } else if (result === "EXIT") {
+        exitRoom();
+    }
+}, true);
 
 function loadEnemies(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
@@ -99,14 +178,6 @@ function drawFogOfWar(ctx, player, camera) {
 
 // зажата ли клавиша | czy przycisk jest wciśnięty
 const keys = {};
-
-window.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = true;
-});
-
-window.addEventListener("keyup", (e) => {
-    keys[e.key.toLowerCase()] = false;
-});
 
 function resizeCanvas(){
     canvas.width = window.innerWidth;
@@ -210,7 +281,7 @@ function startTransitionToRoom() {
 }
 
 function handleTransition(dt) {
-    const fadeSpeed = 3.0; // Скорость затухания (полный переход за ~0.33 секунды)
+    const fadeSpeed = 3.0; 
 
     if (currentState === GameState.TRANSITION) {
         transitionAlpha += fadeSpeed * dt;
@@ -295,35 +366,6 @@ function update(dt) {
     }
 }
 
-canvas.addEventListener("mouseup", (e) => {
-    if (UI.isMessageActive|| UI.isPaused) {
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-    }
-
-    if (UI.isMenuOpen) return;
-    if (currentState !== GameState.ROOM) return;
-
-    if (e.button !== 0) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-
-    const result = roomManager.handleMouseClick(mx, my, canvas.width, canvas.height);
-
-    if (UI.selectedItemForUse) {
-        if (result !== "ITEM_USED") {
-            UI.showMessage(t.messages.not_applicable);
-            UI.selectedItemForUse = null;
-            UI.resetCursor();
-        }
-    } else if (result === "EXIT") {
-        exitRoom();
-    }
-}, true);
-
 function drawAll() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -352,7 +394,7 @@ function drawAll() {
 
         ctx.restore();
 
-        // drawFogOfWar(ctx, player, camera)
+        drawFogOfWar(ctx, player, camera)
     }
     
     if (currentState === GameState.ROOM) {

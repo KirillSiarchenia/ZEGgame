@@ -5,14 +5,7 @@ Object.assign(UI, {
         if (this.isMessageActive) return;
 
         const pauseMenu = document.getElementById('pause-menu');
-        const settingsMenu = document.getElementById('settings-menu');
-        if (!pauseMenu || !settingsMenu) return;
-
-        if (!settingsMenu.classList.contains('hidden')) {
-            settingsMenu.classList.add('hidden');
-            this.isPaused = false;
-            return;
-        }
+        if (!pauseMenu) return;
 
         const isHidden = pauseMenu.classList.toggle('hidden');
         this.isPaused = !isHidden;
@@ -21,6 +14,25 @@ Object.assign(UI, {
             const inv = document.getElementById('inventory-modal');
             if (inv) inv.classList.add('hidden');
         }
+    },
+
+    showConfirm(message, onYes) {
+        const modal = document.getElementById('confirm-modal');
+        const textEl = document.getElementById('confirm-text');
+        const yesBtn = document.getElementById('btn-confirm-yes');
+        const noBtn = document.getElementById('btn-confirm-no');
+
+        textEl.innerText = message.toUpperCase();
+        modal.classList.remove('hidden');
+
+        yesBtn.onclick = () => {
+            modal.classList.add('hidden');
+            onYes();
+        };
+        
+        noBtn.onclick = () => {
+            modal.classList.add('hidden');
+        };
     },
 
     updateStaticTexts() {
@@ -36,22 +48,26 @@ Object.assign(UI, {
         setText('btn-play', t.menu.play);
         setText('btn-resume', t.menu.resume);
         setText('btn-lang', t.menu.language);
-        setText('btn-to-main', t.menu.to_main || "В МЕНЮ");
+        setText('btn-to-main', t.menu.to_main);
         setText('btn-main-settings', t.menu.settings);
         setText('btn-pause-settings', t.menu.settings);
-        setText('btn-settings-back', t.menu.back || "НАЗАД");
+        setText('btn-settings-back', t.menu.back);
 
         const invBtn = document.getElementById('inventory-btn');
         const invHeader = document.querySelector('.inventory-header h2');
         if (invBtn) invBtn.innerText = t.ui.inventory;
         if (invHeader) invHeader.innerText = t.ui.inventory;
+
+        setText('confirm-text', t.menu.confirm_exit);
+        setText('btn-confirm-yes', t.menu.yes);
+        setText('btn-confirm-no', t.menu.no);
     },
 
     initMenuEvents() {
         const mainMenu = document.getElementById('main-menu');
         const pauseMenu = document.getElementById('pause-menu');
         const settingsMenu = document.getElementById('settings-menu');
-
+        
         document.getElementById('btn-play').onclick = () => {
             mainMenu.classList.add('hidden');
             setGameState(GameState.MAZE);
@@ -74,17 +90,16 @@ Object.assign(UI, {
             document.getElementById(this.settingsParent).classList.remove('hidden');
         };
 
-        document.getElementById('btn-lang').onclick = () => {
-            const nextLang = (currentLang === 'ru') ? 'pl' : 'ru';
-            setLanguage(nextLang);
-        };
-
         document.getElementById('btn-resume').onclick = () => this.togglePauseMenu();
 
+        document.getElementById('btn-lang').onclick = () => {
+            toggleNextLanguage();
+        };
+
         document.getElementById('btn-to-main').onclick = () => {
-            if (confirm(currentLang === 'ru' ? "Вернуться в меню?" : "Wrócić do menu?")) {
+            this.showConfirm(t.menu.confirm_exit, () => {
                 location.reload();
-            }
+            });
         };
     },
 });

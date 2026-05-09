@@ -8,6 +8,9 @@ const langPL = {
         restart: "OD NOWA",
         back: "WRÓĆ",
         to_main: "DO MENU",
+        confirm_exit: "WRÓCIĆ DO MENU?",   
+        yes: "TAK",
+        no: "NIE", 
     },
     messages: {
         exit_locked: "Te drzwi są zamknięte na klucz.",

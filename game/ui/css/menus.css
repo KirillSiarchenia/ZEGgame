@@ -42,3 +42,34 @@
     border-color: #fff;
     box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
+
+#confirm-modal {
+    background: rgba(0, 0, 0, 0.9); 
+    z-index: 10000; 
+}
+
+.confirm-content {
+    background: #111;
+    border: 3px solid #ff4444;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(255, 68, 68, 0.2);
+}
+
+.confirm-content h2 {
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.menu-buttons.horizontal {
+    flex-direction: row;
+    gap: 30px;
+}
+
+.menu-buttons.horizontal button {
+    padding: 10px 40px;
+    min-width: 120px;
+}
