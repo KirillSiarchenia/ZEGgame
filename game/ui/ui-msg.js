@@ -21,7 +21,7 @@ Object.assign(UI, {
     },
     
     showMessage(text) {
-        this.closeMessage(true); // Сброс предыдущего сообщения
+        this.closeMessage(true); 
         
         this._fullText = text;
         const box = document.getElementById('msg-box');
@@ -44,14 +44,28 @@ Object.assign(UI, {
         content.innerText = "";
         typeWriter();
 
-        // Сохраняем ссылку, чтобы удалить позже
         this._msgHandler = (e) => {
             if (e.button === 0) {
                 e.preventDefault();
                 e.stopPropagation();
+                
+                // Закрываем или допечатываем сообщение
                 this.closeMessage(false);
+
+                // ИСПРАВЛЕНИЕ: Блокируем последующий "клик", чтобы он не прошел насквозь в UI-кнопки
+                const preventClickThrough = (clickEvent) => {
+                    clickEvent.stopPropagation();
+                    clickEvent.preventDefault();
+                    window.removeEventListener('click', preventClickThrough, true);
+                };
+                
+                // Вешаем перехватчик на фазе погружения (true)
+                window.addEventListener('click', preventClickThrough, true);
+                // Удаляем перехватчик через 50мс (если игрок кликнул вне кнопок)
+                setTimeout(() => window.removeEventListener('click', preventClickThrough, true), 50);
             }
         };
+        
         setTimeout(() => window.addEventListener('mouseup', this._msgHandler, true), 50);
     },
 });

@@ -394,7 +394,7 @@ function drawAll() {
 
         ctx.restore();
 
-        drawFogOfWar(ctx, player, camera)
+        // drawFogOfWar(ctx, player, camera)
     }
     
     if (currentState === GameState.ROOM) {

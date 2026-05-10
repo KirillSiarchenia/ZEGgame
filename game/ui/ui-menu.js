@@ -53,9 +53,7 @@ Object.assign(UI, {
         setText('btn-pause-settings', t.menu.settings);
         setText('btn-settings-back', t.menu.back);
 
-        const invBtn = document.getElementById('inventory-btn');
         const invHeader = document.querySelector('.inventory-header h2');
-        if (invBtn) invBtn.innerText = t.ui.inventory;
         if (invHeader) invHeader.innerText = t.ui.inventory;
 
         setText('confirm-text', t.menu.confirm_exit);

@@ -50,6 +50,7 @@ const UI = {
     resetCursor() {
         document.body.style.cursor = 'default';
         document.body.classList.remove('cursor-locked');
+        document.body.classList.remove('item-equipped');
         this.selectedItemForUse = null;
     },
 };

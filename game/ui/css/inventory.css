@@ -1,16 +1,21 @@
 #inventory-btn {
     margin-top: 60px;
     margin-left: 20px;
-    padding: 5px 15px;
-    background: #444;
-    color: white;
-    border: 2px solid #666;
+    width: 128px;  
+    height: 128px; 
+    background-image: url('../assets/inventory.png'); 
+    background-repeat: no-repeat;
+    background-position: 0 0;
     cursor: pointer;
-    font-family: 'Courier New', Courier, monospace;
     pointer-events: auto;
+    transform: scale(1.0);
+    transform-origin: top left;
+    mix-blend-mode: multiply;
 }
 
-#inventory-btn:hover { background: #666; }
+body:not(.item-equipped) #inventory-btn:not(.modal-open):hover {
+    background-position: right center;
+}
 
 #inventory-modal {
     position: fixed;

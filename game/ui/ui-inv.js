@@ -6,6 +6,7 @@ Object.assign(UI, {
         if (!visible) {
             const modal = document.getElementById('inventory-modal');
             if (modal) modal.classList.add('hidden');
+            if (btn) btn.classList.remove('modal-open'); 
         }
     },
 
@@ -14,9 +15,18 @@ Object.assign(UI, {
         if (this.isMessageActive || this.selectedItemForUse) return;
 
         const modal = document.getElementById('inventory-modal');
+        const btn = document.getElementById('inventory-btn');
         if (!modal) return;
         
-        modal.classList.toggle('hidden');
+        const isHidden = modal.classList.toggle('hidden');
+        
+        if (btn) {
+            if (!isHidden) {
+                btn.classList.add('modal-open');
+            } else {
+                btn.classList.remove('modal-open');
+            }
+        }
     },
 
     // контекстное меню | 
@@ -122,13 +132,18 @@ Object.assign(UI, {
             Inventory.removeItem(item.instanceId); 
             this.updateConsumables(Inventory.items);
             this.renderInventory(Inventory.items);  
-            this.showMessage(t.ui.hp_up); // пока что для отладки 
+            this.showMessage(t.ui.hp_up); 
             return;
         }
+        
         const modal = document.getElementById('inventory-modal');
+        const btn = document.getElementById('inventory-btn');
+        
         if (modal) modal.classList.add('hidden');
+        if (btn) btn.classList.remove('modal-open'); 
 
         this.selectedItemForUse = item;        
         this.updateCursor(item.color);
+        document.body.classList.add('item-equipped');
     },
 });
