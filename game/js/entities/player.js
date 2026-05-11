@@ -10,6 +10,12 @@ class Player {
         this.lastMoveY = 0;
 
         this.hp = 3;
+        this.maxHp = 3;
+
+        this.hasReceivedFirstDamage = false; 
+        this.waitingForSafeMoment = false;   
+        this.safeTimeElapsed = 0;            
+        this.firstDamageReactionDone = false; 
     }
 
     // проверка движения(для "слуха" врагов) | sprawdzanie ruchu(dla przeciwników)
@@ -24,7 +30,6 @@ class Player {
         let dx = this.gridX - enemyGridX;
         let dy = this.gridY - enemyGridY;
 
-        // Если стоят в одной клетке
         if (dx === 0 && dy === 0) {
             dy = 1;
         }
@@ -38,7 +43,6 @@ class Player {
             const nextX = this.gridX + stepX;
             const nextY = this.gridY + stepY;
 
-            // Теперь проверяем именно свободный проход
             if (maze.isFreeCell(nextX, nextY)) {
                 this.gridX = nextX;
                 this.gridY = nextY;
@@ -57,7 +61,37 @@ class Player {
         if (this.x > targetX) this.x = Math.max(this.x - step, targetX);
         if (this.y < targetY) this.y = Math.min(this.y + step, targetY);
         if (this.y > targetY) this.y = Math.max(this.y - step, targetY);
+
+        this.checkFirstDamageReaction(dt, enemies);
     }
+
+    // Он умный, он знает команды, несмотря на небольшой череп, у него в мозгу помещается много информации
+    checkFirstDamageReaction(dt, enemies) {
+        if (this.firstDamageReactionDone || !enemies) return;
+
+        if (this.hp < this.maxHp && !this.hasReceivedFirstDamage) {
+            this.hasReceivedFirstDamage = true;
+            this.waitingForSafeMoment = true;
+        }
+
+        if (this.waitingForSafeMoment) {
+            const isSafe = enemies.every(e => e.state === 'patrol');
+
+            if (isSafe) {
+                this.safeTimeElapsed += dt;
+                
+                if (this.safeTimeElapsed >= 2.5) { 
+                    UI.showMessage(t.messages.first_damage_reaction);
+                    
+                    this.firstDamageReactionDone = true;
+                    this.waitingForSafeMoment = false; 
+                }
+            } else {
+                this.safeTimeElapsed = 0;
+            }
+        }
+    }
+
     draw(ctx) {
         ctx.fillStyle = "blue";        
         ctx.fillRect(this.x + 5, this.y + 5, tileSize - 10, tileSize - 10);

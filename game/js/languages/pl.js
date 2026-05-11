@@ -17,6 +17,7 @@ const langPL = {
         room_locked: "Coś blokuje drzwi. Nie da się wejść.",
         running_hint: "Ściany i kroki ledwo to wytrzymują, a co dopiero bieg.",
         not_applicable: "Nie można tego tutaj użyć",
+        first_damage_reaction: "Uff... Całe szczęście, że ma tępy miecz i bije bez żadnej techniki."
     },
     interactions: {
         crate_on_button: "Co to był za dźwięk? Chyba coś się otworzyło.",
