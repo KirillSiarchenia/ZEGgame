@@ -8,13 +8,17 @@
     background-position: 0 0;
     cursor: pointer;
     pointer-events: auto;
+    background-color: transparent; 
+    border: none;                
+    padding: 0;                  
+    outline: none;              
+    image-rendering: pixelated; 
     transform: scale(1.0);
     transform-origin: top left;
-    mix-blend-mode: multiply;
 }
 
 body:not(.item-equipped) #inventory-btn:not(.modal-open):hover {
-    background-position: right center;
+    background-position: -128px 0;
 }
 
 #inventory-modal {
