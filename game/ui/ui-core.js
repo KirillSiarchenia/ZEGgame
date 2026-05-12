@@ -11,19 +11,29 @@ const UI = {
         const container = this.getContainer();
         if (!container || currentHp === this.lastHp) return;
         
-        this.lastHp = currentHp;
-        container.innerHTML = ""; 
+        if (container.children.length === 0) {
+            for (let i = 0; i < maxHp; i++) {
+                const heart = document.createElement("div");
+                heart.classList.add("heart");
+                container.appendChild(heart);
+            }
+        }
+        
+        const hearts = container.children;
         
         for (let i = 0; i < maxHp; i++) {
-            const heart = document.createElement("div");
-            heart.classList.add("heart");
-            
             if (i >= currentHp) {
-                heart.classList.add("lost");
+                hearts[i].classList.remove("healed");
+                hearts[i].classList.add("lost");
+            } else {
+                if (hearts[i].classList.contains("lost")) {
+                    hearts[i].classList.remove("lost");
+                    hearts[i].classList.add("healed");
+                }
             }
-            
-            container.appendChild(heart);
         }
+        
+        this.lastHp = currentHp;
     },
     
     getContainer() {

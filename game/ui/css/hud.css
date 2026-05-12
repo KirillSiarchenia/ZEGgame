@@ -9,8 +9,6 @@
 
 #health-bar {
     display: flex;
-    gap: 10px;
-    padding: 20px;
     position: absolute;
     top: 0;
     left: 0;
@@ -18,18 +16,31 @@
 }
 
 .heart {
-    width: 30px; 
-    height: 30px; 
-    background-color: red;
-    clip-path: polygon(50% 15%, 80% 0%, 100% 30%, 50% 90%, 0% 30%, 20% 0%);
-    transition: transform 0.3s ease;
+    width: 35px; 
+    height: 35px; 
+    background-image: url('../assets/hp/health.png'); 
+    background-position: 0px 0px; 
+    background-repeat: no-repeat;
 }
 
 .heart.lost {
-    background-color: gray;
-    opacity: 0.3;
-    transform: scale(0.8);
+    animation: breakHeart 0.7s steps(16) forwards;
 }
+
+@keyframes breakHeart {
+    from { background-position: 0px 0px; }
+    to { background-position: -560px 0px; } 
+}
+
+.heart.healed {
+    animation: healHeart 1.1s steps(33) forwards;
+}
+
+@keyframes healHeart {
+    from { background-position: -560px 0px; }
+    to { background-position: -1715px 0px; } 
+}
+
 
 #consumables-panel {
     position: absolute;
