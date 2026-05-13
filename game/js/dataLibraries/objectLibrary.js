@@ -13,7 +13,15 @@ const ObjectsLibrary = {
         color: "#ff4444",
         isConsumable: true,
         logicType: "pickup",
-        effect: 'heal'
+        action: () => {
+            player.hp = Math.min(player.hp + 1, player.maxHp);
+            UI.updateHealth(player.hp);
+            
+            return {
+                message: t.ui.hp_up || "Здоровье восстановлено",
+                deleteItem: true
+            };
+        }
     },
     crate: {
         id: 'crate',

@@ -48,7 +48,7 @@ Object.assign(UI, {
         useBtn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            this.useItem(item);
+            Inventory.useItem(item);
             menu.remove();
         };
 
@@ -116,34 +116,11 @@ Object.assign(UI, {
             
             btn.onclick = () => {
                 if (this.isMessageActive || this.selectedItemForUse) return;
-                this.useItem(item);
+                // ВЫЗОВ ИЗ INVENTORY
+                Inventory.useItem(item);
             }
                 
-            
             panel.appendChild(btn);
         });
-    },
-
-    // na razie tylko dla heal consumable
-    useItem(item) {
-        if (item.effect === 'heal') {
-            player.hp = Math.min(player.hp + 1, 3);
-            this.updateHealth(player.hp);
-            Inventory.removeItem(item.instanceId); 
-            this.updateConsumables(Inventory.items);
-            this.renderInventory(Inventory.items);  
-            this.showMessage(t.ui.hp_up); 
-            return;
-        }
-        
-        const modal = document.getElementById('inventory-modal');
-        const btn = document.getElementById('inventory-btn');
-        
-        if (modal) modal.classList.add('hidden');
-        if (btn) btn.classList.remove('modal-open'); 
-
-        this.selectedItemForUse = item;        
-        this.updateCursor(item.color);
-        document.body.classList.add('item-equipped');
-    },
+    }
 });
