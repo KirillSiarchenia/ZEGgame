@@ -69,11 +69,6 @@ class Player {
     checkFirstDamageReaction(dt, enemies) {
         if (this.firstDamageReactionDone || !enemies) return;
 
-        if (this.hp < this.maxHp && !this.hasReceivedFirstDamage) {
-            this.hasReceivedFirstDamage = true;
-            this.waitingForSafeMoment = true;
-        }
-
         if (this.waitingForSafeMoment) {
             const isSafe = enemies.every(e => e.state === 'patrol');
 
@@ -81,8 +76,7 @@ class Player {
                 this.safeTimeElapsed += dt;
                 
                 if (this.safeTimeElapsed >= 2.5) { 
-                    UI.showMessage(t.messages.first_damage_reaction);
-                    
+                    UI.showMessage(t.messages.first_damage_reaction);                    
                     this.firstDamageReactionDone = true;
                     this.waitingForSafeMoment = false; 
                 }

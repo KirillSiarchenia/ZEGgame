@@ -288,6 +288,10 @@ class Enemy {
             player.hp -= 1;
             this.lastAttack = now;
             player.applyKnockback(this.gridX, this.gridY, maze);
+            if (!player.hasReceivedFirstDamage && !player.firstDamageReactionDone) {
+                player.hasReceivedFirstDamage = true;
+                player.waitingForSafeMoment = true;
+            }
         }
     }
 
