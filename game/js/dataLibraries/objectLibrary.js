@@ -16,12 +16,18 @@ const ObjectsLibrary = {
         action: () => {
             player.hp = Math.min(player.hp + 1, player.maxHp);
             UI.updateHealth(player.hp);
+            Inventory.addItem({ ...ObjectsLibrary['bone'] });
             
             return {
                 message: t.ui.hp_up || "Здоровье восстановлено",
                 deleteItem: true
             };
         }
+    },
+    bone: {
+        id: 'bone',
+        color: '#e3dac9', 
+        logicType: 'pickup'
     },
     crate: {
         id: 'crate',

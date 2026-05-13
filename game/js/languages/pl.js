@@ -37,6 +37,7 @@ const langPL = {
         crate: "Ciężka skrzynia",
         stone: "Solidny ciężar. Na te chodzące trupy nie wystarczy, ale coś rozbije.",
         rusty_key: "Stary klucz pokryty rdzawym nalotem.",
+        bone: "Na całkiem solidnej kości wisiało to mięso."
     },
     itemName: {
         medkit: "Apteczka"
