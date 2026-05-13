@@ -16,6 +16,7 @@ class Player {
         this.waitingForSafeMoment = false;   
         this.safeTimeElapsed = 0;            
         this.firstDamageReactionDone = false; 
+        this.knockbackTimer = 0;
     }
 
     // проверка движения(для "слуха" врагов) | sprawdzanie ruchu(dla przeciwników)
@@ -25,7 +26,7 @@ class Player {
 
     // отдача после удара врага | odrzut po ataku przeciwnika
     applyKnockback(enemyGridX, enemyGridY, maze) {
-        this.knockbackTimer = Date.now() + 400;
+        this.knockbackTimer = 400;
 
         let dx = this.gridX - enemyGridX;
         let dy = this.gridY - enemyGridY;
@@ -53,6 +54,10 @@ class Player {
     }
 
     update(dt){
+        if (this.knockbackTimer > 0) {
+            this.knockbackTimer -= dt * 1000;
+        }
+
         let targetX = this.gridX * tileSize;
         let targetY = this.gridY * tileSize;
         let step = PLAYER_CONFIG.SPEED * dt;
@@ -92,7 +97,7 @@ class Player {
     }
 
     move(dx, dy, maze, enemies) {
-        if (this.knockbackTimer > Date.now()) return;
+        if (this.knockbackTimer > 0) return;
 
         if (this.x === this.gridX * tileSize && this.y === this.gridY * tileSize) {
             const nextX = this.gridX + dx;

@@ -19,6 +19,9 @@ class Enemy {
         this.searchTimer = 0;
         this.lastAttack = 0;
 
+        this.attackCooldown = 0;
+        this.knockbackTimer = 0;
+
         this.currentPath =[];
         this.finalTargetX = null;
         this.finalTargetY = null;
@@ -29,6 +32,9 @@ class Enemy {
     }
     
     update(player, maze, dt) {
+        if (this.attackCooldown > 0) this.attackCooldown -= dt * 1000;
+        if (this.knockbackTimer > 0) this.knockbackTimer -= dt * 1000;
+
         const dist = this.getDistanceTo(player.gridX, player.gridY);
         let canSee = this.hasLineOfSight(player.gridX, player.gridY, maze);
         let canHear = (dist <= ENEMY_CONFIG.HEAR_RANGE) && player.isMoving;
@@ -185,7 +191,7 @@ class Enemy {
     }
     
     moveTowards(targetX, targetY, maze, player) {
-        if (this.lastAttack && Date.now() - this.lastAttack < ENEMY_CONFIG.KNOCKBACK_TIME) return; 
+        if (this.knockbackTimer > 0) return; 
 
         const targetPxX = this.gridX * tileSize;
         const targetPxY = this.gridY * tileSize;
@@ -283,11 +289,14 @@ class Enemy {
     }
 
     checkAttack(player, maze) {
-        const now = Date.now();
-        if (!this.lastAttack || now - this.lastAttack > ENEMY_CONFIG.ATTACK_COOLDOWN) {
+        if (this.attackCooldown <= 0) {
             player.hp -= 1;
-            this.lastAttack = now;
+            
+            this.attackCooldown = ENEMY_CONFIG.ATTACK_COOLDOWN;
+            this.knockbackTimer = ENEMY_CONFIG.KNOCKBACK_TIME;
+
             player.applyKnockback(this.gridX, this.gridY, maze);
+
             if (!player.hasReceivedFirstDamage && !player.firstDamageReactionDone) {
                 player.hasReceivedFirstDamage = true;
                 player.waitingForSafeMoment = true;
