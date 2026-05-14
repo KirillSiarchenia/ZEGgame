@@ -73,3 +73,15 @@
     padding: 10px 40px;
     min-width: 120px;
 }
+
+#pause-level-indicator {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+}

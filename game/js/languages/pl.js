@@ -11,6 +11,7 @@ const langPL = {
         confirm_exit: "WRÓCIĆ DO MENU?",   
         yes: "TAK",
         no: "NIE", 
+        level: "POZIOM",
     },
     messages: {
         exit_locked: "Te drzwi są zamknięte na klucz.",

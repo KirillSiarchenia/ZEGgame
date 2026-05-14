@@ -11,6 +11,7 @@ const langRU = {
         confirm_exit: "ВЕРНУТЬСЯ В МЕНЮ?",   
         yes: "ДА",
         no: "НЕТ",     
+        level: "УРОВЕНЬ",
     },
     messages: {
         exit_locked: "Эта дверь заперта на ключ.",

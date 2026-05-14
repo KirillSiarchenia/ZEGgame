@@ -13,6 +13,11 @@ Object.assign(UI, {
         if (this.isPaused) {
             const inv = document.getElementById('inventory-modal');
             if (inv) inv.classList.add('hidden');
+
+            const levelIndicator = document.getElementById('pause-level-indicator');
+            if (levelIndicator && typeof currentLevelIndex !== 'undefined') {
+                levelIndicator.innerText = `${t.menu.level}: ${currentLevelIndex + 1}`;
+            }
         }
     },
 
@@ -52,6 +57,7 @@ Object.assign(UI, {
         setText('btn-main-settings', t.menu.settings);
         setText('btn-pause-settings', t.menu.settings);
         setText('btn-settings-back', t.menu.back);
+        setText('pause-level-indicator', `${t.menu.level}: ${currentLevelIndex + 1}`);
 
         const invHeader = document.querySelector('.inventory-header h2');
         if (invHeader) invHeader.innerText = t.ui.inventory;
