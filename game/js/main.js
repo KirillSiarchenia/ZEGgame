@@ -206,20 +206,26 @@ window.addEventListener("keydown", checkRunningHint);
 function setGameState(newState) {
     currentState = newState;
     const consPanel = document.getElementById('consumables-panel');
+    const roomNavUi = document.getElementById('room-nav-ui'); // Находим контейнер кнопок
     
     if (newState === GameState.MAZE) {
         UI.setInventoryBtnVisibility(false);
         if (consPanel) consPanel.classList.remove('hidden-ui'); 
+        if (roomNavUi) roomNavUi.classList.add('hidden-ui'); // Скрываем стрелки
          
         UI.updateConsumables(Inventory.items); 
 
     } else if (newState === GameState.ROOM) {
         UI.setInventoryBtnVisibility(true);
         if (consPanel) consPanel.classList.add('hidden-ui'); 
+        if (roomNavUi) roomNavUi.classList.remove('hidden-ui'); // ПОКАЗЫВАЕМ СТРЕЛКИ
+        
         UI.renderInventory(Inventory.items);
+        if (roomManager) roomManager.updateArrows(); // Обновляем правильные стороны
     } else {
         UI.setInventoryBtnVisibility(false);
         if (consPanel) consPanel.classList.add('hidden-ui');
+        if (roomNavUi) roomNavUi.classList.add('hidden-ui'); // Скрываем стрелки
     }
 }
 

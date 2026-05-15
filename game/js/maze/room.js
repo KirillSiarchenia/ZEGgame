@@ -2,39 +2,81 @@ class RoomManager {
     constructor() {
         this.room = null;
         this.view = "center";
-        this.relNav = {
-            left:  { rx: 0,    ry: 0.25, rw: 0.1, rh: 0.5 },
-            right: { rx: 0.9,  ry: 0.25, rw: 0.1, rh: 0.5 },
-            exit:  { rx: 0.3,  ry: 0.85, rw: 0.4, rh: 0.12 }
+        this.initDOM(); // Инициализация HTML кнопок
+    }
+
+    initDOM() {
+        this.navLeft = document.getElementById('nav-left');
+        this.navRight = document.getElementById('nav-right');
+        this.navDown = document.getElementById('nav-down');
+
+        if (!this.navLeft) return;
+
+        // Поворот влево
+        this.navLeft.onclick = () => {
+            if (UI.selectedItemForUse || UI.isMessageActive || UI.isPaused) return;
+            if (this.view === "center") this.view = "left";
+            else if (this.view === "right") this.view = "center";
+            this.updateArrows();
+        };
+
+        // Поворот вправо
+        this.navRight.onclick = () => {
+            if (UI.selectedItemForUse || UI.isMessageActive || UI.isPaused) return;
+            if (this.view === "center") this.view = "right";
+            else if (this.view === "left") this.view = "center";
+            this.updateArrows();
+        };
+
+        // Выход из комнаты
+        this.navDown.onclick = () => {
+            if (UI.selectedItemForUse || UI.isMessageActive || UI.isPaused) return;
+            exitRoom(); // Это глобальная функция из твоего кода
         };
     }
 
-    enter(roomID, x, y) {
-    this.view = "center";
-
-    if (roomsData && roomsData[roomID]) {
-        this.room = roomsData[roomID]; 
+    updateArrows() {
+        if (!this.navLeft) return;
         
-        for (let viewKey in this.room.views) {
-            const view = this.room.views[viewKey];
-            if (view.objects) {
-                view.objects = view.objects.map(obj => {
-                    const libData = ObjectsLibrary[obj.id];
-                    return (libData) ? { ...libData, ...obj } : obj;
-                });
-            }
+        // Включаем/отключаем нужные кнопки в зависимости от того, куда смотрим
+        if (this.view === "center") {
+            this.navLeft.style.display = "block";
+            this.navRight.style.display = "block";
+            this.navDown.style.display = "block";
+        } else if (this.view === "left") {
+            this.navLeft.style.display = "none";
+            this.navRight.style.display = "block"; // Правая возвращает обратно в центр
+            this.navDown.style.display = "none";
+        } else if (this.view === "right") {
+            this.navLeft.style.display = "block"; // Левая возвращает обратно в центр
+            this.navRight.style.display = "none";
+            this.navDown.style.display = "none";
         }
     }
-}
 
-    getBox(key, w, h) {
-        const b = this.relNav[key];
-        return { x: b.rx * w, y: b.ry * h, w: b.rw * w, h: b.rh * h };
+    enter(roomID, x, y) {
+        this.view = "center";
+
+        if (roomsData && roomsData[roomID]) {
+            this.room = roomsData[roomID]; 
+            
+            for (let viewKey in this.room.views) {
+                const view = this.room.views[viewKey];
+                if (view.objects) {
+                    view.objects = view.objects.map(obj => {
+                        const libData = ObjectsLibrary[obj.id];
+                        return (libData) ? { ...libData, ...obj } : obj;
+                    });
+                }
+            }
+        }
+        this.updateArrows();
     }
 
     draw(ctx, w, h) {
-        if (!this.room|| !this.room.views[this.view]) return;
+        if (!this.room || !this.room.views[this.view]) return;
         const v = this.room.views[this.view];
+        
         ctx.fillStyle = v.bg || "#000";
         ctx.fillRect(0, 0, w, h);
 
@@ -44,55 +86,32 @@ class RoomManager {
                 ctx.fillRect(o.rx * w, o.ry * h, o.rw * w, o.rh * h);
             }
         });
-
-        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-        if (this.view === "center") {
-            for (let k in this.relNav) {
-                const b = this.getBox(k, w, h);
-                ctx.fillRect(b.x, b.y, b.w, b.h);
-            }
-        } else {
-            const back = this.view === "left" ? "right" : "left";
-            const b = this.getBox(back, w, h);
-            ctx.fillRect(b.x, b.y, b.w, b.h);
-        }
+        
+        // Больше никакого кода для рисования UI поверх комнаты на канвасе!
     }
 
+    // Обработка кликов только по ПРЕДМЕТАМ в комнате (стрелки обрабатывает HTML)
     getClickTarget(mx, my, w, h) {
         const v = this.room.views[this.view];
-        if (!v) return null;
+        if (!v || !v.objects) return null;
 
-        if (v.objects) {
-            for (let o of v.objects) {
-                if (o.visible !== false &&
-                    mx > o.rx * w && mx < (o.rx + o.rw) * w && 
-                    my > o.ry * h && my < (o.ry + o.rh) * h) {
-                    return { type: 'OBJECT', data: o };
-                }
+        for (let o of v.objects) {
+            if (o.visible !== false &&
+                mx > o.rx * w && mx < (o.rx + o.rw) * w && 
+                my > o.ry * h && my < (o.ry + o.rh) * h) {
+                return { type: 'OBJECT', data: o };
             }
         }
-
-        if (this.view === "center") {
-            const exit = this.getBox("exit", w, h);
-            if (this.isIn(mx, my, exit)) return { type: 'EXIT' };
-
-            const left = this.getBox("left", w, h);
-            if (this.isIn(mx, my, left)) return { type: 'NAV_LEFT' };
-
-            const right = this.getBox("right", w, h);
-            if (this.isIn(mx, my, right)) return { type: 'NAV_RIGHT' };
-        } else {
-            const left = this.getBox("left", w, h);
-            const right = this.getBox("right", w, h);
-            if (this.isIn(mx, my, left) || this.isIn(mx, my, right)) return { type: 'NAV_BACK' };
-        }
-
         return null;
     }
 
     handleMouseClick(mx, my, w, h) {
         const target = this.getClickTarget(mx, my, w, h);
-        if (!target) return null;
+        
+        if (!target) {
+            if (UI.selectedItemForUse) return "MISSED_UI";
+            return null;
+        }
 
         if (target.type === 'OBJECT') {
             if (UI.selectedItemForUse) {
@@ -105,17 +124,8 @@ class RoomManager {
             return "OBJECT_CLICKED";
         }
 
-        if (UI.selectedItemForUse) return "MISSED_UI";
-
-        if (target.type === 'EXIT') return "EXIT";
-        
-        if (target.type === 'NAV_LEFT') { this.view = "left"; return "NAVIGATED"; }
-        if (target.type === 'NAV_RIGHT') { this.view = "right"; return "NAVIGATED"; }
-        if (target.type === 'NAV_BACK') { this.view = "center"; return "NAVIGATED"; }
-
         return null;
     }
-
 
     handleObjectClick(obj) {
         if (!UI.selectedItemForUse) return;
@@ -143,7 +153,4 @@ class RoomManager {
         UI.selectedItemForUse = null;
         UI.resetCursor();
     }
-
-    isIn = (mx, my, r) => mx > r.x && mx < r.x + r.w && my > r.y && my < r.y + r.h;
-    default = () => ({ views: { center: { bg: "#111", objects: [] }, left: { bg: "#000", objects: [] }, right: { bg: "#222", objects: [] } } });
 }
