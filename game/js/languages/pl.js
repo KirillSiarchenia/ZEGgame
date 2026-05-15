@@ -12,6 +12,9 @@ const langPL = {
         yes: "TAK",
         no: "NIE", 
         level: "POZIOM",
+        fs_pause_title: "GRA WSTRZYMANA",
+        fs_pause_desc: "PRZYWRÓĆ TRYB PEŁNOEKRANOWY",
+        fs_resume: "POWRÓT DO GRY",
     },
     messages: {
         exit_locked: "Te drzwi są zamknięte na klucz.",

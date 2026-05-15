@@ -12,6 +12,9 @@ const langRU = {
         yes: "ДА",
         no: "НЕТ",     
         level: "УРОВЕНЬ",
+        fs_pause_title: "ИГРА ОСТАНОВЛЕНА",
+        fs_pause_desc: "ВЕРНИТЕ ПОЛНОЭКРАННЫЙ РЕЖИМ",
+        fs_resume: "ВЕРНУТЬСЯ В ИГРУ",
     },
     messages: {
         exit_locked: "Эта дверь заперта на ключ.",

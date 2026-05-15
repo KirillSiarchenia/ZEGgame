@@ -1,8 +1,34 @@
 Object.assign(UI, {
     settingsParent: 'main-menu',
+    isFullscreenPaused: false,
+    wasPausedBeforeFS: false,
+
+    showFullscreenPause() {
+        if (typeof currentState !== 'undefined' && currentState === 'MENU') return;
+        this.isFullscreenPaused = true;
+        
+        if (!this.isPaused) {
+            this.wasPausedBeforeFS = false;
+            this.isPaused = true;
+        } else {
+            this.wasPausedBeforeFS = true;
+        }
+
+        const fsPauseMenu = document.getElementById('fullscreen-pause-menu');
+        if (fsPauseMenu) fsPauseMenu.classList.remove('hidden');
+    },
+
+    hideFullscreenPause() {
+        this.isFullscreenPaused = false;
+        if (!this.wasPausedBeforeFS) {
+            this.isPaused = false;
+        }
+        const fsPauseMenu = document.getElementById('fullscreen-pause-menu');
+        if (fsPauseMenu) fsPauseMenu.classList.add('hidden');
+    },
 
     togglePauseMenu() {
-        if (this.isMessageActive) return;
+        if (this.isMessageActive || this.isFullscreenPaused) return;
 
         const pauseMenu = document.getElementById('pause-menu');
         if (!pauseMenu) return;
@@ -65,6 +91,10 @@ Object.assign(UI, {
         setText('confirm-text', t.menu.confirm_exit);
         setText('btn-confirm-yes', t.menu.yes);
         setText('btn-confirm-no', t.menu.no);
+        
+        setText('header-fs-pause', t.menu.fs_pause_title);
+        setText('subheader-fs-pause', t.menu.fs_pause_desc);
+        setText('btn-fs-resume', t.menu.fs_resume);
     },
 
     initMenuEvents() {
@@ -72,10 +102,37 @@ Object.assign(UI, {
         const pauseMenu = document.getElementById('pause-menu');
         const settingsMenu = document.getElementById('settings-menu');
         
-        document.getElementById('btn-play').onclick = () => {
-            mainMenu.classList.add('hidden');
-            setGameState(GameState.MAZE);
+        // Универсальная функция запроса полного экрана и блокировки Escape
+        const attemptFullscreenAndLock = (onSuccess) => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().then(() => {
+                    // Блокируем выход из фуллскрина по одному нажатию Esc
+                    if ('keyboard' in navigator && navigator.keyboard && navigator.keyboard.lock) {
+                        navigator.keyboard.lock(['Escape']).catch(err => console.warn("Keyboard lock failed:", err));
+                    }
+                    if (onSuccess) onSuccess();
+                }).catch(err => {
+                    console.warn("Fullscreen request failed:", err);
+                    if (onSuccess) onSuccess();
+                });
+            } else {
+                if (onSuccess) onSuccess();
+            }
         };
+
+        document.getElementById('btn-play').onclick = () => {
+            attemptFullscreenAndLock(() => {
+                mainMenu.classList.add('hidden');
+                setGameState(GameState.MAZE);
+            });
+        };
+
+        const btnFsResume = document.getElementById('btn-fs-resume');
+        if (btnFsResume) {
+            btnFsResume.onclick = () => {
+                attemptFullscreenAndLock();
+            };
+        }
 
         document.getElementById('btn-main-settings').onclick = () => {
             this.settingsParent = 'main-menu';

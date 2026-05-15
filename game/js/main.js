@@ -44,7 +44,6 @@ const startPos = maze.getStartPos();
 const player = new Player(startPos.x, startPos.y);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 
-
 window.onload = () => {
     UI.updateStaticTexts();
     UI.initMenuEvents();
@@ -57,33 +56,46 @@ window.onload = () => {
 };
 
 window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
+    if (UI.isFullscreenPaused) return; // Защищаем от нажатий, если потерян полный экран
+
+    const isEscape = e.key === "Escape";
+    const isPauseKey = e.key.toLowerCase() === "p" || e.key.toLowerCase() === "з";
+
+    if (isEscape || isPauseKey) {
         const confirmModal = document.getElementById('confirm-modal');
         if (confirmModal && !confirmModal.classList.contains('hidden')) {
-            confirmModal.classList.add('hidden');
+            if (isEscape) confirmModal.classList.add('hidden');
             return;
         }
         
         if (UI.isMessageActive) {
-            UI.closeMessage(false); 
+            if (isEscape) UI.closeMessage(false); 
             return;
         }
 
         const ctxMenu = document.getElementById('item-context-menu');
-        if (ctxMenu) { ctxMenu.remove(); return; }
+        if (ctxMenu) { 
+            if (isEscape) ctxMenu.remove(); 
+            return; 
+        }
 
-        if (UI.selectedItemForUse) { UI.resetCursor(); return; }
+        if (UI.selectedItemForUse) { 
+            if (isEscape) UI.resetCursor(); 
+            return; 
+        }
 
         const settingsMenu = document.getElementById('settings-menu');
         if (settingsMenu && !settingsMenu.classList.contains('hidden')) {
-            settingsMenu.classList.add('hidden');
-            document.getElementById(UI.settingsParent).classList.remove('hidden');
+            if (isEscape) {
+                settingsMenu.classList.add('hidden');
+                document.getElementById(UI.settingsParent).classList.remove('hidden');
+            }
             return;
         }
 
         const invModal = document.getElementById('inventory-modal');
         if (invModal && !invModal.classList.contains('hidden')) {
-            UI.toggleInventory();
+            if (isEscape) UI.toggleInventory();
             return;
         }
 
@@ -93,16 +105,12 @@ window.addEventListener("keydown", (e) => {
     if (e.key) keys[e.key.toLowerCase()] = true;
 });
 
-window.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = true;
-});
-
 window.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
 });
 
 canvas.addEventListener("mouseup", (e) => {
-    if (UI.isMessageActive || UI.isPaused) {
+    if (UI.isMessageActive || UI.isPaused || UI.isFullscreenPaused) {
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -153,7 +161,6 @@ function loadMazeItems(levelIndex) {
     }
 }
 
-// туман войны | mgła
 function drawFogOfWar(ctx, player, camera) {
     ctx.save();
 
@@ -176,7 +183,6 @@ function drawFogOfWar(ctx, player, camera) {
     ctx.restore();
 }
 
-// зажата ли клавиша | czy przycisk jest wciśnięty
 const keys = {};
 
 function resizeCanvas(){
@@ -193,7 +199,6 @@ let hasTriedRunning = false;
 
 function checkRunningHint(e) {
     if ((e.key === "Shift") && !hasTriedRunning && player.isMoving) {
-        
         UI.showMessage(t.messages.running_hint);        
         hasTriedRunning = true;        
         window.removeEventListener("keydown", checkRunningHint);
@@ -202,37 +207,47 @@ function checkRunningHint(e) {
 
 window.addEventListener("keydown", checkRunningHint);
 
-// отвечает за интерфейс в разных состояниях игры | odpowiada za ui w różnych stanach gry
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+        if (currentState !== GameState.MENU) {
+            UI.showFullscreenPause();
+        }
+    } else {
+        if (UI.isFullscreenPaused) {
+            UI.hideFullscreenPause();
+        }
+        resizeCanvas();
+    }
+});
+
+resizeCanvas(); 
+
 function setGameState(newState) {
     currentState = newState;
     const consPanel = document.getElementById('consumables-panel');
-    const roomNavUi = document.getElementById('room-nav-ui'); // Находим контейнер кнопок
+    const roomNavUi = document.getElementById('room-nav-ui'); 
     
     if (newState === GameState.MAZE) {
         UI.setInventoryBtnVisibility(false);
         if (consPanel) consPanel.classList.remove('hidden-ui'); 
-        if (roomNavUi) roomNavUi.classList.add('hidden-ui'); // Скрываем стрелки
+        if (roomNavUi) roomNavUi.classList.add('hidden-ui'); 
          
         UI.updateConsumables(Inventory.items); 
 
     } else if (newState === GameState.ROOM) {
         UI.setInventoryBtnVisibility(true);
         if (consPanel) consPanel.classList.add('hidden-ui'); 
-        if (roomNavUi) roomNavUi.classList.remove('hidden-ui'); // ПОКАЗЫВАЕМ СТРЕЛКИ
+        if (roomNavUi) roomNavUi.classList.remove('hidden-ui'); 
         
         UI.renderInventory(Inventory.items);
-        if (roomManager) roomManager.updateArrows(); // Обновляем правильные стороны
+        if (roomManager) roomManager.updateArrows(); 
     } else {
         UI.setInventoryBtnVisibility(false);
         if (consPanel) consPanel.classList.add('hidden-ui');
-        if (roomNavUi) roomNavUi.classList.add('hidden-ui'); // Скрываем стрелки
+        if (roomNavUi) roomNavUi.classList.add('hidden-ui'); 
     }
 }
 
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-// Мы уже приехали? | aktualizacja poziomów
 function nextLevel() {
     currentLevelIndex++;
     
@@ -257,7 +272,6 @@ function nextLevel() {
     }
 }
 
-// находит где встать игроку при выходу из комнаты | znajduje miejsce dla gracza po wyjściu z pokoju
 function exitRoom() {
     const directions = [
         { x: 0, y: 1 }, { x: 0, y: -1 }, 
@@ -325,7 +339,7 @@ function checkMazeItemPickup(gridX, gridY) {
 
 function update(dt) {
     if (currentState !== GameState.MAZE || UI.isMessageActive || UI.isPaused) return;
-    // управление | kierowanie
+
     let dx = 0;
     let dy = 0;
 
@@ -354,7 +368,6 @@ function update(dt) {
         startTransitionToRoom();
     }
 
-    // Появление противников | pojawienie przeciwników
     enemies.forEach(enemy => enemy.update(player, maze, dt));
 
     const exit = maze.getExitPos();
@@ -399,8 +412,6 @@ function drawAll() {
         player.draw(ctx);                          
 
         ctx.restore();
-
-        // drawFogOfWar(ctx, player, camera)
     }
     
     if (currentState === GameState.ROOM) {
@@ -421,32 +432,28 @@ function gameLoop(timestamp = performance.now()) {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Вычисляем дельту времени в секундах
     let dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
-    // Защита от "телепортации": если вкладка была неактивна, dt будет огромным. 
-    // Ограничим максимальный шаг до 0.1 сек (эквивалент 10 FPS)
     if (dt > 0.1) dt = 0.1;
 
     if (!UI.isMessageActive && !UI.isPaused) {
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
-            update(dt);             // Передаем dt в логику обновления
-            player.update(dt);     // Передаем dt игроку
+            update(dt);             
+            player.update(dt);     
 
             if (!player.isMoving) {
                 checkMazeItemPickup(player.gridX, player.gridY); 
             }
 
-            camera.update(player.x, player.y); // Если у камеры есть сглаживание движения, ей тоже можно передать dt
+            camera.update(player.x, player.y); 
         }
         
-        handleTransition(dt); // Передаем dt для плавной смены экранов
+        handleTransition(dt); 
         drawAll();
     }
 
     requestAnimationFrame(gameLoop); 
 }
-
 
 requestAnimationFrame(gameLoop);
