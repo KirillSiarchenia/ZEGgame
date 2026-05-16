@@ -3,14 +3,9 @@ const ObjectsLibrary = {
         color: "#555",
         logicType: "trap",
     },
-    coin: {
-        id: "coin",
-        color: "#ffd700",
-        logicType: "pickup", 
-    },
     medkit: {
         id: "medkit",
-        color: "#ff4444",
+        spriteIndex: 3,
         isConsumable: true,
         logicType: "pickup",
         action: () => {
@@ -26,11 +21,13 @@ const ObjectsLibrary = {
     },
     bone: {
         id: 'bone',
+        spriteIndex: 4,
         color: '#e3dac9', 
         logicType: 'pickup'
     },
     crate: {
         id: 'crate',
+        spriteIndex: 2,
         logicType: "pickup", 
         action: (obj) => {
             if (obj.id === "pressure_button" && obj.state === "empty") {
@@ -45,6 +42,7 @@ const ObjectsLibrary = {
     },
     stone: {
         id: 'stone',
+        spriteIndex: 1,
         logicType: "pickup", 
         action: (obj) => {
             if (obj.id === "pressure_button" && obj.state === "with_crate") {
@@ -64,7 +62,6 @@ const ObjectsLibrary = {
     },
     rusty_key: {
         id: 'rusty_key',
-        color: '#8B4513',
+        spriteIndex: 0, 
     }
 };
-

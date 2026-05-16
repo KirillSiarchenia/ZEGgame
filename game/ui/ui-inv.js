@@ -84,7 +84,12 @@ Object.assign(UI, {
         items.forEach(item => {
             const slot = document.createElement('div');
             slot.className = 'inv-slot';
-            slot.style.backgroundColor = item.color || 'gray';
+            
+            if (item.spriteIndex !== undefined) {
+                slot.style.backgroundPosition = `-${item.spriteIndex * 100}px 0px`;
+            } else {
+                slot.style.backgroundColor = item.color || 'rgba(255,255,255,0.1)';
+            }
             
             slot.onmouseup = (e) => {
                 e.stopPropagation();
@@ -99,7 +104,6 @@ Object.assign(UI, {
     updateConsumables(items) {
         const panel = document.getElementById('consumables-panel');
         if (!panel) return;
-
         panel.innerHTML = '';
         
         const consumables = items.filter(item => item.isConsumable === true);
@@ -109,18 +113,21 @@ Object.assign(UI, {
 
         consumables.forEach(item => {
             const btn = document.createElement('button');
-            const displayName = t.itemName[item.id] || item.id;
             btn.className = 'consumable-btn';
-            btn.style.backgroundColor = item.color || 'gray';
-            btn.innerText = displayName;
+            
+            if (item.spriteIndex !== undefined) {
+                btn.style.backgroundPosition = `-${item.spriteIndex * 100}px 0px`;
+            } else {
+                btn.style.backgroundColor = item.color || 'gray';
+                btn.innerText = t.itemName[item.id] || item.id;
+            }
             
             btn.onclick = () => {
                 if (this.isMessageActive || this.selectedItemForUse) return;
-                // ВЫЗОВ ИЗ INVENTORY
                 Inventory.useItem(item);
             }
                 
             panel.appendChild(btn);
         });
-    }
+    },
 });

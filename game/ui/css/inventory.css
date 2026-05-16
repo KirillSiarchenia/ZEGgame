@@ -55,19 +55,24 @@ body:not(.item-equipped) #inventory-btn:not(.modal-open):hover {
 
 #inventory-slots {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 15px;
     overflow-y: auto; 
 }
 
 .inv-slot {
-    width: 80px;
-    height: 80px;
-    background: #333;
-    border: 2px solid #555;
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    background-image: url('../assets/inventory-items.png');
+    background-repeat: no-repeat;
+    background-size: auto 100%; 
+    image-rendering: pixelated;
+    background-color: transparent;
+    border: none;
 }
 
 #item-context-menu {

@@ -54,21 +54,15 @@
 }
 
 .consumable-btn {
-    width: 60px;
-    height: 60px;
-    top: 20px;
-    right: 20px; 
-    margin-bottom: 5px;
-    background: #333;
-    border: 2px solid #ffd700;
-    color: white;
+    width: 100px;
+    height: 100px;
     cursor: pointer;
-    font-size: 10px;
-    display: block;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    z-index: 1001;
+    background-image: url('../assets/inventory-items.png');
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    image-rendering: pixelated;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: transparent;
 }
-
-.consumable-btn:hover { background: #444; }
