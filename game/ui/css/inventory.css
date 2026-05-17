@@ -63,16 +63,18 @@ body:not(.item-equipped) #inventory-btn:not(.modal-open):hover {
 .inv-slot {
     width: 100px;
     height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
     background-image: url('../assets/inventory-items.png');
     background-repeat: no-repeat;
-    background-size: auto 100%; 
+    background-size: auto 200%; 
+    background-position-y: 0px;
     image-rendering: pixelated;
     background-color: transparent;
     border: none;
+}
+
+.inv-slot:hover {
+    background-position-y: -100px;
 }
 
 #item-context-menu {

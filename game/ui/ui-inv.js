@@ -86,7 +86,7 @@ Object.assign(UI, {
             slot.className = 'inv-slot';
             
             if (item.spriteIndex !== undefined) {
-                slot.style.backgroundPosition = `-${item.spriteIndex * 100}px 0px`;
+                slot.style.backgroundPositionX = `-${item.spriteIndex * 100}px`;
             } else {
                 slot.style.backgroundColor = item.color || 'rgba(255,255,255,0.1)';
             }

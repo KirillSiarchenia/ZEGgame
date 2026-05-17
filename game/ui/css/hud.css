@@ -59,10 +59,14 @@
     cursor: pointer;
     background-image: url('../assets/inventory-items.png');
     background-repeat: no-repeat;
-    background-size: auto 100%;
+    background-size: auto 200%;
     image-rendering: pixelated;
     background-color: transparent;
     border: none;
     outline: none;
     color: transparent;
+}
+
+.consumable-btn:hover {
+    background-position-y: -100px !important;
 }
