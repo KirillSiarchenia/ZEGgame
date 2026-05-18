@@ -6,6 +6,9 @@ const UI = {
     typingTimer: null,
     isPaused: false,        
     lastHp: -1,
+    cursorElement: null,
+    mouseX: window.innerWidth / 2,
+    mouseY: window.innerHeight / 2,
 
     // обновление UI здоровья | aktualizacja UI zdrowia
     updateHealth(currentHp, maxHp = 3) {
@@ -38,29 +41,68 @@ const UI = {
         return document.getElementById("health-bar");
     },
 
-    // установка кастомного курсора при выборе предмета | ustawienie niestandardowego kursora przy wyborze przedmiotu
-    updateCursor(color) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 32;
-        canvas.height = 32;
-        const ctx = canvas.getContext('2d');
-        
-        ctx.fillStyle = color || 'white';
-        ctx.fillRect(4, 4, 24, 24);
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(4, 4, 24, 24);
+    // обновление кастомного курсора | aktualizacja niestandardowego kursora
+    initCustomCursor() {
+        if (!this.cursorElement) {
+            this.cursorElement = document.createElement('div');
+            this.cursorElement.id = 'floating-cursor';
+            this.cursorElement.style.position = 'fixed';
+            this.cursorElement.style.pointerEvents = 'none'; 
+            this.cursorElement.style.zIndex = '9999';
+            this.cursorElement.style.display = 'none';
+            this.cursorElement.style.imageRendering = 'pixelated';
+            
+            window.addEventListener('mousemove', (e) => {
+                this.mouseX = e.clientX;
+                this.mouseY = e.clientY;
+                if (this.cursorElement.style.display === 'block') {
+                    this.cursorElement.style.left = this.mouseX + 'px';
+                    this.cursorElement.style.top = this.mouseY + 'px';
+                }
+            });
+            
+            document.body.appendChild(this.cursorElement);
+        }
+    },
 
-        const url = canvas.toDataURL();
-        document.body.style.cursor = `url(${url}) 12 12, auto`;
+    // обновление кастомного курсора | aktualizacja niestandardowego kursora
+    updateCursor(item) {
+        this.initCustomCursor();
+
+        if (item.spriteIndex !== undefined) {
+            this.cursorElement.style.width = '100px';
+            this.cursorElement.style.height = '100px';
+            this.cursorElement.style.backgroundImage = "url('ui/assets/inventory-items.png')";
+            this.cursorElement.style.backgroundRepeat = "no-repeat";
+            this.cursorElement.style.backgroundSize = "auto 200%"; 
+            this.cursorElement.style.backgroundPosition = `-${item.spriteIndex * 100}px 0px`;
+            
+            this.cursorElement.style.transform = 'translate(-50%, -50%)';
+            this.cursorElement.style.backgroundColor = 'transparent';
+            this.cursorElement.style.border = 'none';
+        } else {
+            this.cursorElement.style.width = '30px';
+            this.cursorElement.style.height = '30px';
+            this.cursorElement.style.backgroundImage = 'none';
+            this.cursorElement.style.backgroundColor = item.color || 'white';
+            this.cursorElement.style.border = '2px solid white';
+            this.cursorElement.style.transform = 'translate(-50%, -50%)';
+        }
+
+        this.cursorElement.style.display = 'block';
+        this.cursorElement.style.left = this.mouseX + 'px';
+        this.cursorElement.style.top = this.mouseY + 'px';
+
+        document.body.style.cursor = 'none'; 
         document.body.classList.add('cursor-locked');
     },
 
-    // сброс курсора в исходное состояние | resetowanie kursora do stanu początkowego
     resetCursor() {
+        if (this.cursorElement) {
+            this.cursorElement.style.display = 'none';
+        }
         document.body.style.cursor = 'default';
-        document.body.classList.remove('cursor-locked');
-        document.body.classList.remove('item-equipped');
+        document.body.classList.remove('cursor-locked', 'item-equipped');
         this.selectedItemForUse = null;
     },
 };

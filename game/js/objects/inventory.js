@@ -47,7 +47,6 @@ const Inventory = {
             return;
         }
         
-        // если предмет не расходуемый мгновенно, экипируем его на курсор | jeśli przedmiot nie jest zużywany natychmiast, ekwipujemy go na kursorze
         const modal = document.getElementById('inventory-modal');
         const btn = document.getElementById('inventory-btn');
         
@@ -55,7 +54,9 @@ const Inventory = {
         if (btn) btn.classList.remove('modal-open'); 
 
         UI.selectedItemForUse = item;        
-        UI.updateCursor(item.color);
+        
+        UI.updateCursor(item); 
+        
         document.body.classList.add('item-equipped');
-    }
+    },
 };
