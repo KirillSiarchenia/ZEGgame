@@ -11,10 +11,11 @@ const UI = {
     mouseY: window.innerHeight / 2,
 
     // обновление UI здоровья | aktualizacja UI zdrowia
-    updateHealth(currentHp, maxHp = 3) {
+    updateHealth(currentHp, maxHp = PLAYER_CONFIG.MAX_HP) {
         const container = this.getContainer();
         if (!container || currentHp === this.lastHp) return;
         
+        // создание элементов сердец, если контейнер пуст
         if (container.children.length === 0) {
             container.innerHTML = '<div class="heart"></div>'.repeat(maxHp);
         }

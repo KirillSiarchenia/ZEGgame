@@ -9,12 +9,13 @@ const ObjectsLibrary = {
         isConsumable: true,
         logicType: "pickup",
         action: () => {
-            player.hp = Math.min(player.hp + 1, player.maxHp);
+            player.hp = Math.min(player.hp + 1, PLAYER_CONFIG.MAX_HP);
+            
             UI.updateHealth(player.hp);
             Inventory.addItem({ ...ObjectsLibrary['bone'] });
             
             return {
-                message: t.ui.hp_up || "Здоровье восстановлено",
+                message: t.ui.hp_up,
                 deleteItem: true
             };
         }

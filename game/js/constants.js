@@ -12,11 +12,15 @@ const PLAYER_CONFIG = {
     MAX_HP: 3,
     START_X: 1,
     START_Y: 1,
-    SPEED: 800,
+    SPEED: 450,
+    SPRITE_PATH: 'ui/assets/mc.png', 
+    FRAME_WIDTH: 90,                  
+    FRAME_HEIGHT: 90,                 
+    ANIM_SPEED: 0.05
 };
 
 const ENEMY_CONFIG = {
-    SPEED: 600,
+    SPEED: 400,
     HEAR_RANGE: 2.5,
     ATTACK_COOLDOWN: 1500, 
     KNOCKBACK_TIME: 1000, 
