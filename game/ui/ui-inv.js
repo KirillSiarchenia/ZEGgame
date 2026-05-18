@@ -1,4 +1,5 @@
 Object.assign(UI, {
+    // управление видимостью кнопки инвентаря | zarządzanie widocznością przycisku ekwipunku
     setInventoryBtnVisibility(visible) {
         const btn = document.getElementById('inventory-btn');
         if (btn) btn.style.display = visible ? 'block' : 'none';
@@ -29,7 +30,7 @@ Object.assign(UI, {
         }
     },
 
-    // контекстное меню | 
+    // контекстное меню действий с предметом | menu kontekstowe akcji przedmiotu
     showItemActions(item, mouseEvent) {
         const oldMenu = document.getElementById('item-context-menu');
         if (oldMenu) oldMenu.remove();
@@ -76,6 +77,7 @@ Object.assign(UI, {
         setTimeout(() => document.addEventListener('mousedown', closeMenu), 50);
     },
 
+    // отрисовка сетки предметов в инвентаре | rysowanie siatki przedmiotów w ekwipunku
     renderInventory(items) {
         const container = document.getElementById('inventory-slots');
         if (!container) return;
@@ -101,6 +103,7 @@ Object.assign(UI, {
         });
     },
 
+    // обновление панели расходуемых предметов (быстрый доступ) | aktualizacja panelu przedmiotów zużywalnych (szybki dostęp)
     updateConsumables(items) {
         const panel = document.getElementById('consumables-panel');
         if (!panel) return;

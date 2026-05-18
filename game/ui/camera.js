@@ -1,4 +1,5 @@
 class Camera {
+    // инициализация камеры и ее мертвой зоны | inicjalizacja kamery i jej martwej strefy
     constructor(width, height, mapWidth, mapHeight) {
         this.x = 0;
         this.y = 0;
@@ -13,11 +14,13 @@ class Camera {
         };
     }
 
+    // жесткое центрирование камеры на объекте (игроке) | sztywne centrowanie kamery na obiekcie (graczu)
     focusOn(playerX, playerY) {
         this.x = playerX - this.width / 2;
         this.y = playerY - this.height / 2;
     }
 
+    // отрисовка отладочной рамки мертвой зоны | rysowanie ramki debugowania martwej strefy
     drawDebug(ctx) {
         ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
         ctx.lineWidth = 2;
@@ -28,6 +31,7 @@ class Camera {
         ctx.strokeRect(x, y, this.deadZone.width, this.deadZone.height);
     }
 
+    // плавное обновление позиции камеры, если игрок выходит за мертвую зону | płynna aktualizacja pozycji kamery, jeśli gracz wychodzi poza martwą strefę
     update(playerX, playerY) {
         const edgeLeft = this.x + (this.width / 2) - (this.deadZone.width / 2);
         const edgeRight = this.x + (this.width / 2) + (this.deadZone.width / 2);
@@ -49,6 +53,7 @@ class Camera {
         }
     }
 
+    // применение сдвига камеры к контексту холста | zastosowanie przesunięcia kamery do kontekstu płótna
     apply(ctx) {
         ctx.translate(-Math.floor(this.x), -Math.floor(this.y));
     }

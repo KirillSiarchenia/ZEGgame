@@ -19,7 +19,7 @@ class Player {
         this.knockbackTimer = 0;
     }
 
-    // проверка движения(для "слуха" врагов) | sprawdzanie ruchu(dla przeciwników)
+    // проверка находится ли игрок в движении | sprawdzenie, czy gracz jest w ruchu
     get isMoving() {
         return this.x !== this.gridX * tileSize || this.y !== this.gridY * tileSize;
     }
@@ -53,11 +53,13 @@ class Player {
         }
     }
 
+    // физическое обновление позиции | fizyczna aktualizacja pozycji 
     update(dt){
         if (this.knockbackTimer > 0) {
             this.knockbackTimer -= dt * 1000;
         }
 
+        // плавное движение к целевому тайлу | płynny ruch do docelowej płytki
         let targetX = this.gridX * tileSize;
         let targetY = this.gridY * tileSize;
         let step = PLAYER_CONFIG.SPEED * dt;
@@ -71,6 +73,7 @@ class Player {
     }
 
     // Он умный, он знает команды, несмотря на небольшой череп, у него в мозгу помещается много информации
+    // реакция персонажа (текст) на первый полученный урон | reakcja postaci (tekst) na pierwsze otrzymane obrażenia
     checkFirstDamageReaction(dt, enemies) {
         if (this.firstDamageReactionDone || !enemies) return;
 
@@ -96,6 +99,7 @@ class Player {
         ctx.fillRect(this.x + 5, this.y + 5, tileSize - 10, tileSize - 10);
     }
 
+    // логика попытки шага в сторону на сетке | logika próby kroku w bok po siatce
     move(dx, dy, maze, enemies) {
         if (this.knockbackTimer > 0) return;
 

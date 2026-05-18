@@ -3,6 +3,7 @@ Object.assign(UI, {
     isFullscreenPaused: false,
     wasPausedBeforeFS: false,
 
+    // вызов окна паузы при потере полноэкранного режима | wywołanie okna pauzy po utracie trybu pełnoekranowego
     showFullscreenPause() {
         if (typeof currentState !== 'undefined' && currentState === 'MENU') return;
         this.isFullscreenPaused = true;
@@ -26,7 +27,8 @@ Object.assign(UI, {
         const fsPauseMenu = document.getElementById('fullscreen-pause-menu');
         if (fsPauseMenu) fsPauseMenu.classList.add('hidden');
     },
-
+    
+    // открытие/закрытие главного меню паузы | otwieranie/zamykanie głównego menu pauzy
     togglePauseMenu() {
         if (this.isMessageActive || this.isFullscreenPaused) return;
 
@@ -47,6 +49,7 @@ Object.assign(UI, {
         }
     },
 
+    // вызов модального окна подтверждения | wywołanie modalnego okna potwierdzenia
     showConfirm(message, onYes) {
         const modal = document.getElementById('confirm-modal');
         const textEl = document.getElementById('confirm-text');
@@ -66,6 +69,7 @@ Object.assign(UI, {
         };
     },
 
+    // обновление всех текстов интерфейса при смене языка | aktualizacja wszystkich tekstów interfejsu przy zmianie języka
     updateStaticTexts() {
         const setText = (id, text) => {
             const el = document.getElementById(id);

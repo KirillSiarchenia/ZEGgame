@@ -7,29 +7,27 @@ const UI = {
     isPaused: false,        
     lastHp: -1,
 
+    // обновление UI здоровья | aktualizacja UI zdrowia
     updateHealth(currentHp, maxHp = 3) {
         const container = this.getContainer();
         if (!container || currentHp === this.lastHp) return;
         
         if (container.children.length === 0) {
-            for (let i = 0; i < maxHp; i++) {
-                const heart = document.createElement("div");
-                heart.classList.add("heart");
-                container.appendChild(heart);
-            }
+            container.innerHTML = '<div class="heart"></div>'.repeat(maxHp);
         }
         
         const hearts = container.children;
         
         for (let i = 0; i < maxHp; i++) {
-            if (i >= currentHp) {
-                hearts[i].classList.remove("healed");
-                hearts[i].classList.add("lost");
-            } else {
-                if (hearts[i].classList.contains("lost")) {
-                    hearts[i].classList.remove("lost");
-                    hearts[i].classList.add("healed");
-                }
+            const heart = hearts[i];
+            const isLost = i >= currentHp;
+            
+            if (isLost && !heart.classList.contains("lost")) {
+                heart.classList.remove("healed");
+                heart.classList.add("lost");
+            } else if (!isLost && heart.classList.contains("lost")) {
+                heart.classList.remove("lost");
+                heart.classList.add("healed");
             }
         }
         
@@ -40,6 +38,7 @@ const UI = {
         return document.getElementById("health-bar");
     },
 
+    // установка кастомного курсора при выборе предмета | ustawienie niestandardowego kursora przy wyborze przedmiotu
     updateCursor(color) {
         const canvas = document.createElement('canvas');
         canvas.width = 32;
@@ -57,6 +56,7 @@ const UI = {
         document.body.classList.add('cursor-locked');
     },
 
+    // сброс курсора в исходное состояние | resetowanie kursora do stanu początkowego
     resetCursor() {
         document.body.style.cursor = 'default';
         document.body.classList.remove('cursor-locked');

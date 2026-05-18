@@ -1,6 +1,7 @@
 const Inventory = {
     items:[],
 
+    // добавление предмета с генерацией уникального ID | dodanie przedmiotu z generowaniem unikalnego ID
     addItem(item) {
         const instance = { ...item, instanceId: Date.now() + Math.random() };
         this.items.push(instance);
@@ -11,20 +12,24 @@ const Inventory = {
         UI.renderInventory(Inventory.items);
     },
 
+    // проверка наличия предмета в инвентаре | sprawdzanie obecności przedmiotu w ekwipunku
     has(itemId) {
         return this.items.some(item => item.id === itemId);
     },
 
+    // удаление конкретного экземпляра предмета | usunięcie konkretnego egzemplarza przedmiotu
     removeItem(instanceId) {
         this.items = this.items.filter(i => i.instanceId !== instanceId);
     },
 
+    // перерисовка интерфейса инвентаря | przerysowanie interfejsu ekwipunku
     updateUI() {
         if (typeof UI !== 'undefined' && UI.renderInventory) {
             UI.renderInventory(this.items);
         }
     },
 
+    // обработка использования предмета (мгновенного или экипировки) | obsługa użycia przedmiotu (natychmiastowego lub wyposażenia)
     useItem(item) {
         if (item.isConsumable && typeof item.action === "function") {
             const response = item.action();
@@ -42,6 +47,7 @@ const Inventory = {
             return;
         }
         
+        // если предмет не расходуемый мгновенно, экипируем его на курсор | jeśli przedmiot nie jest zużywany natychmiast, ekwipujemy go na kursorze
         const modal = document.getElementById('inventory-modal');
         const btn = document.getElementById('inventory-btn');
         

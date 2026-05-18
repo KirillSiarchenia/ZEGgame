@@ -1,6 +1,7 @@
 Object.assign(UI, {
     _fullText: "",
 
+    // закрытие текстового окна сообщений | zamykanie tekstowego okna wiadomości
     closeMessage(force = true) {
         const box = document.getElementById('msg-box');
         const content = document.getElementById('msg-content');
@@ -20,6 +21,7 @@ Object.assign(UI, {
         window.removeEventListener('mouseup', this._msgHandler, true);
     },
     
+    // плавный вывод текста в окно (эффект печатной машинки) | płynne wyświetlanie tekstu w oknie (efekt maszyny do pisania)
     showMessage(text) {
         this.closeMessage(true); 
         

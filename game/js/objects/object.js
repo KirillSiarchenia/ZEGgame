@@ -22,7 +22,7 @@ const ObjectLogic = {
         }
     },
     
-    // логика подбора предметов |
+    // // логика подбора предмета в комнате | logika podnoszenia przedmiotu w pokoju
     pickup: (obj) => {
         if (obj.state === 'collected') return;
 
@@ -43,6 +43,7 @@ const ObjectLogic = {
         Inventory.addItem(obj);
     },
 
+    // логика взаимодействия с кнопкой-переключателем | logika interakcji z przyciskiem-przełącznikiem
     button_logic: (target) => {
         if (target.state === 'broken') {
             if (target.hasKey) {

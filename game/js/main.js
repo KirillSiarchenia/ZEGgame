@@ -6,6 +6,7 @@ const allLanguages = {
 let currentLang = localStorage.getItem('game_lang') || 'ru';
 let t = allLanguages[currentLang];
 
+// управление локализацией | zarządzanie lokalizacją
 function setLanguage(langCode) {
     if (allLanguages[langCode]) {
         currentLang = langCode;
@@ -55,8 +56,9 @@ window.onload = () => {
     UI.setInventoryBtnVisibility(false);
 };
 
+// глобальные обработчики ввода клавиатуры | globalne procedury obsługi wprowadzania z klawiatury
 window.addEventListener("keydown", (e) => {
-    if (UI.isFullscreenPaused) return; // Защищаем от нажатий, если потерян полный экран
+    if (UI.isFullscreenPaused) return; 
 
     const isEscape = e.key === "Escape";
     const isPauseKey = e.key.toLowerCase() === "p" || e.key.toLowerCase() === "з";
@@ -109,6 +111,7 @@ window.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
 });
 
+// глобальный обработчик кликов мыши на холсте (для комнат) | globalna procedura obsługi kliknięć myszą na płótnie (dla pokoi)
 canvas.addEventListener("mouseup", (e) => {
     if (UI.isMessageActive || UI.isPaused || UI.isFullscreenPaused) {
         e.preventDefault();
@@ -138,6 +141,7 @@ canvas.addEventListener("mouseup", (e) => {
     }
 }, true);
 
+// загрузка сущностей уровня | ładowanie encji poziomu
 function loadEnemies(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
     enemies = []; 
@@ -161,6 +165,7 @@ function loadMazeItems(levelIndex) {
     }
 }
 
+// отрисовка эффекта тумана войны вокруг игрока | rysowanie efektu mgły wojny wokół gracza
 function drawFogOfWar(ctx, player, camera) {
     ctx.save();
 
@@ -222,6 +227,7 @@ document.addEventListener('fullscreenchange', () => {
 
 resizeCanvas(); 
 
+// изменение текущего состояния игры (меню/лабиринт/комната) | zmiana aktualnego stanu gry (menu/labirynt/pokój)
 function setGameState(newState) {
     currentState = newState;
     const consPanel = document.getElementById('consumables-panel');
@@ -248,6 +254,7 @@ function setGameState(newState) {
     }
 }
 
+// переход на следующий уровень | przejście do następnego poziomu
 function nextLevel() {
     currentLevelIndex++;
     
@@ -272,17 +279,15 @@ function nextLevel() {
     }
 }
 
+// выход из комнаты в лабиринт | wyjście z pokoju do labiryntu
 function exitRoom() {
-    const directions = [
-        { x: 0, y: 1 }, { x: 0, y: -1 }, 
-        { x: 1, y: 0 }, { x: -1, y: 0 }
-    ];
+    const directions = [{ x: 0, y: 1 }, { x: 0, y: -1 }, { x: 1, y: 0 }, { x: -1, y: 0 }];
 
     for (let d of directions) {
         let nx = player.gridX + d.x;
         let ny = player.gridY + d.y;
         
-        if (maze.grid[ny] && maze.grid[ny][nx] === 0) {
+        if (maze.isFreeCell(nx, ny)) {
             player.gridX = nx;
             player.gridY = ny;
             player.x = nx * tileSize;
@@ -295,6 +300,7 @@ function exitRoom() {
     transitionAlpha = 1; 
 }
 
+// эффекты затемнения при входе в комнату | efekty zaciemnienia przy wejściu do pokoju
 function startTransitionToRoom() {
     currentState = GameState.TRANSITION;
     transitionAlpha = 0;
@@ -317,53 +323,49 @@ function handleTransition(dt) {
     }
 }
 
+// проверка подбора предметов | sprawdzanie podnoszenia przedmiotów
 function checkMazeItemPickup(gridX, gridY) {
-    currentMazeItems.forEach(item => {
+    for (let item of currentMazeItems) {
         if (!item.collected && gridX === item.x && gridY === item.y) {
-            
             const libData = ObjectsLibrary[item.id]; 
-            
             if (libData) {
                 item.collected = true;
                 Inventory.addItem({ ...libData });
                 
-                const pickUpMessage = (t.itemPickUp && t.itemPickUp[item.id]) 
-                    ? t.itemPickUp[item.id] 
-                    : item.id + " подобран"; 
-
+                const pickUpMessage = t.itemPickUp?.[item.id] || `${item.id} подобран`; 
                 UI.showMessage(pickUpMessage);
             }
         }
-    });
+    }
 }
 
+// обновление состояния игры | aktualizacja stanu gry
 function update(dt) {
     if (currentState !== GameState.MAZE || UI.isMessageActive || UI.isPaused) return;
 
     let dx = 0;
     let dy = 0;
 
+    // обработка ввода движения | obsługa wejścia ruchu
     if (keys["w"] || keys["arrowup"] || keys["ц"]) dy = -1;
     else if (keys["s"] || keys["arrowdown"] || keys["ы"]) dy = 1;
     else if (keys["a"] || keys["arrowleft"] || keys["ф"]) dx = -1;
     else if (keys["d"] || keys["arrowright"] || keys["в"]) dx = 1;
 
-
+    // попытка движения игрока | próba ruchu gracza
     if ((dx !== 0 || dy !== 0) && !player.isMoving) {
         const targetX = player.gridX + dx;
         const targetY = player.gridY + dy;
         
-        if (maze.grid[targetY] !== undefined && maze.grid[targetY][targetX] !== undefined) {
-            const canExit = maze.checkExitEntry(targetX, targetY);
-            const canEnterRoom = maze.checkRoomEntry(targetX, targetY);
-
-            if (canExit && canEnterRoom) {
+        if (maze.grid[targetY]?.[targetX] !== undefined) {
+            if (maze.checkExitEntry(targetX, targetY) && maze.checkRoomEntry(targetX, targetY)) {
                 player.move(dx, dy, maze, enemies);
             }
         }
     }
 
-    const cellValue = maze.grid[player.gridY][player.gridX];
+    // переход в комнату | przejście do pokoju
+    const cellValue = maze.grid[player.gridY]?.[player.gridX];
     if (cellValue >= 11 && !player.isMoving) {
         startTransitionToRoom();
     }
@@ -371,12 +373,10 @@ function update(dt) {
     enemies.forEach(enemy => enemy.update(player, maze, dt));
 
     const exit = maze.getExitPos();
-    if (player.gridX === exit.x && player.gridY === exit.y) {
-        if (player.x === player.gridX * tileSize && player.y === player.gridY * tileSize) {
-            const keyItem = Inventory.items.find(it => it.id === 'rusty_key');
-            Inventory.removeItem(keyItem.instanceId);
-            nextLevel();
-        }
+    if (exit && player.gridX === exit.x && player.gridY === exit.y && !player.isMoving) {
+        const keyItem = Inventory.items.find(it => it.id === 'rusty_key');
+        if (keyItem) Inventory.removeItem(keyItem.instanceId);
+        nextLevel();
     }
 
     if (player.hp !== UI.lastHp) {
@@ -385,6 +385,7 @@ function update(dt) {
     }
 }
 
+// главный метод отрисовки всей сцены | główna metoda rysowania całej sceny
 function drawAll() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -393,8 +394,8 @@ function drawAll() {
         ctx.save();
         camera.apply(ctx); 
 
+        // отрисовка мира (лабиринт, предметы, враги, игрок) | rysowanie świata (labirynt, przedmioty, przeciwnicy, gracz)
         maze.draw(ctx);   
-
         currentMazeItems.forEach(item => {
             if (!item.collected) {
                 ctx.fillStyle = item.color || "gold";
@@ -414,10 +415,12 @@ function drawAll() {
         ctx.restore();
     }
     
+    // отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu
     if (currentState === GameState.ROOM) {
         roomManager.draw(ctx, canvas.width, canvas.height); 
     }
 
+    // применение прозрачного слоя для эффекта перехода | nałożenie przezroczystej warstwy dla efektu przejścia
     if (transitionAlpha > 0) {
         ctx.fillStyle = `rgba(0, 0, 0, ${transitionAlpha})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -426,16 +429,18 @@ function drawAll() {
 
 let lastTime = performance.now();
 
+// основной игровой цикл браузера | główna pętla gry przeglądarki
 function gameLoop(timestamp = performance.now()) {
     if (currentState === GameState.MENU) {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
+    // расчет дельты времени между кадрами | obliczanie różnicy czasu między klatkami
     let dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
-    if (dt > 0.1) dt = 0.1;
+    if (dt > 0.1) dt = 0.1; // защита от огромных лагов | ochrona przed ogromnymi lagami
 
     if (!UI.isMessageActive && !UI.isPaused) {
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
