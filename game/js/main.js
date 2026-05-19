@@ -48,7 +48,8 @@ const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maz
 window.onload = () => {
     UI.updateStaticTexts();
     UI.initMenuEvents();
-
+    
+    resetRoomsData();
     const invBtn = document.getElementById('inventory-btn');
     if (invBtn) {
         invBtn.addEventListener('click', () => UI.toggleInventory());
@@ -147,6 +148,7 @@ function restartGame() {
     player.hp = PLAYER_CONFIG.MAX_HP;
     
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
+    resetRoomsData();
     loadEnemies(currentLevelIndex);
     loadMazeItems(currentLevelIndex);
 
@@ -168,6 +170,10 @@ function restartGame() {
     
     setGameState(GameState.MAZE);
     camera.focusOn(player.x, player.y);
+}
+
+function resetRoomsData() {
+    roomsData = JSON.parse(JSON.stringify(INITIAL_ROOMS_DATA));
 }
 
 // загрузка сущностей уровня | ładowanie encji poziomu

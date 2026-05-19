@@ -1,4 +1,4 @@
-const roomsData = {
+const INITIAL_ROOMS_DATA = {
     "11": {
         isLocked: false,
         views: {
@@ -38,3 +38,5 @@ const roomsData = {
         }
     },
 };
+
+let roomsData = {};
