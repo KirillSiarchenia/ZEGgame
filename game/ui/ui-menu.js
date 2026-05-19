@@ -97,6 +97,7 @@ Object.assign(UI, {
         setText('pause-level-indicator', `${t.menu.level}: ${currentLevelIndex + 1}`);
         setText('header-death', t.menu.death_title);
         setText('btn-restart', t.menu.restart);
+        setText('btn-pause-restart', t.menu.restart);
         setText('btn-death-to-main', t.menu.to_main);
 
         const invHeader = document.querySelector('.inventory-header h2');
@@ -179,6 +180,13 @@ Object.assign(UI, {
         document.getElementById('btn-restart').onclick = () => {
             document.getElementById('death-menu').classList.add('hidden');
             restartGame();
+        };
+
+        document.getElementById('btn-pause-restart').onclick = () => {
+            this.showConfirm(t.menu.restart + "?", () => {
+                this.togglePauseMenu();
+                restartGame(); 
+            });
         };
 
         document.getElementById('btn-death-to-main').onclick = () => {

@@ -146,11 +146,15 @@ function restartGame() {
     Inventory.items = [];
     player.hp = PLAYER_CONFIG.MAX_HP;
     
-    // Пересоздаем мир
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
     loadEnemies(currentLevelIndex);
     loadMazeItems(currentLevelIndex);
-    
+
+    player.hp = PLAYER_CONFIG.MAX_HP;
+    player.hasReceivedFirstDamage = false; 
+    player.waitingForSafeMoment = false;     
+    player.safeTimeElapsed = 0;               
+    player.firstDamageReactionDone = false;     
     const startPos = maze.getStartPos();
     player.gridX = startPos.x;
     player.gridY = startPos.y;

@@ -1,9 +1,12 @@
 class Maze {
     constructor(map, tileSize) {
         this.grid = map;
-        this.tileSize = tileSize;
         this.rows = map.length;
         this.cols = map[0].length;
+        
+        this.wallImg = new Image();
+        this.wallImg.src = 'ui/assets/wall.png';
+        this.floorColor = "#675147";
     }
 
     // находит стартовую позицию | znajduje początkowy tile
@@ -46,16 +49,24 @@ class Maze {
     draw(ctx) {
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
-                ctx.fillStyle = this.grid[y][x] === 1 ? "black" : "white";
-                ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                const cell = this.grid[y][x];
+                const posX = x * tileSize;
+                const posY = y * tileSize;
+
+                if (cell === 1) {
+                    if (this.wallImg.complete) {
+                        ctx.drawImage(this.wallImg, posX, posY, tileSize, tileSize);
+                    } else {
+                        ctx.fillStyle = "black";
+                        ctx.fillRect(posX, posY, tileSize, tileSize);
+                    }
+                } else {
+                    ctx.fillStyle = this.floorColor;
+                    ctx.fillRect(posX, posY, tileSize, tileSize);
+                }
             }
         }
-        const exit = this.getExitPos();
-        if (exit) {
-            ctx.fillStyle = "rgba(46, 204, 113, 0.5)";
-            ctx.fillRect(exit.x * this.tileSize, exit.y * this.tileSize, this.tileSize, this.tileSize);
-        }
-    }  
+    }
 
     // проверка стен | sprawdzanie ścian
     isWall(x, y) {
