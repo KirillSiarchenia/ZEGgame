@@ -141,6 +141,31 @@ canvas.addEventListener("mouseup", (e) => {
     }
 }, true);
 
+function restartGame() {
+    currentLevelIndex = 0;
+    Inventory.items = [];
+    player.hp = PLAYER_CONFIG.MAX_HP;
+    
+    // Пересоздаем мир
+    maze = new Maze(allLevels[currentLevelIndex], tileSize);
+    loadEnemies(currentLevelIndex);
+    loadMazeItems(currentLevelIndex);
+    
+    const startPos = maze.getStartPos();
+    player.gridX = startPos.x;
+    player.gridY = startPos.y;
+    player.x = startPos.x * tileSize;
+    player.y = startPos.y * tileSize;
+    player.facing = 'down';
+
+    UI.updateHealth(player.hp);
+    UI.updateConsumables([]);
+    UI.lastHp = player.hp;
+    
+    setGameState(GameState.MAZE);
+    camera.focusOn(player.x, player.y);
+}
+
 // загрузка сущностей уровня | ładowanie encji poziomu
 function loadEnemies(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
@@ -342,6 +367,13 @@ function checkMazeItemPickup(gridX, gridY) {
 // обновление состояния игры | aktualizacja stanu gry
 function update(dt) {
     if (currentState !== GameState.MAZE || UI.isMessageActive || UI.isPaused) return;
+    if (player.hp <= 0 && currentState !== GameState.DEAD) {
+        setGameState(GameState.DEAD); 
+                setTimeout(() => {
+            UI.showDeathMenu(); 
+        }, 500); 
+        return;
+    }
 
     let dx = 0;
     let dy = 0;
@@ -390,7 +422,7 @@ function drawAll() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {
+    if (currentState === GameState.MAZE || currentState === GameState.TRANSITION || currentState === GameState.DEAD) {
         ctx.save();
         camera.apply(ctx); 
 

@@ -5,6 +5,7 @@ const langPL = {
         resume: "WZNÓW",
         settings: "USTAWIENIA",
         language: "JĘZYK: POLSKI",
+        death_title: "NIE ŻYJESZ",
         restart: "OD NOWA",
         back: "WRÓĆ",
         to_main: "DO MENU",

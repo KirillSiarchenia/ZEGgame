@@ -53,6 +53,7 @@ class Player {
 
     // Обновление логики и анимации | Aktualizacja logiki i animacji
     update(dt) {
+        if (this.hp <= 0) return;
         if (this.knockbackTimer > 0) this.knockbackTimer -= dt * 1000;
 
         const targetX = this.gridX * tileSize;
@@ -66,16 +67,13 @@ class Player {
         if (this.y < targetY) this.y = Math.min(this.y + step, targetY);
         else if (this.y > targetY) this.y = Math.max(this.y - step, targetY);
 
-        // --- Логика анимации (Цикл по всем 3 кадрам) | Logika animacji (Cykl 3 klatek) ---
         if (this.isMoving) {
             this.frameTimer += dt;
             if (this.frameTimer >= PLAYER_CONFIG.ANIM_SPEED) {
                 this.frameTimer = 0;
-                // Циклический перебор: 0 -> 1 -> 2 -> 0 ...
                 this.currentFrame = (this.currentFrame + 1) % 3; 
             }
         } else {
-            // Когда стоим, всегда кадр 0 | Kiedy stoimy, zawsze klatka 0
             this.currentFrame = 0;
             this.frameTimer = 0;
         }
@@ -112,9 +110,6 @@ class Player {
                 sourceX, sourceY, PLAYER_CONFIG.FRAME_WIDTH, PLAYER_CONFIG.FRAME_HEIGHT, 
                 this.x, this.y, tileSize, tileSize
             );
-        } else {
-            ctx.fillStyle = "blue";        
-            ctx.fillRect(this.x + 5, this.y + 5, tileSize - 10, tileSize - 10);
         }
     }
 

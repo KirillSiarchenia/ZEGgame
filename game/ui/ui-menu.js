@@ -3,6 +3,13 @@ Object.assign(UI, {
     isFullscreenPaused: false,
     wasPausedBeforeFS: false,
 
+    
+    showDeathMenu() {
+        setGameState(GameState.DEAD);
+        const deathMenu = document.getElementById('death-menu');
+        if (deathMenu) deathMenu.classList.remove('hidden');
+    },
+
     // вызов окна паузы при потере полноэкранного режима | wywołanie okna pauzy po utracie trybu pełnoekranowego
     showFullscreenPause() {
         if (typeof currentState !== 'undefined' && currentState === 'MENU') return;
@@ -88,6 +95,9 @@ Object.assign(UI, {
         setText('btn-pause-settings', t.menu.settings);
         setText('btn-settings-back', t.menu.back);
         setText('pause-level-indicator', `${t.menu.level}: ${currentLevelIndex + 1}`);
+        setText('header-death', t.menu.death_title);
+        setText('btn-restart', t.menu.restart);
+        setText('btn-death-to-main', t.menu.to_main);
 
         const invHeader = document.querySelector('.inventory-header h2');
         if (invHeader) invHeader.innerText = t.ui.inventory;
@@ -165,6 +175,14 @@ Object.assign(UI, {
             this.showConfirm(t.menu.confirm_exit, () => {
                 location.reload();
             });
+        };
+        document.getElementById('btn-restart').onclick = () => {
+            document.getElementById('death-menu').classList.add('hidden');
+            restartGame();
+        };
+
+        document.getElementById('btn-death-to-main').onclick = () => {
+            location.reload();
         };
     },
 });

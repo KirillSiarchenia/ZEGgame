@@ -187,3 +187,22 @@
     letter-spacing: 2px;
     text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
 }
+
+#death-menu {
+    background: rgba(14, 0, 0, 0.9);
+    z-index: 15000;
+}
+
+#header-death {
+    color: #ff0000;
+    font-size: 6rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 30px #000;
+}
+
+#death-skull {
+    width: 400px;
+    height: 400px;
+    margin-bottom: 40px;
+    image-rendering: pixelated;
+}

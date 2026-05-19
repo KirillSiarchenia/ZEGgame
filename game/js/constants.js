@@ -5,7 +5,8 @@ const GameState = {
     MENU: 'MENU', 
     MAZE: 'MAZE', 
     ROOM: 'ROOM', 
-    TRANSITION: 'TRANSITION' 
+    TRANSITION: 'TRANSITION',
+    DEAD: 'DEAD',
 };
 
 const PLAYER_CONFIG = {
@@ -16,7 +17,7 @@ const PLAYER_CONFIG = {
     SPRITE_PATH: 'ui/assets/mc.png', 
     FRAME_WIDTH: 90,                  
     FRAME_HEIGHT: 90,                 
-    ANIM_SPEED: 0.05
+    ANIM_SPEED: 0.07
 };
 
 const ENEMY_CONFIG = {

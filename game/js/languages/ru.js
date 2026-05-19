@@ -6,6 +6,7 @@ const langRU = {
         settings: "НАСТРОЙКИ",
         language: "ЯЗЫК: РУССКИЙ",
         restart: "ЗАНОВО",
+        death_title: "ТЫ УМЕР",
         back: "НАЗАД",
         to_main: "В МЕНЮ",
         confirm_exit: "ВЕРНУТЬСЯ В МЕНЮ?",   
