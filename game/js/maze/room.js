@@ -2,7 +2,7 @@ class RoomManager {
     constructor() {
         this.room = null;
         this.view = "center";
-        this.initDOM(); // Инициализация HTML кнопок
+        this.initDOM();
     }
 
     initDOM() {
@@ -12,7 +12,6 @@ class RoomManager {
 
         if (!this.navLeft) return;
 
-        // Поворот влево
         this.navLeft.onclick = () => {
             if (UI.selectedItemForUse || UI.isMessageActive || UI.isPaused) return;
             if (this.view === "center") this.view = "left";
@@ -20,7 +19,6 @@ class RoomManager {
             this.updateArrows();
         };
 
-        // Поворот вправо
         this.navRight.onclick = () => {
             if (UI.selectedItemForUse || UI.isMessageActive || UI.isPaused) return;
             if (this.view === "center") this.view = "right";
@@ -28,27 +26,25 @@ class RoomManager {
             this.updateArrows();
         };
 
-        // Выход из комнаты
         this.navDown.onclick = () => {
             if (UI.selectedItemForUse || UI.isMessageActive || UI.isPaused) return;
-            exitRoom(); // Это глобальная функция из твоего кода
+            exitRoom();
         };
     }
 
     updateArrows() {
         if (!this.navLeft) return;
         
-        // Включаем/отключаем нужные кнопки в зависимости от того, куда смотрим
         if (this.view === "center") {
             this.navLeft.style.display = "block";
             this.navRight.style.display = "block";
             this.navDown.style.display = "block";
         } else if (this.view === "left") {
             this.navLeft.style.display = "none";
-            this.navRight.style.display = "block"; // Правая возвращает обратно в центр
+            this.navRight.style.display = "block"; 
             this.navDown.style.display = "none";
         } else if (this.view === "right") {
-            this.navLeft.style.display = "block"; // Левая возвращает обратно в центр
+            this.navLeft.style.display = "block"; 
             this.navRight.style.display = "none";
             this.navDown.style.display = "none";
         }
@@ -81,24 +77,73 @@ class RoomManager {
         ctx.fillRect(0, 0, w, h);
 
         v.objects.forEach(o => {
-            if (o.visible !== false) { 
+            if (o.visible === false) return;
+
+            let stateData = o.stateImages ? o.stateImages[o.state] : null;
+            
+            // Теперь берем размеры строго из базовых настроек объекта
+            let currentW = o.w || 100;
+            let currentH = o.h || 100;
+
+            const centerX = o.x * w;
+            const centerY = o.y * h;
+            const dw = currentW * (w / 1920);
+            const dh = currentH * (h / 1080);
+            const dx = centerX - dw / 2;
+            const dy = centerY - dh / 2;
+
+            if (stateData && typeof stateData === 'object') {
+                const img = getCachedImage(stateData.sheet);
+                if (img.complete) {
+                    const fw = stateData.frameWidth || o.frameWidth || o.w || 200;
+                    const fh = stateData.frameHeight || o.frameHeight || o.h || fw;
+                    
+                    ctx.drawImage(
+                        img,
+                        stateData.index * fw, 0, fw, fh, 
+                        dx, dy, dw, dh                  
+                    );
+                    return; 
+                }
+            }
+
+            if (typeof stateData === 'string' || o.imagePath) {
+                const path = typeof stateData === 'string' ? stateData : o.imagePath;
+                const img = getCachedImage(path);
+                if (img.complete) {
+                    ctx.drawImage(img, dx, dy, dw, dh);
+                    return;
+                }
+            }
+
+            if (o.spriteIndex !== undefined && itemAssets.sheet.complete) {
+                const sz = 100;
+                ctx.drawImage(itemAssets.sheet, o.spriteIndex * sz, 0, sz, sz, dx, dy, dw, dh);
+            } 
+            else {
                 ctx.fillStyle = o.color || "white";
-                ctx.fillRect(o.rx * w, o.ry * h, o.rw * w, o.rh * h);
+                ctx.fillRect(dx, dy, dw, dh);
             }
         });
-        
-        // Больше никакого кода для рисования UI поверх комнаты на канвасе!
     }
 
-    // Обработка кликов только по ПРЕДМЕТАМ в комнате (стрелки обрабатывает HTML)
     getClickTarget(mx, my, w, h) {
         const v = this.room.views[this.view];
         if (!v || !v.objects) return null;
 
-        for (let o of v.objects) {
-            if (o.visible !== false &&
-                mx > o.rx * w && mx < (o.rx + o.rw) * w && 
-                my > o.ry * h && my < (o.ry + o.rh) * h) {
+        for (let i = v.objects.length - 1; i >= 0; i--) {
+            const o = v.objects[i];
+            if (o.visible === false) continue;
+
+            let currentW = o.w || 100;
+            let currentH = o.h || 100;
+
+            const dw = currentW * (w / 1920);
+            const dh = currentH * (h / 1080);
+            const dx = o.x * w - dw / 2;
+            const dy = o.y * h - dh / 2;
+
+            if (mx > dx && mx < dx + dw && my > dy && my < dy + dh) {
                 return { type: 'OBJECT', data: o };
             }
         }

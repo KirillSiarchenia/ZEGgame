@@ -43,6 +43,7 @@ const ObjectsLibrary = {
     },
     stone: {
         id: 'stone',
+        w: 100, h: 100,
         spriteIndex: 1,
         logicType: "pickup", 
         action: (obj) => {
@@ -57,9 +58,16 @@ const ObjectsLibrary = {
     },
     pressure_button: { 
         id: 'pressure_button', 
+        w: 600, h: 400,
         state: 'empty', 
         hasKey: true,
         logicType: 'button_logic',
+        stateImages: {
+            'empty':      { sheet: 'ui/assets/button-box.png', index: 0},
+            'with_crate': { sheet: 'ui/assets/button-box.png', index: 1},
+            'broken':     { sheet: 'ui/assets/button-box.png', index: 2},
+            'damaged':    { sheet: 'ui/assets/button-box.png', index: 3}
+        },
     },
     rusty_key: {
         id: 'rusty_key',

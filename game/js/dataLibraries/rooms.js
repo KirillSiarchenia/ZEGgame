@@ -5,7 +5,7 @@ const INITIAL_ROOMS_DATA = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { id: "pressure_button", rx: 0.2, ry: 0.7, rw: 0.05, rh: 0.05 },
+                    { id: "pressure_button", x: 0.45, y: 0.7},
                 ]
             },
             left: {
@@ -28,7 +28,7 @@ const INITIAL_ROOMS_DATA = {
             left: {
                 bg: "#1a1a1a",
                 objects: [
-                    {id: "stone", rx: 0.2, ry: 0.7, rw: 0.05, rh: 0.05},
+                    {id: "stone", x: 0.2, y: 0.8},
                 ]
             },
             right: {

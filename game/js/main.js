@@ -30,6 +30,21 @@ let roomManager = new RoomManager();
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+const itemAssets = {
+    sheet: new Image(),
+    cache: {}
+};
+itemAssets.sheet.src = 'ui/assets/inventory-items.png';
+
+function getCachedImage(path) {
+    if (!itemAssets.cache[path]) {
+        const img = new Image();
+        img.src = path;
+        itemAssets.cache[path] = img;
+    }
+    return itemAssets.cache[path];
+}
+
 const allLevels = [maps.map1, maps.map2, maps.map3];
 
 let currentLevelIndex = 0;
@@ -435,19 +450,32 @@ function drawAll() {
     if (currentState === GameState.MAZE || currentState === GameState.TRANSITION || currentState === GameState.DEAD) {
         ctx.save();
         camera.apply(ctx); 
+        maze.draw(ctx); 
 
-        // отрисовка мира (лабиринт, предметы, враги, игрок) | rysowanie świata (labirynt, przedmioty, przeciwnicy, gracz)
-        maze.draw(ctx);   
         currentMazeItems.forEach(item => {
             if (!item.collected) {
-                ctx.fillStyle = item.color || "gold";
-                ctx.beginPath();
-                ctx.arc(
-                    item.x * tileSize + tileSize / 2, 
-                    item.y * tileSize + tileSize / 2, 
-                    10, 0, Math.PI * 2
-                );
-                ctx.fill();
+                const centerX = item.x * tileSize + tileSize / 2;
+                const centerY = item.y * tileSize + tileSize / 2;
+                
+                const dw = item.w || tileSize * 0.7;
+                const dh = item.h || tileSize * 0.7;
+                const dx = centerX - dw / 2;
+                const dy = centerY - dh / 2;
+
+                if (item.imagePath) {
+                    const img = getCachedImage(item.imagePath);
+                    if (img.complete) ctx.drawImage(img, dx, dy, dw, dh);
+                } 
+                else if (item.spriteIndex !== undefined && itemAssets.sheet.complete) {
+                    const sz = 100;
+                    ctx.drawImage(itemAssets.sheet, item.spriteIndex * sz, 0, sz, sz, dx, dy, dw, dh);
+                } 
+                else {
+                    ctx.fillStyle = item.color || "gold";
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             }
         });
 
