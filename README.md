@@ -62,7 +62,6 @@ Projekt oferuje progresywny system trudności podzielony na trzy etapy:
 3. **Etap Zaawansowany:** Duża skala trudności, gęsta sieć przeciwników.
 
 ---
-# **-----odtad dokonczyc sprawdzanie daleszego ciagu read.me-----**
 ## **Interfejs i Oprawa (UI/UX)**
 
 ### **User Interface**
