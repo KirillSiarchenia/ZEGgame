@@ -37,6 +37,45 @@ const INITIAL_ROOMS_DATA = {
             }
         }
     },
+    "21": {
+        isLocked: false,
+        views: {
+            center: {
+                bg: "#1a1a1a",
+                objects: [
+                    { id: "gears", x: 0.5, y: 0.4 }
+                ]
+            },
+            left: { bg: "#1a1a1a", objects: [] },
+            right: { bg: "#1a1a1a", objects: [] }
+        }
+        },
+        "22": {
+            isLocked: true,
+            views: {
+                center: {
+                    bg: "#1a1a1a",
+                    objects: [
+                        { id: "broken_lever", x: 0.5, y: 0.5 }
+                    ]
+                },
+                left: { bg: "#1a1a1a", objects: [] },
+                right: { bg: "#1a1a1a", objects: [] }
+            }
+        },
+        "23": {
+            isLocked: true,
+            views: {
+                center: {
+                    bg: "#1a1a1a",
+                    objects: [
+                        { id: "rusty_key", x: 0.5, y: 0.5 }
+                    ]
+                },
+                left: { bg: "#1a1a1a", objects: [] },
+                right: { bg: "#1a1a1a", objects: [] }
+            }
+        }
 };
 
 let roomsData = {};

@@ -9,9 +9,9 @@ const langPL = {
         restart: "OD NOWA",
         back: "WRÓĆ",
         to_main: "DO MENU",
-        confirm_exit: "WRÓCIĆ DO MENU?",   
+        confirm_exit: "WRÓCIĆ DO MENU?",
         yes: "TAK",
-        no: "NIE", 
+        no: "NIE",
         level: "POZIOM",
         fs_pause_title: "GRA WSTRZYMANA",
         fs_pause_desc: "PRZYWRÓĆ TRYB PEŁNOEKRANOWY",
@@ -30,7 +30,15 @@ const langPL = {
         found_key: "W tej skrzyni był klucz. Jak ironicznie.",
         empty_crate: "Au! Poza drzazgami nic tu nie ma.",
         button_examine: "Przycisk... Ciekawe co robi...",
-        button_damaged: "Więcej tego nie dotknę"
+        button_damaged: "Więcej tego nie dotknę",
+        gears_jammed: "Zębatki zatrzymały się ze zgrzytem. Otwarły się jakieś drzwi.",
+        take_out_prompt: "WYJĄĆ",
+        item_taken: "Przedmiot wyjęty. Mechanizm znów działa.",
+        gears_spinning: "Kręcą się tak szybko, że lepiej nie wkładać tam rąk.",
+        lever_broken: "Dźwigni brakuje uchwytu. Nie mogę jej ruszyć.",
+        lever_fixed: "Kość idealnie pasuje jako uchwyt!",
+        lever_pulled_on: "Dźwignia opuszczona. Gdzieś otworzyły się drzwi.",
+        lever_pulled_off: "Dźwignia podniesiona. Drzwi się zamknęły."
     },
     ui: {
         inventory: "Ekwipunek",
@@ -45,11 +53,11 @@ const langPL = {
         bone: "Na całkiem solidnej kości wisiało to mięso."
     },
     itemName: {
-        medkit: "Apteczka"
+        stone: "kamień",
+        bone: "kość",
     },
     itemPickUp: {
         crate: "Podniesiono skrzynię",
-        coin: "O, moneta",
-        medkit: "Jeszcze dziś nie umrę",
+        meat: "Jeszcze dziś nie umrę",
     }
 }
