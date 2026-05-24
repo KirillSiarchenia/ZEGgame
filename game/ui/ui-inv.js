@@ -108,8 +108,9 @@ Object.assign(UI, {
         const panel = document.getElementById('consumables-panel');
         if (!panel) return;
         panel.innerHTML = '';
+
+        const consumables = items.filter(item => item.isConsumable === true && item.hideFromHUD !== true);
         
-        const consumables = items.filter(item => item.isConsumable === true);
         if (consumables.length > 0 && currentState === GameState.MAZE) {
             panel.classList.remove('hidden-ui');
         }

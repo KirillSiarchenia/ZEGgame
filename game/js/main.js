@@ -158,8 +158,8 @@ canvas.addEventListener("mouseup", (e) => {
 }, true);
 
 function restartGame() {
-    currentLevelIndex = 0;
-    Inventory.items = [];
+    currentLevelIndex = 2;
+    Inventory.items = []
     player.hp = PLAYER_CONFIG.MAX_HP;
     
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
@@ -219,14 +219,14 @@ function loadMazeItems(levelIndex) {
 function drawFogOfWar(ctx, player, camera) {
     ctx.save();
 
-    const lightRadius = 300; 
+    const radius = player.visionRadius;
     
     const screenX = player.x + (tileSize / 2) - camera.x;
     const screenY = player.y + (tileSize / 2) - camera.y;
 
     const gradient = ctx.createRadialGradient(
-        screenX, screenY, lightRadius * 0.4, 
-        screenX, screenY, lightRadius
+        screenX, screenY, radius * 0.4, 
+        screenX, screenY, radius
     );
 
     gradient.addColorStop(0, "rgba(0, 0, 0, 0)"); 
@@ -483,6 +483,7 @@ function drawAll() {
         player.draw(ctx);                          
 
         ctx.restore();
+        drawFogOfWar(ctx, player, camera);
     }
     
     // отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu
@@ -510,7 +511,7 @@ function gameLoop(timestamp = performance.now()) {
     let dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
-    if (dt > 0.1) dt = 0.1; // защита от огромных лагов | ochrona przed ogromnymi lagami
+    if (dt > 0.1) dt = 0.1;
 
     if (!UI.isMessageActive && !UI.isPaused) {
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {

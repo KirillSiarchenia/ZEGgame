@@ -49,33 +49,64 @@ const INITIAL_ROOMS_DATA = {
             left: { bg: "#1a1a1a", objects: [] },
             right: { bg: "#1a1a1a", objects: [] }
         }
-        },
-        "22": {
-            isLocked: true,
-            views: {
-                center: {
-                    bg: "#1a1a1a",
-                    objects: [
-                        { id: "broken_lever", x: 0.5, y: 0.5 }
-                    ]
-                },
-                left: { bg: "#1a1a1a", objects: [] },
-                right: { bg: "#1a1a1a", objects: [] }
-            }
-        },
-        "23": {
-            isLocked: true,
-            views: {
-                center: {
-                    bg: "#1a1a1a",
-                    objects: [
-                        { id: "rusty_key", x: 0.5, y: 0.5 }
-                    ]
-                },
-                left: { bg: "#1a1a1a", objects: [] },
-                right: { bg: "#1a1a1a", objects: [] }
-            }
+    },
+    "22": {
+        isLocked: true,
+        views: {
+            center: {
+                bg: "#1a1a1a",
+                objects: [
+                    { id: "broken_lever", x: 0.5, y: 0.5 }
+                ]
+            },
+            left: { bg: "#1a1a1a", objects: [] },
+            right: { bg: "#1a1a1a", objects: [] }
         }
+    },
+    "23": {
+        isLocked: true,
+        views: {
+            center: {
+                bg: "#1a1a1a",
+                objects: [
+                    { id: "rusty_key", x: 0.5, y: 0.5 }
+                ]
+            },
+            left: { bg: "#1a1a1a", objects: [] },
+            right: { bg: "#1a1a1a", objects: [] }
+        }
+    },
+    "31": {
+        isLocked: false,
+        views: {
+            center: {
+                bg: "#1a1a1a",
+                objects: [
+                    { id: "statue_head", x: 0.5, y: 0.3 },
+                    { id: "statue_torso", x: 0.5, y: 0.5 },
+                    { id: "statue_legs", x: 0.5, y: 0.7 }
+                ]
+            },
+            left: { bg: "#1a1a1a", objects: [] },
+            right: { bg: "#1a1a1a", objects: [] }
+        }
+    },
+    "32": {
+        isLocked: false,
+        views: {
+            center: { bg: "#1a1a1a", objects: [] },
+            left: { bg: "#1a1a1a", objects: [{ id: "ruby", x: 0.5, y: 0.5 }] },
+            right: { bg: "#1a1a1a", objects: [] }
+        }
+    },
+    "33": {
+        isLocked: false,
+        views: {
+            center: { bg: "#1a1a1a", objects: [] },
+            left: { bg: "#1a1a1a", objects: [] },
+            right: { bg: "#1a1a1a", objects: [{ id: "spoon", x: 0.5, y: 0.5 }] }
+        }
+    },
 };
 
 let roomsData = {};

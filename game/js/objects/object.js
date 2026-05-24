@@ -72,4 +72,42 @@ const ObjectLogic = {
             UI.showMessage(t.interactions.lever_pulled_off);
         }
     },
+    statue_head_logic: (target) => {
+        if (target.state === 'empty') {
+            UI.showMessage(t.interactions.statue_head_empty);
+        } else if (target.state === 'ruby_only' || target.state === 'eye_only') {
+            UI.showMessage(t.interactions.statue_one_eye);
+        } else {
+            UI.showMessage(t.interactions.head_fixed);
+        }
+    },
+
+    statue_segment_logic: (target) => {
+        const room = roomsData["31"];
+        const head = room.views.center.objects.find(o => o.id === 'statue_head');
+        const torso = room.views.center.objects.find(o => o.id === 'statue_torso');
+        const legs = room.views.center.objects.find(o => o.id === 'statue_legs');
+
+        if (torso.state === 'open' || torso.state === 'broken') {
+            if (target.id === 'statue_torso') {
+                UI.showMessage(t.interactions.fist_empty);
+            }
+            return;
+        }
+
+        if (head.state !== 'both_eyes') {
+            UI.showMessage(t.interactions.statue_segment_stuck);
+            return;
+        }
+
+        let currentRot = parseInt(target.state.split('_')[1]);
+        currentRot = (currentRot + 1) % 3;
+        target.state = `rot_${currentRot}`;
+
+        if (torso.state === 'rot_0' && legs.state === 'rot_0') {
+            torso.state = 'open'; 
+            Inventory.addItem({ ...ObjectsLibrary['rusty_key'] });
+            UI.showMessage(t.interactions.statue_solved_key);
+        }
+    },
 };

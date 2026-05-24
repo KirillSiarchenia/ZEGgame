@@ -25,8 +25,12 @@ class Player {
         
         // Состояние анимации | Stan animacji
         this.facing = 'down';  
-        this.currentFrame = 0; // Кадры: 0, 1, 2
+        this.currentFrame = 0;
         this.frameTimer = 0;   
+
+        // ну там чисто для зроку
+        this.visionRadius = 400; 
+        this.missingEye = false;
     }
 
     // Проверка движения | Sprawdzanie ruchu

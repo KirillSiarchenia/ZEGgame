@@ -38,7 +38,19 @@ const langPL = {
         lever_broken: "Dźwigni brakuje uchwytu. Nie mogę jej ruszyć.",
         lever_fixed: "Kość idealnie pasuje jako uchwyt!",
         lever_pulled_on: "Dźwignia opuszczona. Gdzieś otworzyły się drzwi.",
-        lever_pulled_off: "Dźwignia podniesiona. Drzwi się zamknęły."
+        lever_pulled_off: "Dźwignia podniesiona. Drzwi się zamknęły.",
+        extract_eye_prompt: "WYRWAĆ OKO?",
+        already_blind: "Nie mam więcej zbędnych oczu. Nie chcę całkowicie oślepnąć.",
+        eye_extracted: "AAA! Boli! Ale teraz mam odpowiednie oko...",
+        statue_inactive: "Statuetka jest nieruchoma. W miejscu oczu zieje pustka.",
+        head_fixed: "Głowa jest na stałe przymocowana, nie drgnie.",
+        fist_protected: "Oczy już na mnie patrzą... Nie zaryzykuję uderzenia w nią teraz.",
+        eye_inserted: "Oko z obrzydliwym mlaśnięciem wpasowało się w oczodół.",
+        ruby_inserted: "Rubin idealnie wpasował się w oczodół.",
+        statue_solved: "Rozległ się głuchy trzask i statua otworzyła dłoń.",
+        fist_empty: "Nie ma tu nic więcej.",
+        fist_broken: "Twoje uderzenie roztrzaskało kamienny tułów na kawałki!",
+        found_key_statue: "Ze statui wypadł klucz.",
     },
     ui: {
         inventory: "Ekwipunek",
@@ -50,14 +62,22 @@ const langPL = {
         crate: "Ciężka skrzynia",
         stone: "Solidny ciężar. Na te chodzące trupy nie wystarczy, ale coś rozbije.",
         rusty_key: "Stary klucz pokryty rdzawym nalotem.",
-        bone: "Na całkiem solidnej kości wisiało to mięso."
+        bone: "Na całkiem solidnej kości wisiało to mięso.",
+        ruby: "Krwistoczerwony rubin wielkości ludzkiego oka.",
+        spoon: "Zwykła metalowa łyżka. Można nią coś wydłubać.",
+        player_eye: "Moje własne oko. Wciąż oślizgłe.",
     },
     itemName: {
         stone: "kamień",
         bone: "kość",
+        ruby: "rubin",
+        spoon: "łyżka",
+        player_eye: "oko",
     },
     itemPickUp: {
         crate: "Podniesiono skrzynię",
         meat: "Jeszcze dziś nie umrę",
+        ruby: "Znaleziono rubin",
+        spoon: "Znaleziono łyżkę",
     }
 }

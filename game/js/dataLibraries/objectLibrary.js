@@ -61,18 +61,24 @@ const ObjectsLibrary = {
         action: (obj) => {
             if (obj.id === "pressure_button" && obj.state === "with_crate") {
                 obj.state = 'broken';
-                return {
-                    message: t.interactions.stone_break_crate,
-                    deleteItem: false
-                };
+                return { message: t.interactions.stone_break_crate, deleteItem: false };
             }
             if (obj.id === "gears" && obj.state === "spinning") {
                 obj.state = 'jammed_stone';
                 roomsData["22"].isLocked = false;
-                return {
-                    message: t.interactions.gears_jammed,
-                    deleteItem: true
-                };
+                return { message: t.interactions.gears_jammed, deleteItem: true };
+            }
+            if (obj.id === "statue_torso" && obj.state.startsWith('rot_')) {
+                const room = roomsData["31"];
+                const head = room.views.center.objects.find(o => o.id === 'statue_head');
+                
+                if (head && head.state !== 'empty') {
+                    return { message: t.interactions.fist_protected, deleteItem: false };
+                }
+                
+                obj.state = 'broken';
+                Inventory.addItem({ ...ObjectsLibrary['rusty_key'] });
+                return { message: t.interactions.fist_broken_key, deleteItem: false };
             }
         }
     },
@@ -109,6 +115,86 @@ const ObjectsLibrary = {
             'broken':    { sheet: 'ui/assets/lever.png', index: 0 },
             'fixed_off': { sheet: 'ui/assets/lever.png', index: 1 },
             'fixed_on':  { sheet: 'ui/assets/lever.png', index: 2 }
+        }
+    },
+    ruby: {
+        id: 'ruby',
+        spriteIndex: 5,
+        logicType: "pickup",
+        action: (obj) => {
+            if (obj.id === 'statue_head') {
+                if (obj.state === 'empty') {
+                    obj.state = 'ruby_only';
+                    return { message: t.interactions.eye_inserted_one, deleteItem: true };
+                } else if (obj.state === 'eye_only') {
+                    obj.state = 'both_eyes';
+                    return { message: t.interactions.eye_inserted_both, deleteItem: true };
+                }
+            }
+        }
+    },
+    spoon: {
+        id: 'spoon',
+        spriteIndex: 6, 
+        isConsumable: true, 
+        hideFromHUD: true,
+        logicType: "pickup",
+        action: () => {
+            if (player.missingEye) {
+                return { message: t.interactions.already_blind, deleteItem: false };
+            }
+            
+            UI.showConfirm(t.interactions.extract_eye_prompt, () => {
+                player.missingEye = true;
+                player.hp -= 1;
+                player.visionRadius = 300;
+                Inventory.addItem({ ...ObjectsLibrary['player_eye'] });
+                UI.showMessage(t.interactions.eye_extracted);
+            });
+            return {};
+        }
+    },
+    player_eye: {
+        id: 'player_eye',
+        spriteIndex: 7, 
+        logicType: "pickup",
+        action: (obj) => {
+            if (obj.id === 'statue_head') {
+                if (obj.state === 'empty') {
+                    obj.state = 'eye_only';
+                    return { message: t.interactions.eye_inserted_one, deleteItem: true };
+                } else if (obj.state === 'ruby_only') {
+                    obj.state = 'both_eyes';
+                    return { message: t.interactions.eye_inserted_both, deleteItem: true };
+                }
+            }
+        }
+    },
+    statue_head: {
+        id: 'statue_head', w: 200, h: 200, state: 'empty', logicType: 'statue_head_logic',
+        stateImages: {
+            'empty':      { sheet: 'ui/assets/statue.png', index: 0 },
+            'ruby_only':  { sheet: 'ui/assets/statue.png', index: 1 },
+            'eye_only':   { sheet: 'ui/assets/statue.png', index: 2 },
+            'both_eyes':  { sheet: 'ui/assets/statue.png', index: 3 }
+        }
+    },
+    statue_torso: {
+        id: 'statue_torso', w: 200, h: 200, state: 'rot_1', logicType: 'statue_segment_logic',
+        stateImages: {
+            'rot_0':  { sheet: 'ui/assets/statue.png', index: 4 }, 
+            'rot_1':  { sheet: 'ui/assets/statue.png', index: 5 }, 
+            'rot_2':  { sheet: 'ui/assets/statue.png', index: 6 }, 
+            'open':   { sheet: 'ui/assets/statue.png', index: 7 }, 
+            'broken': { sheet: 'ui/assets/statue.png', index: 8 }  
+        }
+    },
+    statue_legs: {
+        id: 'statue_legs', w: 200, h: 200, state: 'rot_2', logicType: 'statue_segment_logic',
+        stateImages: {
+            'rot_0': { sheet: 'ui/assets/statue.png', index: 9 },  
+            'rot_1': { sheet: 'ui/assets/statue.png', index: 10 }, 
+            'rot_2': { sheet: 'ui/assets/statue.png', index: 11 }  
         }
     },
     rusty_key: {
