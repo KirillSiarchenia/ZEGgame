@@ -14,7 +14,7 @@ class Enemy {
         
         this.lastPlayerPos = null; 
         this.playerLastDir = { dx: 0, dy: 0 };
-        this.lastContactType = null; // 'sight' или 'sound'
+        this.lastContactType = null;
         
         this.searchTimer = 0;
         this.lastAttack = 0;

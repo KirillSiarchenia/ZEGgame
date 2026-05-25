@@ -158,7 +158,7 @@ canvas.addEventListener("mouseup", (e) => {
 }, true);
 
 function restartGame() {
-    currentLevelIndex = 2;
+    currentLevelIndex = 0;
     Inventory.items = []
     player.hp = PLAYER_CONFIG.MAX_HP;
     
@@ -324,8 +324,10 @@ function nextLevel() {
         camera.mapHeight = maze.rows * tileSize;
         camera.focusOn(player.x, player.y);
     } else {
-        alert("Поздравляю! Вы прошли игру!");
-        currentLevelIndex = 0; 
+        CutsceneManager.play('outro', () => {
+            currentLevelIndex = 0; 
+            location.reload(); 
+        });
     }
 }
 
@@ -483,7 +485,7 @@ function drawAll() {
         player.draw(ctx);                          
 
         ctx.restore();
-        drawFogOfWar(ctx, player, camera);
+        // drawFogOfWar(ctx, player, camera);
     }
     
     // отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu

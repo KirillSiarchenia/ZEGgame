@@ -1,0 +1,56 @@
+#cutscene-ui {
+    background-color: black;
+    z-index: 90; /* Ниже меню паузы (у него 100), чтобы пауза отображалась поверх */
+    justify-content: flex-start;
+    padding-top: 10vh;
+}
+
+.cutscene-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 800px;
+}
+
+#cutscene-image {
+    width: 800px;
+    height: 400px;
+    image-rendering: pixelated;
+}
+
+#cutscene-text-box {
+    position: relative;
+    width: 800px;
+    min-height: 150px;
+    margin-top: 30px;
+    padding: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    pointer-events: auto;
+    text-align: left;
+}
+
+#cutscene-text {
+    color: white;
+    font-size: 24px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.skip-btn {
+    position: fixed;
+    bottom: 30px; 
+    right: 30px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-family: 'Courier New', Courier, monospace;
+    background: #222;
+    color: white;
+    border: 1px solid #444;
+    cursor: pointer;
+    z-index: 96;
+}
+
+.skip-btn:hover {
+    background: #444;
+    border-color: white;
+}

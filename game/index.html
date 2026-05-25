@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="ui/css/menus.css">
     <link rel="stylesheet" href="ui/css/messages.css">
     <link rel="stylesheet" href="ui/css/navigation.css">
+    <link rel="stylesheet" href="ui/css/cutscenes.css">
 </head>
 <body>
 
@@ -17,6 +18,7 @@
         <h1 id="header-main">LABYRINTH</h1>
         <div class="menu-buttons">
             <button id="btn-play">ИГРАТЬ</button>
+            <button id="btn-tutorial">ОБУЧЕНИЕ</button>
             <button id="btn-main-settings">НАСТРОЙКИ</button>
         </div>
     </div>
@@ -63,7 +65,6 @@
 
     <div id="msg-box" class="hidden message-window">
         <div id="msg-content" class="message-text"></div>
-        <div class="msg-cursor">▼</div>
     </div>
 
     <div id="inventory-modal" class="hidden">
@@ -95,6 +96,16 @@
         </div>
     </div>
 
+    <div id="cutscene-ui" class="overlay-menu hidden">
+        <button id="btn-skip-cutscene" class="skip-btn">ПРОПУСТИТЬ</button>
+        <div class="cutscene-content">
+            <div id="cutscene-image"></div>
+            <div id="cutscene-text-box">
+                <div id="cutscene-text"></div>
+            </div>
+        </div>
+    </div>
+
     <canvas id="gameCanvas"></canvas>
     
     <script src="js/constants.js"></script>
@@ -112,6 +123,8 @@
     <script src="js/entities/pathfinding.js"></script>
     <script src="js/entities/enemy.js"></script>
     <script src="js/entities/player.js"></script>
+    <script src="js/dataLibraries/cutscenes.js"></script>
+    <script src="ui/ui-cutscene.js"></script>
     <script src="ui/ui-core.js"></script> 
     <script src="ui/ui-inv.js"></script> 
     <script src="ui/ui-menu.js"></script> 

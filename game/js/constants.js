@@ -6,6 +6,7 @@ const GameState = {
     ROOM: 'ROOM', 
     TRANSITION: 'TRANSITION',
     DEAD: 'DEAD',
+    CUTSCENE: 'CUTSCENE',
 };
 
 const PLAYER_CONFIG = {

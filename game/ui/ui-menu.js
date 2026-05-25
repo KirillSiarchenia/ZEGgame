@@ -99,6 +99,9 @@ Object.assign(UI, {
         setText('btn-restart', t.menu.restart);
         setText('btn-pause-restart', t.menu.restart);
         setText('btn-death-to-main', t.menu.to_main);
+        setText('btn-play', t.menu.play);
+        setText('btn-tutorial', t.menu.tutorial);
+        setText('btn-skip-cutscene', t.menu.skip);
 
         const invHeader = document.querySelector('.inventory-header h2');
         if (invHeader) invHeader.innerText = t.ui.inventory;
@@ -138,7 +141,10 @@ Object.assign(UI, {
         document.getElementById('btn-play').onclick = () => {
             attemptFullscreenAndLock(() => {
                 mainMenu.classList.add('hidden');
-                setGameState(GameState.MAZE);
+
+                CutsceneManager.play('intro', () => {
+                    setGameState(GameState.MAZE);
+                });
             });
         };
 
@@ -192,5 +198,16 @@ Object.assign(UI, {
         document.getElementById('btn-death-to-main').onclick = () => {
             location.reload();
         };
+
+        const btnTutorial = document.getElementById('btn-tutorial');
+        if (btnTutorial) {
+            btnTutorial.onclick = () => {
+                mainMenu.classList.add('hidden');
+                CutsceneManager.play('tutorial', () => {
+                    mainMenu.classList.remove('hidden');
+                    setGameState(GameState.MENU);
+                });
+            };
+        }
     },
 });

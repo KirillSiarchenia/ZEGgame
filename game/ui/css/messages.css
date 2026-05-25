@@ -19,11 +19,3 @@
     line-height: 1.4;
     white-space: pre-wrap;
 }
-
-.msg-cursor {
-    position: absolute;
-    bottom: 10px;
-    right: 20px;
-    color: white;
-    animation: blink 0.8s infinite;
-}
