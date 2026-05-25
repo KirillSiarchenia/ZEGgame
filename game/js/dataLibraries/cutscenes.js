@@ -4,7 +4,9 @@ const CutscenesData = {
         { sheet: 'ui/assets/cutscenes/tutorial.png', index: 1, textKey: 'tut_frame_2' }
     ],
     intro: [
-        { sheet: 'ui/assets/cutscenes/intro.png', index: 0, textKey: 'intro_frame_1' }
+        { sheet: 'ui/assets/cutscenes/intro.png', index: 0, textKey: 'intro_frame_1' },
+        { sheet: 'ui/assets/cutscenes/intro.png', index: 1, textKey: 'intro_frame_2' },
+        { sheet: 'ui/assets/cutscenes/intro.png', index: 2, textKey: 'intro_frame_3' },
     ],
     outro: [
         { sheet: 'ui/assets/cutscenes/outro.png', index: 0, textKey: 'outro_frame_1' }

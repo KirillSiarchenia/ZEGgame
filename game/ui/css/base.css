@@ -12,13 +12,8 @@ body {
 }
 
 canvas {
-    background-color: white;
+    background-color: black;
     display: block; 
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
 }
 
 .hidden { display: none !important; }
