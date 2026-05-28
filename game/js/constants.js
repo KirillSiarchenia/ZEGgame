@@ -1,5 +1,25 @@
 const tileSize = 90;
 
+const slashAnim = {
+    active: false,
+    x: 0,
+    y: 0,
+    frame: 0,
+    maxFrames: 5,         
+    frameTimer: 0,
+    frameDuration: 0.02,  
+    sprite: new Image()
+};
+slashAnim.sprite.src = 'ui/assets/slash.png'; 
+
+function triggerSlashEffect(px, py) {
+    slashAnim.active = true;
+    slashAnim.x = px;
+    slashAnim.y = py;
+    slashAnim.frame = 0;
+    slashAnim.frameTimer = 0;
+}
+
 const GameState = { 
     MENU: 'MENU', 
     MAZE: 'MAZE', 
@@ -25,8 +45,9 @@ const ENEMY_CONFIG = {
     HEAR_RANGE: 2.5,
     ATTACK_COOLDOWN: 1500, 
     KNOCKBACK_TIME: 1000, 
-    LOOK_TIME: 1.0,   
-    EYE_OFFSET: 10    // В будущем убрать к чертям нахер нафиг
+    LOOK_TIME: 1.0, 
+    SPRITE_PATH: 'ui/assets/enemy.png',  
+    ANIM_SPEED: 0.1 
 };
 
 const MSG_CONFIG = {

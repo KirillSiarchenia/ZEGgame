@@ -215,6 +215,7 @@ function loadMazeItems(levelIndex) {
     }
 }
 
+
 // отрисовка эффекта тумана войны вокруг игрока | rysowanie efektu mgły wojny wokół gracza
 function drawFogOfWar(ctx, player, camera) {
     ctx.save();
@@ -398,7 +399,7 @@ function update(dt) {
         setGameState(GameState.DEAD); 
                 setTimeout(() => {
             UI.showDeathMenu(); 
-        }, 500); 
+        }); 
         return;
     }
 
@@ -449,11 +450,13 @@ function drawAll() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Отрисовка лабиринта
     if (currentState === GameState.MAZE || currentState === GameState.TRANSITION || currentState === GameState.DEAD) {
         ctx.save();
         camera.apply(ctx); 
         maze.draw(ctx); 
 
+        // Предметы на полу
         currentMazeItems.forEach(item => {
             if (!item.collected) {
                 const centerX = item.x * tileSize + tileSize / 2;
@@ -481,19 +484,20 @@ function drawAll() {
             }
         });
 
+        // Враги и игрок
         enemies.forEach(enemy => enemy.draw(ctx)); 
         player.draw(ctx);                          
 
         ctx.restore();
-        // drawFogOfWar(ctx, player, camera);
+        drawFogOfWar(ctx, player, camera);
     }
     
-    // отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu
+    // Отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu
     if (currentState === GameState.ROOM) {
         roomManager.draw(ctx, canvas.width, canvas.height); 
     }
 
-    // применение прозрачного слоя для эффекта перехода | nałożenie przezroczystej warstwy dla efektu przejścia
+    // Применение прозрачного слоя для эффекта перехода | nałożenie przezroczystej warstwy dla efektu przejścia
     if (transitionAlpha > 0) {
         ctx.fillStyle = `rgba(0, 0, 0, ${transitionAlpha})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -514,6 +518,50 @@ function gameLoop(timestamp = performance.now()) {
     lastTime = timestamp;
 
     if (dt > 0.1) dt = 0.1;
+
+    if (slashAnim.active) {
+        slashAnim.frameTimer += dt;
+        
+        // Листаем кадры
+        if (slashAnim.frameTimer >= slashAnim.frameDuration) {
+            slashAnim.frameTimer = 0;
+            slashAnim.frame++;
+            if (slashAnim.frame >= slashAnim.maxFrames) {
+                slashAnim.active = false; // Выключаем, когда кадры кончились
+            }
+        }
+
+        // Если анимация ВСЁ ЕЩЁ активна - рисуем её
+        if (slashAnim.active) {
+            // Заливаем экран чернотой
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (slashAnim.sprite.complete && slashAnim.sprite.naturalWidth > 0) {
+                ctx.save();
+                const screenX = slashAnim.x - camera.x;
+                const screenY = slashAnim.y - camera.y;
+
+                const fw = slashAnim.sprite.naturalWidth / slashAnim.maxFrames;
+                const fh = slashAnim.sprite.naturalHeight;
+
+                const drawW = tileSize * 2.5; 
+                const drawH = tileSize * 2.5;
+                const drawX = screenX - (drawW - tileSize) / 2;
+                const drawY = screenY - (drawH - tileSize) / 2;
+
+                ctx.drawImage(
+                    slashAnim.sprite,
+                    slashAnim.frame * fw, 0, fw, fh,
+                    drawX, drawY, drawW, drawH     
+                );
+                ctx.restore();
+            }
+
+            requestAnimationFrame(gameLoop);
+            return; // БЛОКИРУЕМ остальную игру!
+        }
+    }
 
     if (!UI.isMessageActive && !UI.isPaused) {
         if (currentState === GameState.MAZE || currentState === GameState.TRANSITION) {

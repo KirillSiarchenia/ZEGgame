@@ -25,6 +25,12 @@ class Enemy {
         this.currentPath =[];
         this.finalTargetX = null;
         this.finalTargetY = null;
+
+        this.sprite = new Image();
+        this.sprite.src = ENEMY_CONFIG.SPRITE_PATH;
+        this.facing = 'down';
+        this.currentFrame = 0;
+        this.frameTimer = 0;
     }
 
     get isMoving() {
@@ -124,6 +130,22 @@ class Enemy {
                     }
                 }
                 break;
+        }
+
+        if (this.dirX === 1) this.facing = 'right';
+        else if (this.dirX === -1) this.facing = 'left';
+        else if (this.dirY === 1) this.facing = 'down';
+        else if (this.dirY === -1) this.facing = 'up';
+
+        if (this.isMoving) {
+            this.frameTimer += dt;
+            if (this.frameTimer >= ENEMY_CONFIG.ANIM_SPEED) {
+                this.frameTimer = 0;
+                this.currentFrame = (this.currentFrame + 1) % 3; 
+            }
+        } else {
+            this.currentFrame = 0;
+            this.frameTimer = 0;
         }
 
         this.smoothMove(dt);
@@ -291,6 +313,8 @@ class Enemy {
     checkAttack(player, maze) {
         if (this.attackCooldown <= 0) {
             player.hp -= 1;
+
+            triggerSlashEffect(player.x, player.y);
             
             this.attackCooldown = ENEMY_CONFIG.ATTACK_COOLDOWN;
             this.knockbackTimer = ENEMY_CONFIG.KNOCKBACK_TIME;
@@ -309,17 +333,19 @@ class Enemy {
     }
 
     draw(ctx) {
-        const stateColors = { 'chase': 'red', 'searching': 'yellow', 'patrol': 'orange' };
-        ctx.fillStyle = stateColors[this.state];
-        ctx.fillRect(this.x + 8, this.y + 8, tileSize - 16, tileSize - 16);
+        const rows = { 'down': 0, 'up': 1, 'left': 2, 'right': 3 };
+        const row = rows[this.facing] || 0;
 
-        ctx.fillStyle = "black";
-        let eyeSize = 4;
-        let offset = tileSize / 2 - eyeSize / 2;
-        ctx.fillRect(
-            this.x + offset + (this.dirX * ENEMY_CONFIG.EYE_OFFSET), 
-            this.y + offset + (this.dirY * ENEMY_CONFIG.EYE_OFFSET), 
-            eyeSize, eyeSize
+        const fw = this.sprite.naturalWidth / 3;
+        const fh = this.sprite.naturalHeight / 4;
+
+        const sourceX = this.currentFrame * fw;
+        const sourceY = row * fh;
+
+        ctx.drawImage(
+            this.sprite,
+            sourceX, sourceY, fw, fh, 
+            this.x, this.y, tileSize, tileSize
         );
     }
 }
