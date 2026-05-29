@@ -31,6 +31,8 @@ class Player {
         // ну там чисто для зроку
         this.visionRadius = 400; 
         this.missingEye = false;
+
+        this.isControlLocked = false;
     }
 
     // Проверка движения | Sprawdzanie ruchu

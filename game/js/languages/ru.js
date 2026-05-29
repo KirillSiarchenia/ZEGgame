@@ -18,6 +18,7 @@ const langRU = {
         fs_resume: "ВЕРНУТЬСЯ В ИГРУ",
         tutorial: "ОБУЧЕНИЕ",
         skip: "ПРОПУСТИТЬ",
+        the_end: "КОНЕЦ",
     },
     cutscenes: {
         tut_frame_1: [
@@ -55,7 +56,8 @@ const langRU = {
         room_locked: "Что-то блокирует дверь, не войти.",
         running_hint: "Стены и шаги едва выдерживают, что уж говорить о беге.",
         not_applicable: "Это здесь неприменимо",
-        first_damage_reaction: "Фух... Повезло, что у ублюдка меч тупой, да и бьёт он без техники."
+        first_damage_reaction: "Фух... Повезло, что у ублюдка меч тупой, да и бьёт он без техники.",
+        epilogue_1: "Брат, это ты? Что с тобой стало?",
     },
     interactions: {
         crate_on_button: "Что за звук? Похоже что-то открылось.",
@@ -105,9 +107,9 @@ const langRU = {
     itemName: {
         stone: "камень",
         bone: "кость",
-        ruby: "рубин",
+        ruby: "Рубин",
         spoon: "ложка",
-        player_eye: "глаз",
+        player_eye: "Глаз",
     },
     itemPickUp: {
         crate: "Ящик подобран",

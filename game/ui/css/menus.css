@@ -145,6 +145,22 @@
     box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
+.btn-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.lang-hint {
+    position: absolute;
+    left: calc(100% + 15px);
+    color: #666;
+    font-size: 1.2rem;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: nowrap;
+    pointer-events: none; 
+}
+
 #confirm-modal {
     background: rgba(0, 0, 0, 0.9); 
     z-index: 10000; 

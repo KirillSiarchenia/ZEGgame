@@ -7,7 +7,7 @@ const slashAnim = {
     frame: 0,
     maxFrames: 5,         
     frameTimer: 0,
-    frameDuration: 0.02,  
+    frameDuration: 0.03,  
     sprite: new Image()
 };
 slashAnim.sprite.src = 'ui/assets/slash.png'; 
@@ -27,6 +27,7 @@ const GameState = {
     TRANSITION: 'TRANSITION',
     DEAD: 'DEAD',
     CUTSCENE: 'CUTSCENE',
+    END: 'END',
 };
 
 const PLAYER_CONFIG = {

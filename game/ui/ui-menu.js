@@ -113,6 +113,8 @@ Object.assign(UI, {
         setText('header-fs-pause', t.menu.fs_pause_title);
         setText('subheader-fs-pause', t.menu.fs_pause_desc);
         setText('btn-fs-resume', t.menu.fs_resume);
+
+        setText('header-end', t.menu.the_end);
     },
 
     initMenuEvents() {

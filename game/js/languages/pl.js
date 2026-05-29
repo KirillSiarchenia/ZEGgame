@@ -18,6 +18,7 @@ const langPL = {
         fs_resume: "POWRÓT DO GRY",
         tutorial: "SAMOUCZEK",
         skip: "POMIŃ",
+        the_end: "KONIEC",
     },
     cutscenes: {
         tut_frame_1: [
@@ -55,7 +56,8 @@ const langPL = {
         room_locked: "Coś blokuje drzwi, nie da się wejść.",
         running_hint: "Ściany i kroki ledwo wytrzymują, a co dopiero bieg.",
         not_applicable: "To nie ma tutaj zastosowania",
-        first_damage_reaction: "Uff... Na szczęście ten drań ma tępy miecz, a do tego bije bez żadnej techniki."
+        first_damage_reaction: "Uff... Na szczęście ten drań ma tępy miecz, a do tego bije bez żadnej techniki.",
+        epilogue_1: "Bracie, to ty? Co ci się stało?",
     },
     interactions: {
         crate_on_button: "Co to za dźwięk? Wygląda na to, że coś się otworzyło.",

@@ -45,7 +45,7 @@ function getCachedImage(path) {
     return itemAssets.cache[path];
 }
 
-const allLevels = [maps.map1, maps.map2, maps.map3];
+const allLevels = [maps.map1, maps.map2, maps.map3, maps.map4];
 
 let currentLevelIndex = 0;
 let enemies = [];
@@ -309,28 +309,35 @@ function setGameState(newState) {
 function nextLevel() {
     currentLevelIndex++;
     
-    if (currentLevelIndex < allLevels.length) {
-        maze = new Maze(allLevels[currentLevelIndex], tileSize);
-        loadEnemies(currentLevelIndex);
-        loadMazeItems(currentLevelIndex);
-        
-        const startPos = maze.getStartPos();
+    if (!allLevels[currentLevelIndex]) return;
 
+    maze = new Maze(allLevels[currentLevelIndex], tileSize);
+    loadEnemies(currentLevelIndex);
+    loadMazeItems(currentLevelIndex);
+
+    if (currentLevelIndex === 3) {
+        player.gridX = 3; 
+        player.gridY = 1;
+        player.sprite.src = ENEMY_CONFIG.SPRITE_PATH; 
+        document.getElementById('ui-container').style.display = 'none';
+        Epilogue.start(3, 12); 
+    } else {
+        const startPos = maze.getStartPos();
         player.gridX = startPos.x;
         player.gridY = startPos.y;
-        player.x = startPos.x * tileSize;
-        player.y = startPos.y * tileSize;
-
-        camera.mapWidth = maze.cols * tileSize;
-        camera.mapHeight = maze.rows * tileSize;
-        camera.focusOn(player.x, player.y);
-    } else {
-        CutsceneManager.play('outro', () => {
-            currentLevelIndex = 0; 
-            location.reload(); 
-        });
+        player.sprite.src = PLAYER_CONFIG.SPRITE_PATH; 
+        player.isControlLocked = false; 
+        Epilogue.active = false;
     }
+
+    player.x = player.gridX * tileSize;
+    player.y = player.gridY * tileSize;
+
+    camera.mapWidth = maze.cols * tileSize;
+    camera.mapHeight = maze.rows * tileSize;
+    camera.focusOn(player.x, player.y);
 }
+
 
 // выход из комнаты в лабиринт | wyjście z pokoju do labiryntu
 function exitRoom() {
@@ -403,14 +410,18 @@ function update(dt) {
         return;
     }
 
+    Epilogue.update(dt);
+
     let dx = 0;
     let dy = 0;
 
-    // обработка ввода движения | obsługa wejścia ruchu
-    if (keys["w"] || keys["arrowup"] || keys["ц"]) dy = -1;
-    else if (keys["s"] || keys["arrowdown"] || keys["ы"]) dy = 1;
-    else if (keys["a"] || keys["arrowleft"] || keys["ф"]) dx = -1;
-    else if (keys["d"] || keys["arrowright"] || keys["в"]) dx = 1;
+    // обработка ввода движения | obsługa wejścia ruchu\
+    if (!player.isControlLocked) {
+        if (keys["w"] || keys["arrowup"] || keys["ц"]) dy = -1;
+        else if (keys["s"] || keys["arrowdown"] || keys["ы"]) dy = 1;
+        else if (keys["a"] || keys["arrowleft"] || keys["ф"]) dx = -1;
+        else if (keys["d"] || keys["arrowright"] || keys["в"]) dx = 1;
+    }
 
     // попытка движения игрока | próba ruchu gracza
     if ((dx !== 0 || dy !== 0) && !player.isMoving) {
@@ -436,7 +447,15 @@ function update(dt) {
     if (exit && player.gridX === exit.x && player.gridY === exit.y && !player.isMoving) {
         const keyItem = Inventory.items.find(it => it.id === 'rusty_key');
         if (keyItem) Inventory.removeItem(keyItem.instanceId);
-        nextLevel();
+        
+        if (currentLevelIndex === 2) { 
+            CutsceneManager.play('outro', () => {
+                setGameState(GameState.MAZE); 
+                nextLevel(); 
+            });
+        } else {
+            nextLevel();
+        }
     }
 
     if (player.hp !== UI.lastHp) {
@@ -486,6 +505,7 @@ function drawAll() {
 
         // Враги и игрок
         enemies.forEach(enemy => enemy.draw(ctx)); 
+        Epilogue.draw(ctx);
         player.draw(ctx);                          
 
         ctx.restore();
@@ -522,12 +542,11 @@ function gameLoop(timestamp = performance.now()) {
     if (slashAnim.active) {
         slashAnim.frameTimer += dt;
         
-        // Листаем кадры
         if (slashAnim.frameTimer >= slashAnim.frameDuration) {
             slashAnim.frameTimer = 0;
             slashAnim.frame++;
             if (slashAnim.frame >= slashAnim.maxFrames) {
-                slashAnim.active = false; // Выключаем, когда кадры кончились
+                slashAnim.active = false; 
             }
         }
 
@@ -583,3 +602,76 @@ function gameLoop(timestamp = performance.now()) {
 }
 
 requestAnimationFrame(gameLoop);
+
+const Epilogue = {
+    active: false,
+    phase: 0,
+    brother: null,
+    stepTimer: 0, // Добавили таймер для пауз между шагами
+
+    start(bx, by) {
+        this.active = true;
+        this.phase = 0;
+        this.stepTimer = 0;
+        this.brother = { x: bx * tileSize, y: by * tileSize, gridY: by };
+        player.isControlLocked = false; 
+        player.speed = PLAYER_CONFIG.SPEED; // Гарантируем обычную скорость
+    },
+
+    update(dt) {
+        if (!this.active) return;
+        
+        const distY = Math.abs(player.gridY - this.brother.gridY);
+        
+        if (this.phase === 0 && distY <= 2) {
+            this.phase = 1;
+            player.isControlLocked = true; 
+            player.isMoving = false;
+            UI.showMessage(t.messages.epilogue_1);
+        }
+        else if (this.phase === 1 && !UI.isMessageActive) {
+            this.phase = 2;
+            setTimeout(() => UI.showMessage("..."), 200);
+        }
+        else if (this.phase === 2 && !UI.isMessageActive) {
+            
+            if (!player.isMoving) {
+                
+                this.stepTimer += dt;
+                
+                if (this.stepTimer >= 0.6) {
+                    this.stepTimer = 0; 
+                    
+                    if (player.gridY < this.brother.gridY - 1) {
+                        player.move(0, 1, maze, []); 
+                    } else {
+                        this.phase = 3;
+                        
+                        setGameState(GameState.END); 
+                        
+                        triggerSlashEffect(this.brother.x, this.brother.y);
+                        
+                        setTimeout(() => {
+                            document.getElementById('end-screen').classList.remove('hidden');
+                            
+                            setTimeout(() => {
+                                location.reload();
+                            }, 4000);
+                            
+                        }, 1500);
+                    }
+                }
+            }
+        }
+    },
+
+    draw(ctx) {
+        if (!this.active) return;
+        const img = getCachedImage(PLAYER_CONFIG.SPRITE_PATH);
+        if (img.complete) {
+            const fw = PLAYER_CONFIG.FRAME_WIDTH;
+            const fh = PLAYER_CONFIG.FRAME_HEIGHT;
+            ctx.drawImage(img, 0, fh, fw, fh, this.brother.x, this.brother.y, tileSize, tileSize);
+        }
+    }
+};
