@@ -9,7 +9,7 @@
     border: 4px solid white;
     padding: 20px;
     z-index: 3000;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'CustomFont';
     pointer-events: auto;
 }
 
