@@ -9,9 +9,9 @@ const langPL = {
         death_title: "UMARŁEŚ",
         back: "WRÓĆ",
         to_main: "DO MENU",
-        confirm_exit: "WRÓCIĆ DO MENU?",   
+        confirm_exit: "WRÓCIĆ DO MENU?",
         yes: "TAK",
-        no: "NIE",     
+        no: "NIE",
         level: "POZIOM",
         fs_pause_title: "GRA WSTRZYMANA",
         fs_pause_desc: "PRZYWRÓĆ TRYB PEŁNOEKRANOWY",
@@ -30,6 +30,22 @@ const langPL = {
             "Aby wstrzymać grę lub zamknąć różne menu, używaj Escape.",
             "Aby biegać, naciśnij Shift.",
         ],
+        tut_frame_3: [
+            "Sama gra składa się z dwóch głównych trybów: labiryntu, po którym chodzisz, oraz pokoi, w których znajdują się zagadki i przedmioty.",
+            "W labiryntach musisz unikać wrogów.",
+            "Mogą cię usłyszeć nawet przez ścianę lub cię zobaczyć.",
+            "Ukrywaj się bardzo dobrze, oni szukają starannie.",
+        ],
+        tut_frame_4: [
+            "W samych pokojach możesz przełączać się między widokami za pomocą strzałek, aby obejrzeć wszystko, co tu jest, lub wyjść z pokoju.",
+            "Aby wejść w interakcję ze znalezionymi przedmiotami, musisz otworzyć ekwipunek.",
+            "Możesz go znaleźć pod swoim paskiem zdrowia, ale tylko wtedy, gdy wchodzisz do pokoi.",
+            "W ekwipunku możesz używać znalezionych przedmiotów.",
+        ],
+        tut_frame_5: [
+            "Aby przejść na następny poziom, musisz znaleźć zardzewiały klucz.",
+            "Powodzenia, bohaterze!",
+        ],
         intro_frame_1: [
             "Była sobie pewna wieś.",
             "To była najzwyklejsza mała wieś.",
@@ -45,10 +61,34 @@ const langPL = {
         intro_frame_3: [
             "Pewnego dnia zaginął również twój brat.",
             "Najwyraźniej będziesz pierwszym człowiekiem, który odważy się zstąpić w głębiny strachu.",
-            "A może po prostu będziesz kolejnym zaginionym, a no nie pierwszym śmiałkiem.",
+            "A może po prostu będziesz kolejnym zaginionym, a nie pierwszym śmiałkiem.",
         ],
+
         outro_frame_1: [
-            "Światło... w końcu światło.",
+            "Podchodzisz do drzwi, za którymi każdą komórką swojego ciała masz nadzieję znaleźć brata, którego tak desperacko szukałeś...",
+            "Wkładając klucz do drzwi, chciwie przekręcasz go w zamku.",
+        ],
+        outro_frame_2: [
+            "Wszystko to po to, by znaleźć kolejny labirynt.",
+            "Po bolesnych godzinach rozwiązujesz i ten.",
+            "Tylko po to, by spróbować nie zwariować w kolejnych labiryntach.",
+        ],
+        outro_frame_3: [
+            "Ostatnie drzwi na drodze do utraty zmysłów prowadzą cię na urwisko spoglądające w otchłań.",
+            "Zaczynasz się wpatrywać.",
+            "Z czasem marzysz o tym, żebyś zginął już w pierwszym labiryncie.",
+        ],
+        outro_frame_4: [
+            "To, co zobaczyłeś, pogrążyło cię w paraliżującym, zwierzęcym strachu.",
+            "Chciałeś krzyczeć, ale z twojego sparaliżowanego gardła wydobywały się tylko ciche jęki błagające o ratunek.",
+            "Chciałeś wpaść do tego dołu grozy i się roztrzaskać, nie obchodził cię los kolejnych kilku sekund lotu.",
+            "Nie obchodziło cię nawet to, że spadałbyś godzinami.",
+            "Ale twoje nogi tylko uginały się pod ciężarem szaleństwa, które nasycało twoją biedną głowę, aż ostatecznie zaprzestały próżnych prób utrzymania twojego ciała.",
+            "Chciałeś wydłubać sobie oczy, ale twoje ręce nie słuchały cię w zimnym otępieniu.",
+            "Czy w ogóle tam były?",
+            "Nie potrafiłeś odpowiedzieć.",
+            "Mogłeś tylko próbować znaleźć sposób na zakończenie tego, w co to wszystko się przerodziło.",
+            "Ale sposobu nie było."
         ]
     },
     messages: {
@@ -57,26 +97,27 @@ const langPL = {
         running_hint: "Ściany i kroki ledwo wytrzymują, a co dopiero bieg.",
         not_applicable: "To nie ma tutaj zastosowania",
         first_damage_reaction: "Uff... Na szczęście ten drań ma tępy miecz, a do tego bije bez żadnej techniki.",
-        epilogue_1: "Bracie, to ty? Co ci się stało?",
+        epilogue_1: "Bracie, to ty? Co ci się stało?"
     },
     interactions: {
         crate_on_button: "Co to za dźwięk? Wygląda na to, że coś się otworzyło.",
         stone_break_crate: "Skrzynia rozbita!",
         found_key: "W tej skrzyni był klucz! Co za ironia.",
         empty_crate: "Au! Oprócz skaleczeń nic tu więcej nie ma.",
-        button_examine: "Przycisk... Co on robi...",
+        button_examine: "Płyta naciskowa. Czeka na swój ciężar.",
         button_damaged: "Więcej tam nie wejdę",
+        key_broken: "Szlag, ten stary klucz pękł. Już mi się do niczego nie przyda.",
         gears_jammed: "Zębatki zatrzymały się ze zgrzytem.",
         take_out_prompt: "WYJĄĆ",
         item_taken: "Zębatki znów się zakręciły.",
-        gears_spinning: "Obracają się tak szybko, że lepiej nie wkładać tam rąk.",
-        lever_broken: "Dźwignia nie ma uchwytu. Nie mogę jej przesunąć.",
+        gears_spinning: "Obracają się nieubłaganie, boję się, że nie zdołam ich zatrzymać.",
+        lever_broken: "Dźwignia nie ma uchwytu. Teraz jest z niej tyle pożytku, co z pługa w górach.",
         lever_fixed: "Kość idealnie dopasowała się jako uchwyt!",
         lever_pulled_on: "Dźwignia opuszczona.",
         lever_pulled_off: "Dźwignia podniesiona.",
         extract_eye_prompt: "WYRWAĆ OKO?",
-        already_blind: "Nie mam już dodatkowych oczu. Nie chcę oślepnąć całkowicie.",
-        eye_extracted: "AAA! Boli! Ale za to teraz mam oko...",
+        already_blind: "Nie mam już dodatkowych oczu. Nie chcę całkowicie oślepnąć.",
+        eye_extracted: "AAA! NIE DO ZNIESIENIA!",
         statue_head_empty: "Statua znieruchomiała. W miejscu oczu zieje pustka.",
         statue_segment_stuck: "Za nic nie mogę poruszyć tej części. Mechanizm jest zablokowany.",
         statue_one_eye: "Jedno na miejscu. Pozostało znaleźć drugie.",
@@ -113,9 +154,6 @@ const langPL = {
     },
     itemPickUp: {
         crate: "Podniesiono skrzynię",
-        coin: "O, monetka",
-        meat: "Co za ohyda. Ale to wciąż jedzenie...",
-        ruby: "Znaleziono rubin",
-        spoon: "Znaleziono łyżkę",
+        meat: "Dzisiaj nie umrę",
     }
 }

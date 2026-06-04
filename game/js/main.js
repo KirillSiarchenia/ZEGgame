@@ -3,7 +3,7 @@ const allLanguages = {
     'pl': langPL,
 };
 
-let currentLang = localStorage.getItem('game_lang') || 'ru';
+let currentLang = localStorage.getItem('game_lang') || 'pl';
 let t = allLanguages[currentLang];
 
 // управление локализацией | zarządzanie lokalizacją
