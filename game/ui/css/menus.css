@@ -18,7 +18,6 @@
     font-size: 5rem;
     letter-spacing: 15px;
     margin-bottom: 50px;
-    text-shadow: 0 0 20px #ff0000;
 }
 
 .menu-buttons {
@@ -50,10 +49,9 @@
 
 .confirm-content {
     background: #111;
-    border: 3px solid #ff4444;
+    border: 3px solid #444;
     padding: 40px;
     text-align: center;
-    box-shadow: 0 0 30px rgba(255, 68, 68, 0.2);
 }
 
 .confirm-content h2 {
@@ -83,7 +81,6 @@
     font-size: 1.5rem;
     font-weight: bold;
     letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
 }
 
 .overlay-menu {
@@ -102,16 +99,15 @@
 
 .overlay-menu h1 {
     color: #fff;
-    font-family: 'CustomFont';
+    font-family: 'MenuFont';
     font-size: 5rem;
     letter-spacing: 15px;
     margin-bottom: 50px;
-    text-shadow: 0 0 20px #ff0000;
 }
 
 .overlay-menu h2 {
     color: #fff;
-    font-family: 'CustomFont';
+    font-family: 'MenuFont';
     font-size: 2rem;
     margin-bottom: 30px;
     text-align: center;
@@ -198,11 +194,10 @@
     top: 30px;
     left: 30px;
     color: #fff;
-    font-family: 'CustomFont';
+    font-family: 'MenuFont';
     font-size: 1.5rem;
     font-weight: bold;
     letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
 }
 
 #death-menu {
@@ -217,9 +212,14 @@
     text-shadow: 0 0 30px #000;
 }
 
+#header-settings {
+    font-family: 'MenuFont';
+}
+
 #death-skull {
     width: 400px;
     height: 400px;
     margin-bottom: 40px;
+    font-family: 'MenuFont';
     image-rendering: pixelated;
 }

@@ -312,15 +312,14 @@ function setGameState(newState) {
 
 // переход на следующий уровень | przejście do następnego poziomu
 function nextLevel() {
-    UI.showMessage(t.interactions.key_broken);
     currentLevelIndex++;
     
     if (!allLevels[currentLevelIndex]) return;
-
+    
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
     loadEnemies(currentLevelIndex);
     loadMazeItems(currentLevelIndex);
-
+    
     if (currentLevelIndex === 3) {
         player.gridX = 3; 
         player.gridY = 1;
@@ -328,6 +327,7 @@ function nextLevel() {
         document.getElementById('ui-container').style.display = 'none';
         Epilogue.start(3, 12); 
     } else {
+        UI.showMessage(t.interactions.key_broken);
         const startPos = maze.getStartPos();
         player.gridX = startPos.x;
         player.gridY = startPos.y;
