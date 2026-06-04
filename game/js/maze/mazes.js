@@ -6,6 +6,10 @@ class Maze {
         
         this.wallImg = new Image();
         this.wallImg.src = 'ui/assets/wall.png';
+
+        this.exitDoorImg = new Image();
+        this.exitDoorImg.src = 'ui/assets/exit-door.png';
+        
         this.floorColor = "#675147";
     }
 
@@ -47,6 +51,8 @@ class Maze {
 
     // отрисовка лабиринта | rysowanie labiryntu 
     draw(ctx) {
+        const exitPos = this.getExitPos(); // Получаем координаты выхода
+
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
                 const cell = this.grid[y][x];
@@ -61,8 +67,23 @@ class Maze {
                         ctx.fillRect(posX, posY, tileSize, tileSize);
                     }
                 } else {
+                    // Рисуем пол для пустых клеток и комнат
                     ctx.fillStyle = this.floorColor;
                     ctx.fillRect(posX, posY, tileSize, tileSize);
+
+                    // Отрисовываем дверь, если это клетка выхода
+                    if (exitPos && x === exitPos.x && y === exitPos.y) {
+                        if (this.exitDoorImg.complete) {
+                            const doorW = 90;
+                            const doorH = 90;
+                            
+                            // Центрируем дверь по клетке (если tileSize больше 90)
+                            const doorX = posX + (tileSize - doorW) / 2;
+                            const doorY = posY + (tileSize - doorH) / 2;
+                            
+                            ctx.drawImage(this.exitDoorImg, doorX, doorY, doorW, doorH);
+                        }
+                    }
                 }
             }
         }
