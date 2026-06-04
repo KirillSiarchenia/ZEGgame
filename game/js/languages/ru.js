@@ -19,6 +19,8 @@ const langRU = {
         tutorial: "ОБУЧЕНИЕ",
         skip: "ПРОПУСТИТЬ",
         the_end: "КОНЕЦ",
+        music: "МУЗЫКА",
+        sfx: "ЗВУКИ",
     },
     cutscenes: {
         tut_frame_1: [

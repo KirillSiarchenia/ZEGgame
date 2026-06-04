@@ -33,6 +33,8 @@ class Player {
         this.missingEye = false;
 
         this.isControlLocked = false;
+
+        this.stepOdd = false; 
     }
 
     // Проверка движения | Sprawdzanie ruchu
@@ -146,6 +148,12 @@ class Player {
                 this.gridY = nextY;
                 this.lastMoveX = dx;
                 this.lastMoveY = dy;
+
+                this.stepOdd = !this.stepOdd;
+
+                if (this.stepOdd) {
+                    SoundManager.play('step');
+                }
             }
         }
     }

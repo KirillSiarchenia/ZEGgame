@@ -189,6 +189,11 @@ function restartGame() {
     
     setGameState(GameState.MAZE);
     camera.focusOn(player.x, player.y);
+
+    if (typeof SoundManager !== 'undefined') {
+        SoundManager.setPauseMuffle(false);
+        SoundManager.playAmbient('main');
+    }
 }
 
 function resetRoomsData() {
@@ -444,6 +449,7 @@ function update(dt) {
     const cellValue = maze.grid[player.gridY]?.[player.gridX];
     if (cellValue >= 11 && !player.isMoving) {
         startTransitionToRoom();
+        SoundManager.play('doorOpen');
     }
 
     enemies.forEach(enemy => enemy.update(player, maze, dt));
@@ -452,6 +458,7 @@ function update(dt) {
     if (exit && player.gridX === exit.x && player.gridY === exit.y && !player.isMoving) {
         const keyItem = Inventory.items.find(it => it.id === 'rusty_key');
         if (keyItem) Inventory.removeItem(keyItem.instanceId);
+        SoundManager.play('doorOpen');
         
         if (currentLevelIndex === 2) { 
             CutsceneManager.play('outro', () => {
@@ -612,7 +619,7 @@ const Epilogue = {
     active: false,
     phase: 0,
     brother: null,
-    stepTimer: 0, // Добавили таймер для пауз между шагами
+    stepTimer: 0, 
 
     start(bx, by) {
         this.active = true;
@@ -620,7 +627,9 @@ const Epilogue = {
         this.stepTimer = 0;
         this.brother = { x: bx * tileSize, y: by * tileSize, gridY: by };
         player.isControlLocked = false; 
-        player.speed = PLAYER_CONFIG.SPEED; // Гарантируем обычную скорость
+        player.speed = PLAYER_CONFIG.SPEED; 
+
+        SoundManager.playAmbient('end');
     },
 
     update(dt) {
@@ -655,6 +664,8 @@ const Epilogue = {
                         setGameState(GameState.END); 
                         
                         triggerSlashEffect(this.brother.x, this.brother.y);
+
+                        SoundManager.play('attack');
                         
                         setTimeout(() => {
                             document.getElementById('end-screen').classList.remove('hidden');

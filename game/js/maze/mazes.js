@@ -31,8 +31,10 @@ class Maze {
         const cellValue = this.grid[targetY]?.[targetX];
         if (cellValue >= 11 && roomsData[cellValue]?.isLocked) {
             UI.showMessage(t.messages.room_locked);
+            SoundManager.play('doorLocked');
             return false;
         }
+        SoundManager.play('doorOpened');
         return true;
     }
 
@@ -43,12 +45,14 @@ class Maze {
             const hasKey = Inventory.items.some(it => it.id === 'rusty_key');
             if (!hasKey) {
                 UI.showMessage(t.messages.exit_locked);
+                SoundManager.play('doorLocked');
                 return false;
             }
         }
+        SoundManager.play('doorOpened');
         return true;
     }
-
+    
     // отрисовка лабиринта | rysowanie labiryntu 
     draw(ctx) {
         const exitPos = this.getExitPos(); // Получаем координаты выхода

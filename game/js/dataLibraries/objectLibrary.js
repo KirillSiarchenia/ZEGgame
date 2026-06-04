@@ -46,6 +46,7 @@ const ObjectsLibrary = {
             if (obj.id === "pressure_button" && obj.state === "empty") {
                 obj.state = 'with_crate';
                 roomsData["12"].isLocked = false;
+                SoundManager.play('button');
                 return {
                     message: t.interactions.crate_on_button,
                     deleteItem: true
@@ -61,6 +62,7 @@ const ObjectsLibrary = {
         action: (obj) => {
             if (obj.id === "pressure_button" && obj.state === "with_crate") {
                 obj.state = 'broken';
+                SoundManager.play('crate');
                 return { message: t.interactions.stone_break_crate, deleteItem: false };
             }
             if (obj.id === "gears" && obj.state === "spinning") {
@@ -149,6 +151,7 @@ const ObjectsLibrary = {
                 player.hp -= 1;
                 player.visionRadius = 300;
                 Inventory.addItem({ ...ObjectsLibrary['player_eye'] });
+                SoundManager.play('eye');
                 UI.showMessage(t.interactions.eye_extracted);
             });
             return {};

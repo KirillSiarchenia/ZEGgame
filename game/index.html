@@ -30,6 +30,27 @@
     
     <div id="settings-menu" class="overlay-menu hidden">
         <h1 id="header-settings">НАСТРОЙКИ</h1>
+
+        <div class="settings-volume-container">
+            <div class="volume-row">
+                <span class="volume-label" id="label-music">МУЗЫКА</span>
+                <div class="volume-controls">
+                    <button class="volume-btn" id="btn-music-down">-</button>
+                    <div class="volume-bar" id="bar-music"></div>
+                    <button class="volume-btn" id="btn-music-up">+</button>
+                </div>
+            </div>
+            
+            <div class="volume-row">
+                <span class="volume-label" id="label-sfx">ЗВУКИ</span>
+                <div class="volume-controls">
+                    <button class="volume-btn" id="btn-sfx-down">-</button>
+                    <div class="volume-bar" id="bar-sfx"></div>
+                    <button class="volume-btn" id="btn-sfx-up">+</button>
+                </div>
+            </div>
+        </div>
+        
         <div class="menu-buttons">
             <div class="btn-wrapper">
                 <button id="btn-lang">ЯЗЫК: RU</button>
@@ -141,6 +162,7 @@
     <script src="ui/ui-menu.js"></script> 
     <script src="ui/ui-msg.js"></script> 
     <script src="ui/camera.js"></script>
+    <script src="js/soundManager.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

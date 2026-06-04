@@ -31,6 +31,8 @@ class Enemy {
         this.facing = 'down';
         this.currentFrame = 0;
         this.frameTimer = 0;
+
+        this.stepOdd = false; 
     }
 
     get isMoving() {
@@ -171,6 +173,17 @@ class Enemy {
                 this.gridY = nextY;
                 this.dirX = this.playerLastDir.dx;
                 this.dirY = this.playerLastDir.dy;
+                
+                if (this.stepOdd) {
+                    const dist = this.getDistanceTo(player.gridX, player.gridY);
+                    const maxHearDist = 6;
+                    const volumeFactor = Math.max(0, 1 - (dist / maxHearDist));
+
+                    if (volumeFactor > 0) {
+                        SoundManager.play('enemyStep', volumeFactor);
+                    }
+                }
+
                 return true;
             }
         }
@@ -257,6 +270,18 @@ class Enemy {
 
                     this.gridX = nextStep.x;
                     this.gridY = nextStep.y;
+
+                    this.stepOdd = !this.stepOdd;
+                    
+                    if (this.stepOdd) {
+                        const dist = this.getDistanceTo(player.gridX, player.gridY);
+                        const maxHearDist = 6;
+                        const volumeFactor = Math.max(0, 1 - (dist / maxHearDist));
+
+                        if (volumeFactor > 0) {
+                            SoundManager.play('enemyStep', volumeFactor);
+                        }
+                    }
                 } else {
                     this.dirX = nextStep.x - this.gridX;
                     this.dirY = nextStep.y - this.gridY;
@@ -315,6 +340,8 @@ class Enemy {
             player.hp -= 1;
 
             triggerSlashEffect(player.x, player.y);
+
+            SoundManager.play('attack');
             
             this.attackCooldown = ENEMY_CONFIG.ATTACK_COOLDOWN;
             this.knockbackTimer = ENEMY_CONFIG.KNOCKBACK_TIME;

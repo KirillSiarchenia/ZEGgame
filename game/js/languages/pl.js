@@ -19,6 +19,8 @@ const langPL = {
         tutorial: "SAMOUCZEK",
         skip: "POMIŃ",
         the_end: "KONIEC",
+        music: "MUZYKA",
+        sfx: "DŹWIĘKI"
     },
     cutscenes: {
         tut_frame_1: [

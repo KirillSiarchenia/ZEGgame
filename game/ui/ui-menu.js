@@ -24,6 +24,10 @@ Object.assign(UI, {
 
         const fsPauseMenu = document.getElementById('fullscreen-pause-menu');
         if (fsPauseMenu) fsPauseMenu.classList.remove('hidden');
+
+        if (typeof SoundManager !== 'undefined') {
+            SoundManager.setPauseMuffle(true);
+        }
     },
 
     hideFullscreenPause() {
@@ -33,6 +37,10 @@ Object.assign(UI, {
         }
         const fsPauseMenu = document.getElementById('fullscreen-pause-menu');
         if (fsPauseMenu) fsPauseMenu.classList.add('hidden');
+
+        if (typeof SoundManager !== 'undefined') {
+            SoundManager.setPauseMuffle(this.isPaused);
+        }
     },
     
     // открытие/закрытие главного меню паузы | otwieranie/zamykanie głównego menu pauzy
@@ -45,6 +53,10 @@ Object.assign(UI, {
         const isHidden = pauseMenu.classList.toggle('hidden');
         this.isPaused = !isHidden;
 
+        if (typeof SoundManager !== 'undefined') {
+            SoundManager.setPauseMuffle(this.isPaused);
+        }
+
         if (this.isPaused) {
             const inv = document.getElementById('inventory-modal');
             if (inv) inv.classList.add('hidden');
@@ -54,6 +66,28 @@ Object.assign(UI, {
                 levelIndicator.innerText = `${t.menu.level}: ${currentLevelIndex + 1}`;
             }
         }
+    },
+
+    renderVolumeBars() {
+        const createBones = (containerId, currentVolume) => {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const activeSegmentsCount = Math.round(currentVolume * 10);
+            
+            for (let i = 1; i <= 10; i++) {
+                const bone = document.createElement('div');
+                bone.className = 'bone-segment';
+                if (i > activeSegmentsCount) {
+                    bone.classList.add('inactive');
+                }
+                container.appendChild(bone);
+            }
+        };
+
+        createBones('bar-music', SoundManager.musicVolume);
+        createBones('bar-sfx', SoundManager.sfxVolume);
     },
 
     // вызов модального окна подтверждения | wywołanie modalnego okna potwierdzenia
@@ -102,6 +136,8 @@ Object.assign(UI, {
         setText('btn-play', t.menu.play);
         setText('btn-tutorial', t.menu.tutorial);
         setText('btn-skip-cutscene', t.menu.skip);
+        setText('label-music', t.menu.music);
+        setText('label-sfx', t.menu.sfx);
 
         const invHeader = document.querySelector('.inventory-header h2');
         if (invHeader) invHeader.innerText = t.ui.inventory;
@@ -146,6 +182,7 @@ Object.assign(UI, {
 
                 CutsceneManager.play('intro', () => {
                     setGameState(GameState.MAZE);
+                    SoundManager.playAmbient('main');
                 });
             });
         };
@@ -161,12 +198,14 @@ Object.assign(UI, {
             this.settingsParent = 'main-menu';
             mainMenu.classList.add('hidden');
             settingsMenu.classList.remove('hidden');
+            this.renderVolumeBars();
         };
 
         document.getElementById('btn-pause-settings').onclick = () => {
             this.settingsParent = 'pause-menu';
             pauseMenu.classList.add('hidden');
             settingsMenu.classList.remove('hidden');
+            this.renderVolumeBars();
         };
 
         document.getElementById('btn-settings-back').onclick = () => {
@@ -211,5 +250,29 @@ Object.assign(UI, {
                 });
             };
         }
+
+        document.getElementById('btn-music-down').onclick = () => {
+            let vol = Math.max(0, SoundManager.musicVolume - 0.1);
+            SoundManager.setMusicVolume(vol);
+            this.renderVolumeBars();
+        };
+        document.getElementById('btn-music-up').onclick = () => {
+            let vol = Math.min(1.0, SoundManager.musicVolume + 0.1);
+            SoundManager.setMusicVolume(vol);
+            this.renderVolumeBars();
+        };
+
+        document.getElementById('btn-sfx-down').onclick = () => {
+            let vol = Math.max(0, SoundManager.sfxVolume - 0.1);
+            SoundManager.setSfxVolume(vol);
+            this.renderVolumeBars();
+            SoundManager.play('button');
+        };
+        document.getElementById('btn-sfx-up').onclick = () => {
+            let vol = Math.min(1.0, SoundManager.sfxVolume + 0.1);
+            SoundManager.setSfxVolume(vol);
+            this.renderVolumeBars();
+            SoundManager.play('button');
+        };
     },
 });

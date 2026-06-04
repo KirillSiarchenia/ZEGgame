@@ -104,6 +104,8 @@ const ObjectLogic = {
         currentRot = (currentRot + 1) % 3;
         target.state = `rot_${currentRot}`;
 
+        SoundManager.play('statue');
+
         if (torso.state === 'rot_0' && legs.state === 'rot_0') {
             torso.state = 'open'; 
             Inventory.addItem({ ...ObjectsLibrary['rusty_key'] });
