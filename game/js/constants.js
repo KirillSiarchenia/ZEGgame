@@ -56,9 +56,3 @@ const MSG_CONFIG = {
     CLOSE_DELAY: 100,
     INIT_DELAY: 150
 };
-
-const COLORS = {
-    FOG: "rgba(0, 0, 0, 1)",
-    UI_BORDER: "#ff4444",
-    ITEM_DEFAULT: "gold"
-};

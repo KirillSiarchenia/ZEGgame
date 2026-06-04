@@ -164,8 +164,7 @@ canvas.addEventListener("mouseup", (e) => {
 
 function restartGame() {
     currentLevelIndex = 0;
-    Inventory.items = []
-    player.hp = PLAYER_CONFIG.MAX_HP;
+    Inventory.items = [];
     
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
     resetRoomsData();

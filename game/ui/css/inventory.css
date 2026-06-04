@@ -54,7 +54,7 @@ body:not(.item-equipped) #inventory-btn:not(.modal-open):hover {
 }
 
 .inventory-header h2 {
-    font-family: 'MenuFont';
+    font-family: 'MenuFont'; 
     margin: 0;
 }
 
@@ -105,6 +105,6 @@ body:not(.item-equipped) #inventory-btn:not(.modal-open):hover {
 }
 
 #item-context-menu button:hover {
-    background: #444;
+    background: #444; 
     color: #fff;
 }
