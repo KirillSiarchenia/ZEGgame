@@ -312,6 +312,7 @@ function setGameState(newState) {
 
 // переход на следующий уровень | przejście do następnego poziomu
 function nextLevel() {
+    UI.showMessage(t.interactions.key_broken);
     currentLevelIndex++;
     
     if (!allLevels[currentLevelIndex]) return;
