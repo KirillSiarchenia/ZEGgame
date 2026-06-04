@@ -22,13 +22,19 @@ Object.assign(UI, {
     },
     
     // плавный вывод текста в окно (эффект печатной машинки) | płynne wyświetlanie tekstu w oknie (efekt maszyny do pisania)
-    showMessage(text) {
+    showMessage(text, position = 'bottom') {
         this.closeMessage(true); 
         
         this._fullText = text;
         const box = document.getElementById('msg-box');
         const content = document.getElementById('msg-content');
         if (!box || !content) return;
+
+        if (position === 'top') {
+            box.classList.add('top-pos');
+        } else {
+            box.classList.remove('top-pos');
+        }
 
         box.classList.remove('hidden');
         this.isMessageActive = true;

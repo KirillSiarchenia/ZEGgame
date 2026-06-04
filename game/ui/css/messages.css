@@ -19,3 +19,8 @@
     line-height: 1.4;
     white-space: pre-wrap;
 }
+
+.message-window.top-pos {
+    bottom: auto; 
+    top: 20px;   
+}

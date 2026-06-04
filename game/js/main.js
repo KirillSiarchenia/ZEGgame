@@ -158,7 +158,7 @@ canvas.addEventListener("mouseup", (e) => {
 }, true);
 
 function restartGame() {
-    currentLevelIndex = 0;
+    currentLevelIndex = 2;
     Inventory.items = []
     player.hp = PLAYER_CONFIG.MAX_HP;
     
@@ -627,7 +627,7 @@ const Epilogue = {
             this.phase = 1;
             player.isControlLocked = true; 
             player.isMoving = false;
-            UI.showMessage(t.messages.epilogue_1);
+            UI.showMessage(t.messages.epilogue_1, 'top');
         }
         else if (this.phase === 1 && !UI.isMessageActive) {
             this.phase = 2;
