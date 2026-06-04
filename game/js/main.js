@@ -78,6 +78,15 @@ window.addEventListener("keydown", (e) => {
 
     const isEscape = e.key === "Escape";
     const isPauseKey = e.key.toLowerCase() === "p" || e.key.toLowerCase() === "з";
+    const isSpace = e.key === " ";
+
+    if (UI.isMessageActive) {
+        if (isEscape || isSpace) {
+            e.preventDefault(); 
+            UI.closeMessage(false); 
+        }
+        return;
+    }
 
     if (isEscape || isPauseKey) {
         const confirmModal = document.getElementById('confirm-modal');
@@ -86,10 +95,6 @@ window.addEventListener("keydown", (e) => {
             return;
         }
         
-        if (UI.isMessageActive) {
-            if (isEscape) UI.closeMessage(false); 
-            return;
-        }
 
         const ctxMenu = document.getElementById('item-context-menu');
         if (ctxMenu) { 
@@ -158,7 +163,7 @@ canvas.addEventListener("mouseup", (e) => {
 }, true);
 
 function restartGame() {
-    currentLevelIndex = 2;
+    currentLevelIndex = 0;
     Inventory.items = []
     player.hp = PLAYER_CONFIG.MAX_HP;
     
