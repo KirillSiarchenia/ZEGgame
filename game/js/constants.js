@@ -1,4 +1,4 @@
-const tileSize = 90;
+const tileSize = 30;
 
 const slashAnim = {
     active: false,

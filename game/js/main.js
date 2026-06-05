@@ -76,6 +76,13 @@ window.onload = () => {
 window.addEventListener("keydown", (e) => {
     if (UI.isFullscreenPaused) return; 
 
+    if (typeof CutsceneManager !== 'undefined' && CutsceneManager.active) {
+        if (e.key === "Escape" || e.key === " ") {
+            e.preventDefault();
+        }
+        return;
+    }
+
     const isEscape = e.key === "Escape";
     const isPauseKey = e.key.toLowerCase() === "p" || e.key.toLowerCase() === "з";
     const isSpace = e.key === " ";
@@ -129,6 +136,7 @@ window.addEventListener("keydown", (e) => {
 });
 
 window.addEventListener("keyup", (e) => {
+    if (typeof CutsceneManager !== 'undefined' && CutsceneManager.active) { return; }
     keys[e.key.toLowerCase()] = false;
 });
 
@@ -163,7 +171,7 @@ canvas.addEventListener("mouseup", (e) => {
 }, true);
 
 function restartGame() {
-    currentLevelIndex = 0;
+    currentLevelIndex = 2;
     Inventory.items = [];
     
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
