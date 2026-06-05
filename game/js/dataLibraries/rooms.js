@@ -5,7 +5,7 @@ const INITIAL_ROOMS_DATA = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { id: "pressure_button", x: 0.45, y: 0.7},
+                    { id: "pressure_button", x: 600, y: 600},
                 ]
             },
             left: {
@@ -28,7 +28,7 @@ const INITIAL_ROOMS_DATA = {
             left: {
                 bg: "#1a1a1a",
                 objects: [
-                    {id: "stone", x: 0.2, y: 0.8},
+                    {id: "stone", x: 384, y: 700},
                 ]
             },
             right: {
@@ -43,7 +43,7 @@ const INITIAL_ROOMS_DATA = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { id: "gears", x: 0.5, y: 0.4 }
+                    { id: "gears", x: 960, y: 432}
                 ]
             },
             left: { bg: "#1a1a1a", objects: [] },
@@ -56,7 +56,7 @@ const INITIAL_ROOMS_DATA = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { id: "broken_lever", x: 0.5, y: 0.5 }
+                    { id: "broken_lever", x: 960, y: 540 }
                 ]
             },
             left: { bg: "#1a1a1a", objects: [] },
@@ -69,7 +69,7 @@ const INITIAL_ROOMS_DATA = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { id: "rusty_key", x: 0.5, y: 0.5 }
+                    { id: "rusty_key", x: 960, y: 540 }
                 ]
             },
             left: { bg: "#1a1a1a", objects: [] },
@@ -82,9 +82,9 @@ const INITIAL_ROOMS_DATA = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { id: "statue_head", x: 0.5, y: 0.3 },
-                    { id: "statue_torso", x: 0.5, y: 0.5 },
-                    { id: "statue_legs", x: 0.5, y: 0.7 }
+                    { id: "statue_head", x: 960, y: 300  },
+                    { id: "statue_torso", x: 960, y: 500  },
+                    { id: "statue_legs", x: 960, y: 700 }
                 ]
             },
             left: { bg: "#1a1a1a", objects: [] },
@@ -95,7 +95,7 @@ const INITIAL_ROOMS_DATA = {
         isLocked: false,
         views: {
             center: { bg: "#1a1a1a", objects: [] },
-            left: { bg: "#1a1a1a", objects: [{ id: "ruby", x: 0.5, y: 0.5 }] },
+            left: { bg: "#1a1a1a", objects: [{ id: "ruby", x: 960, y: 540}] },
             right: { bg: "#1a1a1a", objects: [] }
         }
     },
@@ -104,7 +104,7 @@ const INITIAL_ROOMS_DATA = {
         views: {
             center: { bg: "#1a1a1a", objects: [] },
             left: { bg: "#1a1a1a", objects: [] },
-            right: { bg: "#1a1a1a", objects: [{ id: "spoon", x: 0.5, y: 0.5 }] }
+            right: { bg: "#1a1a1a", objects: [{ id: "spoon", x: 960, y: 540 }] }
         }
     },
 };

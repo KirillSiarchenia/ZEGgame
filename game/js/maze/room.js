@@ -81,16 +81,20 @@ class RoomManager {
 
             let stateData = o.stateImages ? o.stateImages[o.state] : null;
             
-            // Теперь берем размеры строго из базовых настроек объекта
             let currentW = o.w || 100;
             let currentH = o.h || 100;
 
-            const centerX = o.x * w;
-            const centerY = o.y * h;
-            const dw = currentW * (w / 1920);
-            const dh = currentH * (h / 1080);
-            const dx = centerX - dw / 2;
-            const dy = centerY - dh / 2;
+            const baseScreenWidth = 1920;
+            const baseScreenHeight = 1080;
+
+            const actualX = o.x * (w / baseScreenWidth);
+            const actualY = o.y * (h / baseScreenHeight);
+
+            const dw = currentW * (w / baseScreenWidth);
+            const dh = currentH * (h / baseScreenHeight); 
+
+            const dx = actualX - dw / 2;
+            const dy = actualY - dh / 2;
 
             if (stateData && typeof stateData === 'object') {
                 const img = getCachedImage(stateData.sheet);
@@ -137,11 +141,18 @@ class RoomManager {
 
             let currentW = o.w || 100;
             let currentH = o.h || 100;
+            
+            const baseScreenWidth = 1920;
+            const baseScreenHeight = 1080;
 
-            const dw = currentW * (w / 1920);
-            const dh = currentH * (h / 1080);
-            const dx = o.x * w - dw / 2;
-            const dy = o.y * h - dh / 2;
+            const actualX = o.x * (w / baseScreenWidth);
+            const actualY = o.y * (h / baseScreenHeight);
+
+            const dw = currentW * (w / baseScreenWidth);
+            const dh = currentH * (h / baseScreenHeight);
+
+            const dx = actualX - dw / 2;
+            const dy = actualY - dh / 2;
 
             if (mx > dx && mx < dx + dw && my > dy && my < dy + dh) {
                 return { type: 'OBJECT', data: o };
