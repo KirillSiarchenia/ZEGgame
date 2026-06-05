@@ -6,4 +6,7 @@ const mazeItemsData = {
     "map2": [
         {id: "herb", x: 1, y: 1},
     ],
+    "map3": [
+        {id: "herb", x: 27, y: 19},
+    ],
 };

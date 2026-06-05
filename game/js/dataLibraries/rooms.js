@@ -10,7 +10,9 @@ const INITIAL_ROOMS_DATA = {
             },
             left: {
                 bg: "#1a1a1a",
-                objects: []
+                objects: [
+                    { id: "herb", x: 600, y: 600},
+                ]
             },
             right: {
                 bg: "#1a1a1a",
@@ -33,7 +35,9 @@ const INITIAL_ROOMS_DATA = {
             },
             right: {
                 bg: "#1a1a1a",
-                objects: []
+                objects: [
+                    { id: "herb", x: 600, y: 600},
+                ]
             }
         }
     },
@@ -47,7 +51,12 @@ const INITIAL_ROOMS_DATA = {
                 ]
             },
             left: { bg: "#1a1a1a", objects: [] },
-            right: { bg: "#1a1a1a", objects: [] }
+            right: { 
+                bg: "#1a1a1a", 
+                objects: [
+                    { id: "herb", x: 600, y: 600},
+                ] 
+            }
         }
     },
     "22": {
@@ -55,12 +64,20 @@ const INITIAL_ROOMS_DATA = {
         views: {
             center: {
                 bg: "#1a1a1a",
+                objects: [ ]
+            },
+            left: { 
+                bg: "#1a1a1a", 
+                objects: [
+                    { id: "herb", x: 600, y: 600},
+                ] 
+            },
+            right: { 
+                bg: "#1a1a1a", 
                 objects: [
                     { id: "broken_lever", x: 960, y: 540 }
                 ]
-            },
-            left: { bg: "#1a1a1a", objects: [] },
-            right: { bg: "#1a1a1a", objects: [] }
+             }
         }
     },
     "23": {
@@ -94,7 +111,7 @@ const INITIAL_ROOMS_DATA = {
     "32": {
         isLocked: false,
         views: {
-            center: { bg: "#1a1a1a", objects: [] },
+            center: { bg: "#1a1a1a", objects: [{ id: "herb", x: 600, y: 600}] },
             left: { bg: "#1a1a1a", objects: [{ id: "ruby", x: 960, y: 540}] },
             right: { bg: "#1a1a1a", objects: [] }
         }

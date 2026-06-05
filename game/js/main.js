@@ -171,7 +171,7 @@ canvas.addEventListener("mouseup", (e) => {
 }, true);
 
 function restartGame() {
-    currentLevelIndex = 2;
+    currentLevelIndex = 0;
     Inventory.items = [];
     
     maze = new Maze(allLevels[currentLevelIndex], tileSize);

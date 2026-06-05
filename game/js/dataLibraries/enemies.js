@@ -8,5 +8,10 @@ const enemiesData = {
         { x: 1, y: 3, tileSize: tileSize, path: [{x: 1, y: 3}, {x: 5, y: 7}] },
         { x: 15, y: 3, tileSize: tileSize, path: [{x: 15, y: 3}, {x: 22, y: 9}] },
     ],
-    map3: []
+    map3: [
+        { x: 1, y: 16, tileSize: tileSize, path: [{x: 1, y: 16}, {x: 8, y: 19}] },
+        { x: 15, y: 13, tileSize: tileSize, path: [{x: 15, y: 13}, {x: 23, y: 15}] },
+        { x: 23, y: 3, tileSize: tileSize, path: [{x: 23, y: 3}, {x: 27, y: 7}] },
+        { x: 11, y: 7, tileSize: tileSize, path: [{x: 11, y: 7}, {x: 9, y: 5}] },
+    ]
 };
