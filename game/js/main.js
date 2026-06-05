@@ -182,6 +182,8 @@ function restartGame() {
     player.x = startPos.x * tileSize;
     player.y = startPos.y * tileSize;
     player.facing = 'down';
+    player.invulnTimer = 0;
+    player.blinkTimer = 0;
 
     UI.updateHealth(player.hp);
     UI.updateConsumables([]);

@@ -19,6 +19,9 @@ class Player {
         this.firstDamageReactionDone = false; 
         this.knockbackTimer = 0;
 
+        this.invulnTimer = 0;
+        this.blinkTimer = 0;
+
         // Инициализация графики | Inicjalizacja grafiki
         this.sprite = new Image();
         this.sprite.src = PLAYER_CONFIG.SPRITE_PATH; 
@@ -64,6 +67,15 @@ class Player {
         if (this.hp <= 0) return;
         if (this.knockbackTimer > 0) this.knockbackTimer -= dt * 1000;
 
+        if (this.invulnTimer > 0) {
+            this.invulnTimer -= dt;
+            this.blinkTimer += dt;
+            if (this.invulnTimer <= 0) {
+                this.invulnTimer = 0;
+                this.blinkTimer = 0;
+            }
+        }
+
         const targetX = this.gridX * tileSize;
         const targetY = this.gridY * tileSize;
         const step = PLAYER_CONFIG.SPEED * dt;
@@ -106,6 +118,13 @@ class Player {
 
     // Отрисовка | Rysowanie
     draw(ctx) {
+        if (this.invulnTimer > 0) {
+            const flashInterval = 0.1;
+            if (Math.floor(this.blinkTimer / flashInterval) % 2 === 0) {
+                return;
+            }
+        }
+
         const rows = { 'down': 0, 'up': 1, 'left': 2, 'right': 3 };
         const row = rows[this.facing] || 0;
 
@@ -136,7 +155,7 @@ class Player {
             const nextY = this.gridY + dy;
 
             const isWall = maze.isWall(nextX, nextY);
-            const isEnemyThere = enemies.some(e => {
+            const isEnemyThere = this.invulnTimer > 0 ? false : enemies.some(e => {
                 if (e.gridX === nextX && e.gridY === nextY) return true;
                 const eGridL = Math.floor(e.x / tileSize), eGridR = Math.floor((e.x + tileSize - 1) / tileSize);
                 const eGridT = Math.floor(e.y / tileSize), eGridB = Math.floor((e.y + tileSize - 1) / tileSize);

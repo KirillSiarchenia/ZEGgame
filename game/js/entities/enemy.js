@@ -336,8 +336,11 @@ class Enemy {
     }
 
     checkAttack(player, maze) {
+        if (player.invulnTimer > 0) return;
+
         if (this.attackCooldown <= 0) {
             player.hp -= 1;
+            player.invulnTimer = 1.0;
 
             triggerSlashEffect(player.x, player.y);
 
