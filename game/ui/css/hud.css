@@ -41,7 +41,6 @@
     to { background-position: -1715px 0px; } 
 }
 
-
 #consumables-panel {
     position: absolute;
     top: 20px;
@@ -54,6 +53,8 @@
 }
 
 .consumable-btn {
+    box-sizing: content-box !important;
+    padding: 0 !important;             
     width: 100px;
     height: 100px;
     cursor: pointer;
@@ -61,12 +62,15 @@
     background-repeat: no-repeat;
     background-size: auto 200%;
     image-rendering: pixelated;
-    background-color: transparent;
-    border: none;
+    background-color: #14110f;
+    border: 3px solid #000000;
+    box-shadow: inset -2px -2px 0px #050404, inset 2px 2px 0px #2a231e;
     outline: none;
     color: transparent;
 }
 
 .consumable-btn:hover {
     background-position-y: -100px !important;
+    border-color: #000000;
+    box-shadow: inset -2px -2px 0px #0d0a08, inset 2px 2px 0px #42382f;
 }

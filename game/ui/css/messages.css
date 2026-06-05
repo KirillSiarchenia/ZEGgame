@@ -1,12 +1,17 @@
 .message-window {
+    filter: url(#pixel-shabby);
     position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
     height: 150px;
-    background: black;
-    border: 4px solid white;
+    background: #0d0b0a;
+    border: 5px solid #000000;
+    box-shadow: 
+        inset -4px -4px 0px #050404, 
+        inset 4px 4px 0px #26201b, 
+        0px 10px 25px rgba(0,0,0,0.85);
     padding: 20px;
     z-index: 3000;
     font-family: 'CustomFont';
@@ -14,10 +19,11 @@
 }
 
 .message-text {
-    color: white;
+    color: #807870;
     font-size: 24px;
     line-height: 1.4;
     white-space: pre-wrap;
+    text-shadow: 2px 2px 0px #000;
 }
 
 .message-window.top-pos {

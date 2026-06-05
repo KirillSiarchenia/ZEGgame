@@ -1,6 +1,6 @@
 #cutscene-ui {
     background-color: black;
-    z-index: 90; /* Ниже меню паузы (у него 100), чтобы пауза отображалась поверх */
+    z-index: 90;
     justify-content: flex-start;
     padding-top: 10vh;
 }
@@ -29,28 +29,33 @@
 }
 
 #cutscene-text {
-    color: white;
+    color: white; 
     text-align: center;
     font-size: 24px;
     line-height: 1.4;
     white-space: pre-wrap;
+    text-shadow: 2px 2px 0px #000;
 }
 
 .skip-btn {
+    filter: url(#pixel-shabby);
     position: fixed;
     font-family: 'CustomFont';
     bottom: 30px; 
     right: 30px;
-    padding: 10px 20px;
+    padding: 10px 24px;
     font-size: 1.2rem;
-    background: #222;
-    color: white;
-    border: 1px solid #444;
+    background: #14110f;
+    color: #807870;
+    border: 3px solid #000000;
+    box-shadow: inset -2px -2px 0px #050404, inset 2px 2px 0px #2a231e;
     cursor: pointer;
     z-index: 96;
 }
 
 .skip-btn:hover {
-    background: #444;
-    border-color: white;
+    background-color: #241e1a;
+    color: #cfb07c;
+    border-color: #000000;
+    box-shadow: inset -2px -2px 0px #0d0a08, inset 2px 2px 0px #42382f;
 }
