@@ -63,6 +63,16 @@ const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maz
 window.onload = () => {
     UI.updateStaticTexts();
     UI.initMenuEvents();
+
+    const bgImg = document.getElementById('menu-bg-image');
+    if (bgImg) {
+        const isCompleted = localStorage.getItem('game_completed') === 'true';
+        if (isCompleted) {
+            bgImg.style.backgroundImage = "url('ui/assets/menu-bg-completed.png')";
+        } else {
+            bgImg.style.backgroundImage = "url('ui/assets/menu-bg-default.png')";
+        }
+    }
     
     resetRoomsData();
     const invBtn = document.getElementById('inventory-btn');
@@ -525,13 +535,12 @@ function drawAll() {
             }
         });
 
-        // Враги и игрок
         enemies.forEach(enemy => enemy.draw(ctx)); 
         Epilogue.draw(ctx);
         player.draw(ctx);                          
 
         ctx.restore();
-        // drawFogOfWar(ctx, player, camera);
+        drawFogOfWar(ctx, player, camera);
     }
     
     // Отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu
@@ -572,9 +581,7 @@ function gameLoop(timestamp = performance.now()) {
             }
         }
 
-        // Если анимация ВСЁ ЕЩЁ активна - рисуем её
         if (slashAnim.active) {
-            // Заливаем экран чернотой
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -600,7 +607,7 @@ function gameLoop(timestamp = performance.now()) {
             }
 
             requestAnimationFrame(gameLoop);
-            return; // БЛОКИРУЕМ остальную игру!
+            return; 
         }
     }
 
@@ -672,6 +679,8 @@ const Epilogue = {
                         this.phase = 3;
                         
                         setGameState(GameState.END); 
+
+                        localStorage.setItem('game_completed', 'true');
                         
                         triggerSlashEffect(this.brother.x, this.brother.y);
 

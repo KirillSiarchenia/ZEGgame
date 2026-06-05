@@ -1,5 +1,4 @@
 .message-window {
-    filter: url(#pixel-shabby);
     position: fixed;
     bottom: 20px;
     left: 50%;
