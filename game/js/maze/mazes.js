@@ -10,6 +10,9 @@ class Maze {
         this.floorImg = new Image();
         this.floorImg.src = 'ui/assets/floor.png';
 
+        this.roomDoorImg = new Image();
+        this.roomDoorImg.src = 'ui/assets/door.png';
+
         this.exitDoorImg = new Image();
         this.exitDoorImg.src = 'ui/assets/exit-door.png';
     }
@@ -56,7 +59,7 @@ class Maze {
     
     // отрисовка лабиринта | rysowanie labiryntu 
     draw(ctx) {
-        const exitPos = this.getExitPos(); // Получаем координаты выхода
+        const exitPos = this.getExitPos();
 
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
@@ -78,6 +81,16 @@ class Maze {
                             const doorY = posY + (tileSize - doorH) / 2;
                             
                             ctx.drawImage(this.exitDoorImg, doorX, doorY, doorW, doorH);
+                        }
+                    } else if (cell >= 11) {
+                        if (this.roomDoorImg.complete) {
+                            const doorW = 90;
+                            const doorH = 90;
+                            
+                            const doorX = posX + (tileSize - doorW) / 2;
+                            const doorY = posY + (tileSize - doorH) / 2;
+                            
+                            ctx.drawImage(this.roomDoorImg, doorX, doorY, doorW, doorH);
                         }
                     }
                 }

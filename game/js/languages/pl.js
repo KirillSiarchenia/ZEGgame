@@ -20,7 +20,15 @@ const langPL = {
         skip: "POMIŃ",
         the_end: "KONIEC",
         music: "MUZYKA",
-        sfx: "DŹWIĘKI"
+        sfx: "DŹWIĘKI",
+        difficulty: "POZIOM TRUDNOŚCI",
+        diff_easy: "ŁATWY",
+        diff_hard: "ZAMIERZONY",
+        select_difficulty: "WYBIERZ POZIOM TRUDNOŚCI",
+        credits_lead_dev: "Główny deweloper:",
+        credits_dev_name: "Kirill Siarchenia",
+        credits_design: "Graficy:",
+        credits_design_names: "Nathaniel Kusal, Kirill Siarchenia",
     },
     cutscenes: {
         tut_frame_1: [

@@ -3,6 +3,7 @@ const allLanguages = {
     'pl': langPL,
 };
 
+let gameDifficulty = localStorage.getItem('game_difficulty') || 'hard';
 let currentLang = localStorage.getItem('game_lang') || 'pl';
 let t = allLanguages[currentLang];
 
@@ -181,7 +182,7 @@ canvas.addEventListener("mouseup", (e) => {
 }, true);
 
 function restartGame() {
-    currentLevelIndex = 0;
+    currentLevelIndex = 2;
     Inventory.items = [];
     
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
@@ -247,6 +248,8 @@ function loadMazeItems(levelIndex) {
 
 // отрисовка эффекта тумана войны вокруг игрока | rysowanie efektu mgły wojny wokół gracza
 function drawFogOfWar(ctx, player, camera) {
+    if (gameDifficulty === 'easy') return;
+    
     ctx.save();
 
     const radius = player.visionRadius;
@@ -432,13 +435,6 @@ function checkMazeItemPickup(gridX, gridY) {
 // обновление состояния игры | aktualizacja stanu gry
 function update(dt) {
     if (currentState !== GameState.MAZE || UI.isMessageActive || UI.isPaused) return;
-    if (player.hp <= 0 && currentState !== GameState.DEAD) {
-        setGameState(GameState.DEAD); 
-                setTimeout(() => {
-            UI.showDeathMenu(); 
-        }); 
-        return;
-    }
 
     Epilogue.update(dt);
 
@@ -570,6 +566,11 @@ function gameLoop(timestamp = performance.now()) {
 
     if (dt > 0.1) dt = 0.1;
 
+    if (player.hp <= 0 && currentState !== GameState.DEAD && currentState !== GameState.MENU) {
+        setGameState(GameState.DEAD);
+            UI.showDeathMenu();
+    }
+
     if (slashAnim.active) {
         slashAnim.frameTimer += dt;
         
@@ -690,8 +691,14 @@ const Epilogue = {
                             document.getElementById('end-screen').classList.remove('hidden');
                             
                             setTimeout(() => {
-                                location.reload();
-                            }, 4000);
+                                document.getElementById('end-screen').classList.add('hidden');
+                                document.getElementById('credits-screen').classList.remove('hidden');
+                                
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 4500);
+                                
+                            }, 3500);
                             
                         }, 1500);
                     }

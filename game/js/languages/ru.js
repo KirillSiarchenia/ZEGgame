@@ -21,6 +21,14 @@ const langRU = {
         the_end: "КОНЕЦ",
         music: "МУЗЫКА",
         sfx: "ЗВУКИ",
+        difficulty: "СЛОЖНОСТЬ",
+        diff_easy: "ЛЕГКАЯ",
+        diff_hard: "ЗАДУМАННАЯ",
+        select_difficulty: "ВЫБЕРИТЕ СЛОЖНОСТЬ",
+        credits_lead_dev: "Ведущий разработчик:",
+        credits_dev_name: "Кирилл Серченя",
+        credits_design: "Дизайн:",
+        credits_design_names: "Натаниэль Кусаль, Кирилл Серченя",
     },
     cutscenes: {
         tut_frame_1: [

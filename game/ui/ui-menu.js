@@ -8,6 +8,12 @@ Object.assign(UI, {
         setGameState(GameState.DEAD);
         const deathMenu = document.getElementById('death-menu');
         if (deathMenu) deathMenu.classList.remove('hidden');
+        const invModal = document.getElementById('inventory-modal');
+        if (invModal) invModal.classList.add('hidden');
+        const confirmModal = document.getElementById('confirm-modal');
+        if (confirmModal) confirmModal.classList.add('hidden');
+        const msgBox = document.getElementById('msg-box');
+        if (msgBox) msgBox.classList.add('hidden');
     },
 
     // вызов окна паузы при потере полноэкранного режима | wywołanie okna pauzy po utracie trybu pełnoekranowego
@@ -151,18 +157,29 @@ Object.assign(UI, {
         setText('btn-fs-resume', t.menu.fs_resume);
 
         setText('header-end', t.menu.the_end);
+
+        setText('header-difficulty', t.menu.select_difficulty);
+        setText('btn-diff-easy', t.menu.diff_easy);
+        setText('btn-diff-hard', t.menu.diff_hard);
+
+        const diffLabel = gameDifficulty === 'easy' ? t.menu.diff_easy : t.menu.diff_hard;
+        setText('btn-settings-diff', `${t.menu.difficulty}: ${diffLabel}`);
+
+        setText('credits-role-dev', t.menu.credits_lead_dev);
+        setText('credits-name-dev', t.menu.credits_dev_name);
+        setText('credits-role-design', t.menu.credits_design);
+        setText('credits-name-design', t.menu.credits_design_names);
     },
 
     initMenuEvents() {
         const mainMenu = document.getElementById('main-menu');
         const pauseMenu = document.getElementById('pause-menu');
         const settingsMenu = document.getElementById('settings-menu');
+        const difficultyMenu = document.getElementById('difficulty-menu');
         
-        // Универсальная функция запроса полного экрана и блокировки Escape
         const attemptFullscreenAndLock = (onSuccess) => {
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().then(() => {
-                    // Блокируем выход из фуллскрина по одному нажатию Esc
                     if ('keyboard' in navigator && navigator.keyboard && navigator.keyboard.lock) {
                         navigator.keyboard.lock(['Escape']).catch(err => console.warn("Keyboard lock failed:", err));
                     }
@@ -177,14 +194,32 @@ Object.assign(UI, {
         };
 
         document.getElementById('btn-play').onclick = () => {
-            attemptFullscreenAndLock(() => {
-                mainMenu.classList.add('hidden');
+            mainMenu.classList.add('hidden');
+            difficultyMenu.classList.remove('hidden');
+        };
 
+        const startGameWithDifficulty = (selectedDifficulty) => {
+            gameDifficulty = selectedDifficulty;
+            localStorage.setItem('game_difficulty', selectedDifficulty);
+            UI.updateStaticTexts();
+
+            difficultyMenu.classList.add('hidden');
+            
+            attemptFullscreenAndLock(() => {
                 CutsceneManager.play('intro', () => {
                     setGameState(GameState.MAZE);
                     SoundManager.playAmbient('main');
                 });
             });
+        };
+
+        document.getElementById('btn-diff-easy').onclick = () => startGameWithDifficulty('easy');
+        document.getElementById('btn-diff-hard').onclick = () => startGameWithDifficulty('hard');
+
+        document.getElementById('btn-settings-diff').onclick = () => {
+            gameDifficulty = (gameDifficulty === 'easy') ? 'hard' : 'easy';
+            localStorage.setItem('game_difficulty', gameDifficulty);
+            UI.updateStaticTexts();
         };
 
         const btnFsResume = document.getElementById('btn-fs-resume');

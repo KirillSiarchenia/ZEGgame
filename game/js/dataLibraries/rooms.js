@@ -99,9 +99,9 @@ const INITIAL_ROOMS_DATA = {
             center: {
                 bg: "#1a1a1a",
                 objects: [
-                    { id: "statue_head", x: 960, y: 300  },
-                    { id: "statue_torso", x: 960, y: 500  },
-                    { id: "statue_legs", x: 960, y: 700 }
+                    { id: "statue_head", x: 960, y: 241  },
+                    { id: "statue_torso", x: 960, y: 418  },
+                    { id: "statue_legs", x: 960, y: 662.5 }
                 ]
             },
             left: { bg: "#1a1a1a", objects: [] },

@@ -191,30 +191,30 @@ const ObjectsLibrary = {
         }
     },
     statue_head: {
-        id: 'statue_head', w: 200, h: 200, state: 'empty', logicType: 'statue_head_logic',
+        id: 'statue_head', w: 200, h: 140, state: 'empty', logicType: 'statue_head_logic',
         stateImages: {
-            'empty':      { sheet: 'ui/assets/statue.png', index: 0 },
-            'ruby_only':  { sheet: 'ui/assets/statue.png', index: 1 },
-            'eye_only':   { sheet: 'ui/assets/statue.png', index: 2 },
-            'both_eyes':  { sheet: 'ui/assets/statue.png', index: 3 }
+            'empty':      { sheet: 'ui/assets/statue-head.png', index: 0 },
+            'ruby_only':  { sheet: 'ui/assets/statue-head.png', index: 1 },
+            'eye_only':   { sheet: 'ui/assets/statue-head.png', index: 2 },
+            'both_eyes':  { sheet: 'ui/assets/statue-head.png', index: 3 }
         }
     },
     statue_torso: {
-        id: 'statue_torso', w: 200, h: 200, state: 'rot_1', logicType: 'statue_segment_logic',
+        id: 'statue_torso', w: 250, h: 214, state: 'rot_1', logicType: 'statue_segment_logic',
         stateImages: {
-            'rot_0':  { sheet: 'ui/assets/statue.png', index: 4 }, 
-            'rot_1':  { sheet: 'ui/assets/statue.png', index: 5 }, 
-            'rot_2':  { sheet: 'ui/assets/statue.png', index: 6 }, 
-            'open':   { sheet: 'ui/assets/statue.png', index: 7 }, 
-            'broken': { sheet: 'ui/assets/statue.png', index: 8 }  
+            'rot_0':  { sheet: 'ui/assets/statue-torso.png', index: 0 }, 
+            'rot_1':  { sheet: 'ui/assets/statue-torso.png', index: 1 }, 
+            'rot_2':  { sheet: 'ui/assets/statue-torso.png', index: 2 }, 
+            'open':   { sheet: 'ui/assets/statue-torso.png', index: 3 }, 
+            'broken': { sheet: 'ui/assets/statue-torso.png', index: 4 }  
         }
     },
     statue_legs: {
-        id: 'statue_legs', w: 200, h: 200, state: 'rot_2', logicType: 'statue_segment_logic',
+        id: 'statue_legs', w: 165, h: 275, state: 'rot_2', logicType: 'statue_segment_logic',
         stateImages: {
-            'rot_0': { sheet: 'ui/assets/statue.png', index: 9 },  
-            'rot_1': { sheet: 'ui/assets/statue.png', index: 10 }, 
-            'rot_2': { sheet: 'ui/assets/statue.png', index: 11 }  
+            'rot_0': { sheet: 'ui/assets/statue-legs.png', index: 0 },  
+            'rot_1': { sheet: 'ui/assets/statue-legs.png', index: 1 }, 
+            'rot_2': { sheet: 'ui/assets/statue-legs.png', index: 2 }  
         }
     },
     rusty_key: {

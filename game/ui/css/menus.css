@@ -338,3 +338,33 @@
 .bone-segment.inactive {
     filter: brightness(0) opacity(0.15); 
 }
+
+#credits-screen {
+    z-index: 20001;
+    background: black;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#credits-screen h2 {
+    color: #807870;
+    font-family: 'CustomFont';
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-shadow: none;
+}
+
+#credits-screen h1 {
+    color: white;
+    font-family: 'MenuFont';
+    font-size: 3rem;
+    margin-bottom: 40px;
+    text-shadow: none;
+    line-height: 1.4;
+}
+
+#credits-screen #credits-name-design {
+    margin-bottom: 0;
+}

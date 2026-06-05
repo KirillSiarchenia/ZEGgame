@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Prototype</title>
+    <title>Eyes of the Abyss</title>
     <link rel="stylesheet" href="ui/css/base.css">
     <link rel="stylesheet" href="ui/css/hud.css">
     <link rel="stylesheet" href="ui/css/inventory.css">
@@ -67,7 +67,18 @@
                 <button id="btn-lang">ЯЗЫК: RU</button>
                 <span class="lang-hint">← you can change language here</span>
             </div>
+            <div class="btn-wrapper">
+                <button id="btn-settings-diff">СЛОЖНОСТЬ: ЗАДУМАННАЯ</button>
+            </div>
             <button id="btn-settings-back">НАЗАД</button> 
+        </div>
+    </div>
+
+    <div id="difficulty-menu" class="overlay-menu hidden">
+        <h1 id="header-difficulty">ВЫБЕРИТЕ СЛОЖНОСТЬ</h1>
+        <div class="menu-buttons">
+            <button id="btn-diff-easy">ЛЕГКАЯ</button>
+            <button id="btn-diff-hard">ЗАДУМАННАЯ</button>
         </div>
     </div>
     
@@ -147,6 +158,13 @@
 
     <div id="end-screen" class="overlay-menu hidden" style="z-index: 20000; background: black;">
         <h1 id="header-end" style="color: white; text-shadow: none;">КОНЕЦ</h1>
+    </div>
+
+    <div id="credits-screen" class="overlay-menu hidden">
+        <h2 id="credits-role-dev">Ведущий разработчик:</h2>
+        <h1 id="credits-name-dev">Кирилл Серченя</h1>
+        <h2 id="credits-role-design">Дизайн:</h2>
+        <h1 id="credits-name-design">Натаниэль Кусаль, Кирилл Серченя</h1>
     </div>
 
     <canvas id="gameCanvas"></canvas>
