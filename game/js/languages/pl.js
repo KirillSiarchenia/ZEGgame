@@ -146,6 +146,7 @@ const langPL = {
         ruby: "Krwistoczerwony rubin niewielkich rozmiarów, dobrze byłoby go sprzedać.",
         spoon: "Zwykła metalowa łyżka.",
         player_eye: "Moje własne oko. Wciąż oślizgłe.",
+        herb: "Przecież tego zioła używa nasz znachor. Nie spodziewałem się, że w ogóle cokolwiek tu rośnie.",
     },
     itemName: {
         stone: "kamień",
@@ -157,5 +158,6 @@ const langPL = {
     itemPickUp: {
         crate: "Podniesiono skrzynię",
         meat: "Dzisiaj nie umrę",
+        herb: "Podniesiono lecznicze ziele"
     }
 }

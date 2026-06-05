@@ -20,7 +20,9 @@ const SoundManager = {
             enemyStep: 'enemy-step.ogg',
             eye: 'eye.ogg',
             statue: 'statue.ogg',
-            step: 'step.ogg'
+            step: 'step.ogg',
+            hit: 'hit.ogg', 
+            meat: 'meat.ogg',
         };
         for (let key in soundFiles) {
             this.sounds[key] = new Audio(path + soundFiles[key]);

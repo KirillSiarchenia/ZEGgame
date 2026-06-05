@@ -521,7 +521,7 @@ function drawAll() {
         player.draw(ctx);                          
 
         ctx.restore();
-        drawFogOfWar(ctx, player, camera);
+        // drawFogOfWar(ctx, player, camera);
     }
     
     // Отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu

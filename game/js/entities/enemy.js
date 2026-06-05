@@ -342,6 +342,7 @@ class Enemy {
             triggerSlashEffect(player.x, player.y);
 
             SoundManager.play('attack');
+            SoundManager.play('hit');
             
             this.attackCooldown = ENEMY_CONFIG.ATTACK_COOLDOWN;
             this.knockbackTimer = ENEMY_CONFIG.KNOCKBACK_TIME;

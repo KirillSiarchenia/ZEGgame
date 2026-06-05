@@ -64,10 +64,12 @@ const ObjectLogic = {
             UI.showMessage(t.interactions.lever_broken);
         } else if (target.state === 'fixed_off') {
             target.state = 'fixed_on';
+            SoundManager.play('buttton');
             roomsData["23"].isLocked = false;
             UI.showMessage(t.interactions.lever_pulled_on);
         } else if (target.state === 'fixed_on') {
             target.state = 'fixed_off';
+            SoundManager.play('buttton');
             roomsData["23"].isLocked = true;
             UI.showMessage(t.interactions.lever_pulled_off);
         }

@@ -9,6 +9,23 @@ const ObjectsLibrary = {
             
             UI.updateHealth(player.hp);
             Inventory.addItem({ ...ObjectsLibrary['bone'] });
+            SoundManager.play('meat');
+            
+            return {
+                message: t.ui.hp_up,
+                deleteItem: true
+            };
+        }
+    },
+    herb: {
+        id: "herb",
+        spriteIndex: 8, 
+        isConsumable: true,
+        logicType: "pickup",
+        action: () => {
+            player.hp = Math.min(player.hp + 1, PLAYER_CONFIG.MAX_HP);
+            
+            UI.updateHealth(player.hp);
             
             return {
                 message: t.ui.hp_up,
@@ -21,22 +38,22 @@ const ObjectsLibrary = {
         spriteIndex: 4,
         logicType: 'pickup',
         action: (obj) => {
-        if (obj.id === "gears" && obj.state === "spinning") {
-            obj.state = 'jammed_bone';
-            roomsData["22"].isLocked = false;
-            return {
-                message: t.interactions.gears_jammed,
-                deleteItem: true
-            };
+            if (obj.id === "gears" && obj.state === "spinning") {
+                obj.state = 'jammed_bone';
+                roomsData["22"].isLocked = false;
+                return {
+                    message: t.interactions.gears_jammed,
+                    deleteItem: true
+                };
+            }
+            if (obj.id === "broken_lever" && obj.state === "broken") {
+                obj.state = 'fixed_off';
+                return {
+                    message: t.interactions.lever_fixed,
+                    deleteItem: true
+                };
+            }
         }
-        if (obj.id === "broken_lever" && obj.state === "broken") {
-            obj.state = 'fixed_off';
-            return {
-                message: t.interactions.lever_fixed,
-                deleteItem: true
-            };
-        }
-    }
     },
     crate: {
         id: 'crate',
