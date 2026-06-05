@@ -7,10 +7,11 @@ class Maze {
         this.wallImg = new Image();
         this.wallImg.src = 'ui/assets/wall.png';
 
+        this.floorImg = new Image();
+        this.floorImg.src = 'ui/assets/floor.png';
+
         this.exitDoorImg = new Image();
         this.exitDoorImg.src = 'ui/assets/exit-door.png';
-        
-        this.floorColor = "#675147";
     }
 
     // находит стартовую позицию | znajduje początkowy tile
@@ -64,24 +65,15 @@ class Maze {
                 const posY = y * tileSize;
 
                 if (cell === 1) {
-                    if (this.wallImg.complete) {
-                        ctx.drawImage(this.wallImg, posX, posY, tileSize, tileSize);
-                    } else {
-                        ctx.fillStyle = "black";
-                        ctx.fillRect(posX, posY, tileSize, tileSize);
-                    }
+                    ctx.drawImage(this.wallImg, posX, posY, tileSize, tileSize);
                 } else {
-                    // Рисуем пол для пустых клеток и комнат
-                    ctx.fillStyle = this.floorColor;
-                    ctx.fillRect(posX, posY, tileSize, tileSize);
+                    ctx.drawImage(this.floorImg, posX, posY, tileSize, tileSize);
 
-                    // Отрисовываем дверь, если это клетка выхода
                     if (exitPos && x === exitPos.x && y === exitPos.y) {
                         if (this.exitDoorImg.complete) {
                             const doorW = 90;
                             const doorH = 90;
                             
-                            // Центрируем дверь по клетке (если tileSize больше 90)
                             const doorX = posX + (tileSize - doorW) / 2;
                             const doorY = posY + (tileSize - doorH) / 2;
                             
