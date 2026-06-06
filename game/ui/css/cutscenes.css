@@ -1,6 +1,6 @@
 #cutscene-ui {
     background-color: black;
-    z-index: 90;
+    z-index: 4000;
     justify-content: flex-start;
     padding-top: 10vh;
 }

@@ -166,6 +166,7 @@ const ObjectsLibrary = {
             UI.showConfirm(t.interactions.extract_eye_prompt, () => {
                 player.missingEye = true;
                 player.hp -= 1;
+                UI.updateHealth(player.hp);
                 player.visionRadius = 300;
                 Inventory.addItem({ ...ObjectsLibrary['player_eye'] });
                 SoundManager.play('eye');
