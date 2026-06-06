@@ -42,12 +42,17 @@ Object.assign(UI, {
         
         let i = 0;
         const typeWriter = () => {
+            if (UI.isFullscreenPaused) {
+                this.typingTimer = setTimeout(typeWriter, 100);
+                return;
+            }
+
             if (i < text.length) {
                 const char = text.charAt(i);
                 content.innerText += char;
                 i++;
                 if (char !== " " && char !== "\n" && i % 2 === 0) {
-                    const randomPitch = 0.92 + Math.random() * 0.16; // Высота тона от 0.92 до 1.08
+                    const randomPitch = 0.92 + Math.random() * 0.16; 
                     SoundManager.play('typewriter', 0.5, randomPitch);
                 }
                 this.typingTimer = setTimeout(typeWriter, 40);
@@ -59,23 +64,21 @@ Object.assign(UI, {
         typeWriter();
 
         this._msgHandler = (e) => {
+            if (UI.isFullscreenPaused) return;
+
             if (e.button === 0) {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                // Закрываем или допечатываем сообщение
                 this.closeMessage(false);
 
-                // ИСПРАВЛЕНИЕ: Блокируем последующий "клик", чтобы он не прошел насквозь в UI-кнопки
                 const preventClickThrough = (clickEvent) => {
                     clickEvent.stopPropagation();
                     clickEvent.preventDefault();
                     window.removeEventListener('click', preventClickThrough, true);
                 };
                 
-                // Вешаем перехватчик на фазе погружения (true)
                 window.addEventListener('click', preventClickThrough, true);
-                // Удаляем перехватчик через 50мс (если игрок кликнул вне кнопок)
                 setTimeout(() => window.removeEventListener('click', preventClickThrough, true), 50);
             }
         };
