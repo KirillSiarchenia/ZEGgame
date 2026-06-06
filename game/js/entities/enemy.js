@@ -240,6 +240,7 @@ class Enemy {
         const targetPxY = this.gridY * tileSize;
 
         if (this.x === targetPxX && this.y === targetPxY) {
+            // Klasyczny, prosty i przewidywalny wybór trasy (ignorujemy innych wrogów jako ściany)
             if (!this.currentPath || this.currentPath.length === 0 || 
                 this.finalTargetX !== targetX || this.finalTargetY !== targetY) {
                 
@@ -271,6 +272,7 @@ class Enemy {
                 });
 
                 if (!isPlayerThere && !isOtherEnemyThere) {
+                    this.blockedStartTime = null; 
                     this.currentPath.shift();
                     
                     this.dirX = nextStep.x - this.gridX;
@@ -290,7 +292,39 @@ class Enemy {
                             SoundManager.play('enemyStep', volumeFactor);
                         }
                     }
+                } else if (isOtherEnemyThere && !isPlayerThere) {
+                    if (!this.blockedStartTime) {
+                        this.blockedStartTime = Date.now();
+                    }
+
+                    const timeBlocked = Date.now() - this.blockedStartTime;
+
+                    if (timeBlocked >= 2500) { 
+                        this.blockedStartTime = null;
+                        this.currentPath.shift();
+                        
+                        this.dirX = nextStep.x - this.gridX;
+                        this.dirY = nextStep.y - this.gridY;
+
+                        this.gridX = nextStep.x;
+                        this.gridY = nextStep.y;
+
+                        this.stepOdd = !this.stepOdd;
+                        
+                        if (this.stepOdd) {
+                            const dist = this.getDistanceTo(player.gridX, player.gridY);
+                            const maxHearDist = 6;
+                            const volumeFactor = Math.max(0, 1 - (dist / maxHearDist));
+                            if (volumeFactor > 0) {
+                                SoundManager.play('enemyStep', volumeFactor);
+                            }
+                        }
+                    } else {
+                        this.dirX = nextStep.x - this.gridX;
+                        this.dirY = nextStep.y - this.gridY;
+                    }
                 } else {
+                    this.blockedStartTime = null;
                     this.dirX = nextStep.x - this.gridX;
                     this.dirY = nextStep.y - this.gridY;
                 }
