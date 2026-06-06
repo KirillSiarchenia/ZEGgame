@@ -39,6 +39,7 @@ class Enemy {
         return this.x !== this.gridX * tileSize || this.y !== this.gridY * tileSize;
     }
     
+    // Główna funkcja aktualizująca stan logiczny przeciwnika
     update(player, maze, dt) {
         if (this.attackCooldown > 0) this.attackCooldown -= dt * 1000;
         if (this.knockbackTimer > 0) this.knockbackTimer -= dt * 1000;
@@ -56,6 +57,7 @@ class Enemy {
             canHear = false;
         }
 
+        // Maszyna stanów: Reakcja na wykrycie gracza wzrokiem lub słuchem
         if (canSee) {
             this.state = 'chase';
             this.lastPlayerPos = { x: player.gridX, y: player.gridY };
@@ -86,6 +88,7 @@ class Enemy {
             }
         }
 
+        // Wykonanie zachowania przypisanego do aktualnego stanu
         switch (this.state) {
             case 'chase':
                 this.moveTowards(this.lastPlayerPos.x, this.lastPlayerPos.y, maze, player);
@@ -153,6 +156,7 @@ class Enemy {
         this.smoothMove(dt);
     }
 
+    // Próba wykonania ruchu w kierunku, w którym ostatnio uciekał gracz
     tryInertiaStep(maze, player) {
         const nextX = this.gridX + this.playerLastDir.dx;
         const nextY = this.gridY + this.playerLastDir.dy;
@@ -174,6 +178,7 @@ class Enemy {
                 this.dirX = this.playerLastDir.dx;
                 this.dirY = this.playerLastDir.dy;
                 
+                // Odtwarzanie dźwięku kroków co drugi krok przeciwnika
                 if (this.stepOdd) {
                     const dist = this.getDistanceTo(player.gridX, player.gridY);
                     const maxHearDist = 6;
@@ -190,6 +195,7 @@ class Enemy {
         return false;
     }
 
+    // Obsługa logiki rozejrzenia się na boki – obracanie się w dostępne kierunki przed zakończeniem poszukiwań
     handleLookAround(maze, dt) {
         if (this.searchTimer === 0) {
             const cameFromX = -this.dirX;
@@ -215,6 +221,7 @@ class Enemy {
         }
     }
 
+    // Sprawdza, czy przeciwnik znajduje się na skrzyżowaniu
     isAtIntersection(maze) {
         if (this.playerLastDir.dx !== 0) {
             if (!maze.isWall(this.gridX, this.gridY + 1) || !maze.isWall(this.gridX, this.gridY - 1)) return true;
@@ -225,6 +232,7 @@ class Enemy {
         return false;
     }
     
+    // Zarządza przemieszczaniem się w kierunku celu
     moveTowards(targetX, targetY, maze, player) {
         if (this.knockbackTimer > 0) return; 
 
@@ -290,6 +298,7 @@ class Enemy {
         }
     }
         
+    // Zwraca listę sąsiadujących kierunków, które nie są ścianami labiryntu
     getAvailableDirections(maze) {
         const directions =[
             { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
@@ -298,6 +307,7 @@ class Enemy {
         return directions.filter(d => !maze.isWall(this.gridX + d.dx, this.gridY + d.dy));
     }
         
+    // Sprawdza, czy przeciwnik ma gracza w linii wzroku
     hasLineOfSight(tx, ty, maze) {
         if (this.gridX !== tx && this.gridY !== ty) return false;
             
@@ -323,6 +333,7 @@ class Enemy {
         return true;
     }
     
+    // Odpowiada za płynne przemieszczenie pozycji graficznej
     smoothMove(dt) {
         let targetX = this.gridX * tileSize;
         let targetY = this.gridY * tileSize;
@@ -335,6 +346,7 @@ class Enemy {
         else if (this.y > targetY) this.y = Math.max(this.y - step, targetY);
     }
 
+    // Wykonuje atak na gracza
     checkAttack(player, maze) {
         if (player.invulnTimer > 0) return;
 
@@ -363,6 +375,7 @@ class Enemy {
         return Math.sqrt(Math.pow(this.gridX - tx, 2) + Math.pow(this.gridY - ty, 2));
     }
 
+    // Renderuje przeciwnika
     draw(ctx) {
         const rows = { 'down': 0, 'up': 1, 'left': 2, 'right': 3 };
         const row = rows[this.facing] || 0;

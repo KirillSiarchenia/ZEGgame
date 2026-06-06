@@ -1,6 +1,5 @@
 class Player {
     constructor(x, y) {
-        // Позиция на сетке и физические координаты | Pozycja na siatce i współrzędne fizyczne
         this.gridX = x; 
         this.gridY = y;
         this.x = x * tileSize;
@@ -9,10 +8,8 @@ class Player {
         this.lastMoveX = 0; 
         this.lastMoveY = 0;
 
-        // Состояние здоровья | Stan zdrowia
         this.hp = PLAYER_CONFIG.MAX_HP;
 
-        // Логика реакции на урон | Logika reakcji na obrażenia
         this.hasReceivedFirstDamage = false; 
         this.waitingForSafeMoment = false;   
         this.safeTimeElapsed = 0;            
@@ -22,16 +19,13 @@ class Player {
         this.invulnTimer = 0;
         this.blinkTimer = 0;
 
-        // Инициализация графики | Inicjalizacja grafiki
         this.sprite = new Image();
         this.sprite.src = PLAYER_CONFIG.SPRITE_PATH; 
         
-        // Состояние анимации | Stan animacji
         this.facing = 'down';  
         this.currentFrame = 0;
         this.frameTimer = 0;   
 
-        // ну там чисто для зроку
         this.visionRadius = 400; 
         this.missingEye = false;
 

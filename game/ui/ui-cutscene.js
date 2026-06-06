@@ -8,6 +8,7 @@ const CutsceneManager = {
     fullText: "",
     onFinish: null,
 
+     // Uruchomienie odtwarzania określonej cutscenki oraz rejestracja akcji po jej zakończeniu
     play(sceneId, onFinishCallback) {
         if (!CutscenesData[sceneId]) {
             console.warn(`Катсцена ${sceneId} не найдена!`);
@@ -29,6 +30,7 @@ const CutsceneManager = {
         this.showCurrentFrame();
     },
 
+    // Wyświetlenie aktualnego kadru cutscenki poprzez przesunięcie tła z arkusza tekstur 
     showCurrentFrame() {
         const scene = CutscenesData[this.sceneId];
         if (this.frameIndex >= scene.length) {
@@ -39,7 +41,6 @@ const CutsceneManager = {
         const frame = scene[this.frameIndex];
         const imgDiv = document.getElementById('cutscene-image');
         
-        // Устанавливаем спрайт-лист и сдвигаем кадр
         imgDiv.style.backgroundImage = `url('${frame.sheet}')`;
         imgDiv.style.backgroundPosition = `-${frame.index * 800}px 0px`;
         
@@ -47,6 +48,7 @@ const CutsceneManager = {
         this.showTextLine();
     },
 
+    // Wyświetlenie pojedynczej linii tekstu przypisanej do kadru 
     showTextLine() {
         const scene = CutscenesData[this.sceneId];
         const frame = scene[this.frameIndex];
@@ -69,14 +71,21 @@ const CutsceneManager = {
         if (this.typingTimer) clearTimeout(this.typingTimer);
         
         const typeWriter = () => {
-            // Ждём, если игра на паузе (например, нажат Escape)
-            if (UI.isPaused || UI.isFullscreenPaused) {
+            if (UI.isFullscreenPaused) {
                 this.typingTimer = setTimeout(typeWriter, 100);
                 return;
             }
 
             if (i < this.fullText.length) {
-                content.innerText += this.fullText.charAt(i++);
+                const char = this.fullText.charAt(i);
+                content.innerText += char;
+                i++;
+
+                if (char !== " " && char !== "\n" && i % 2 === 0) {
+                    const randomPitch = 0.92 + Math.random() * 0.16;
+                    SoundManager.play('typewriter', 0.5, randomPitch);
+                }
+
                 this.typingTimer = setTimeout(typeWriter, 40);
             } else {
                 this.isTyping = false;
@@ -86,21 +95,21 @@ const CutsceneManager = {
         typeWriter();
     },
 
+    // Przejście do kolejnej linii tekstu lub natychmiastowe ukończenie bieżącego wpisywania
     advance() {
         if (!this.active || UI.isPaused || UI.isFullscreenPaused) return;
 
         if (this.isTyping) {
-            // Если печатается - моментально выводим
             if (this.typingTimer) clearTimeout(this.typingTimer);
             document.getElementById('cutscene-text').innerText = this.fullText;
             this.isTyping = false;
         } else {
-            // Если вывелось - следующая строка
             this.textIndex++;
             this.showTextLine();
         }
     },
 
+    // Pominięcie całej sekwencji cutscenki i powrót do rozgrywki
     skip() {
         if (!this.active) return;
         this.active = false;

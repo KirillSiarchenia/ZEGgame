@@ -43,7 +43,13 @@ Object.assign(UI, {
         let i = 0;
         const typeWriter = () => {
             if (i < text.length) {
-                content.innerText += text.charAt(i++);
+                const char = text.charAt(i);
+                content.innerText += char;
+                i++;
+                if (char !== " " && char !== "\n" && i % 2 === 0) {
+                    const randomPitch = 0.92 + Math.random() * 0.16; // Высота тона от 0.92 до 1.08
+                    SoundManager.play('typewriter', 0.5, randomPitch);
+                }
                 this.typingTimer = setTimeout(typeWriter, 40);
             } else {
                 this.isTyping = false;

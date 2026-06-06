@@ -1,7 +1,6 @@
 const ObjectLogic = {
-    
-    
-    // // логика подбора предмета в комнате | logika podnoszenia przedmiotu w pokoju
+
+    // логика подбора предмета в комнате | logika podnoszenia przedmiotu w pokoju
     pickup: (obj) => {
         if (obj.state === 'collected') return;
 
@@ -42,6 +41,7 @@ const ObjectLogic = {
         }
     },
 
+    // Obsługa zaciętych kół zębatych
     gears_logic: (target) => {
         if (target.state === 'jammed_stone' || target.state === 'jammed_bone') {
             let itemName = target.state === 'jammed_stone' ? t.itemName.stone : t.itemName.bone;
@@ -59,6 +59,8 @@ const ObjectLogic = {
             UI.showMessage(t.interactions.gears_spinning);
         }
     },
+
+    // Logika działania dźwigni
     lever_logic: (target) => {
         if (target.state === 'broken') {
             UI.showMessage(t.interactions.lever_broken);
@@ -74,6 +76,8 @@ const ObjectLogic = {
             UI.showMessage(t.interactions.lever_pulled_off);
         }
     },
+
+    // Kontrola stanu głowy posągu
     statue_head_logic: (target) => {
         if (target.state === 'empty') {
             UI.showMessage(t.interactions.statue_head_empty);
@@ -84,6 +88,7 @@ const ObjectLogic = {
         }
     },
 
+    // Logika obracania segmentów posągu
     statue_segment_logic: (target) => {
         const room = roomsData["31"];
         const head = room.views.center.objects.find(o => o.id === 'statue_head');

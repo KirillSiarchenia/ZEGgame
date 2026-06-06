@@ -23,6 +23,7 @@ const SoundManager = {
             step: 'step.ogg',
             hit: 'hit.ogg', 
             meat: 'meat.ogg',
+            typewriter: 'typewriter.ogg',
         };
         for (let key in soundFiles) {
             this.sounds[key] = new Audio(path + soundFiles[key]);
@@ -40,16 +41,28 @@ const SoundManager = {
         }
     },
 
-    play(key, customVolume = null) {
+    play(key, customVolume = null, customPitch = null) {
         const original = this.sounds[key];
         if (original) {
-            const clone = original.cloneNode();
+            let soundToPlay;
+            
+            if (original.readyState >= 1) { 
+                soundToPlay = original.cloneNode();
+            } else {
+                soundToPlay = original;
+                soundToPlay.currentTime = 0;
+            }
             
             const targetVolume = customVolume !== null ? (customVolume * this.sfxVolume) : this.sfxVolume;
-            
-            clone.volume = Math.max(0, Math.min(1, targetVolume));
-            
-            clone.play().catch(e => console.warn(`Звук ${key} заблокирован:`, e));
+            soundToPlay.volume = Math.max(0, Math.min(1, targetVolume));
+
+            if (customPitch !== null) {
+                soundToPlay.playbackRate = customPitch;
+            }
+
+            soundToPlay.play().catch(e => {
+                console.warn(`Звук ${key} заблокирован или не загружен:`, e);
+            });
         }
     },
 

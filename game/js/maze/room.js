@@ -5,6 +5,7 @@ class RoomManager {
         this.initDOM();
     }
 
+    // Rejestracja elementów nawigacyjnych interfejsu i obsługa ich kliknięć
     initDOM() {
         this.navLeft = document.getElementById('nav-left');
         this.navRight = document.getElementById('nav-right');
@@ -32,6 +33,7 @@ class RoomManager {
         };
     }
 
+    // Aktualizacja widoczności strzałek nawigacyjnych w zależności od aktualnego widoku pokoju
     updateArrows() {
         if (!this.navLeft) return;
         
@@ -50,6 +52,7 @@ class RoomManager {
         }
     }
 
+    // Inicjalizacja wejścia do wybranego pokoju, ładowanie danych obiektów i reset widoku na centralny
     enter(roomID, x, y) {
         this.view = "center";
 
@@ -69,6 +72,7 @@ class RoomManager {
         this.updateArrows();
     }
 
+     // Renderowanie tła oraz aktywnych obiektów w aktualnym widoku pokoju
     draw(ctx, w, h) {
         if (!this.room || !this.room.views[this.view]) return;
         const v = this.room.views[this.view];
@@ -131,6 +135,7 @@ class RoomManager {
         });
     }
 
+    // Sprawdzenie, który obiekt w pokoju znajduje się bezpośrednio pod wskazanym kursorem myszy
     getClickTarget(mx, my, w, h) {
         const v = this.room.views[this.view];
         if (!v || !v.objects) return null;
@@ -161,6 +166,7 @@ class RoomManager {
         return null;
     }
 
+    // Przekierowanie kliknięcia myszy do odpowiedniego obiektu w widoku lub obsługa interakcji z przedmiotem
     handleMouseClick(mx, my, w, h) {
         const target = this.getClickTarget(mx, my, w, h);
         
@@ -183,6 +189,7 @@ class RoomManager {
         return null;
     }
 
+    // Obsługa użycia wybranego przedmiotu z ekwipunku na wskazanym obiekcie oraz aktualizacja stanu inwentarza
     handleObjectClick(obj) {
         if (!UI.selectedItemForUse) return;
 

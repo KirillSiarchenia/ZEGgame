@@ -164,8 +164,8 @@ const langPL = {
         player_eye: "oko",
     },
     itemPickUp: {
-        crate: "Podniesiono skrzynię",
-        meat: "Dzisiaj nie umrę",
-        herb: "Podniesiono lecznicze ziele"
+        crate: "Podniesiono skrzynie",
+        meat: "Co za ohyda! Ale to wciaz jedzenie...",
+        herb: "Co za znalezisko!"               
     }
 }

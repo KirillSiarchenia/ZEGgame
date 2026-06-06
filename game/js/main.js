@@ -1,13 +1,15 @@
+// Globalne konfiguracje językowe, stany gry oraz referencje do obiektów silnika (gracz, labirynt, kamera)
 const allLanguages = {
     'ru': langRU, 
     'pl': langPL,
+    'en': langEN,
 };
 
 let gameDifficulty = localStorage.getItem('game_difficulty') || 'hard';
 let currentLang = localStorage.getItem('game_lang') || 'pl';
 let t = allLanguages[currentLang];
 
-// управление локализацией | zarządzanie lokalizacją
+// Funkcja zarządzająca dynamiczną zmianą języka w grze
 function setLanguage(langCode) {
     if (allLanguages[langCode]) {
         currentLang = langCode;
@@ -17,6 +19,7 @@ function setLanguage(langCode) {
     }
 }
 
+// Funkcja przełączająca język na kolejny dostępny z listy
 function toggleNextLanguage() {
     const langKeys = Object.keys(allLanguages);
     let currentIndex = langKeys.indexOf(currentLang);
@@ -31,12 +34,14 @@ let roomManager = new RoomManager();
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Buforowanie i ładowanie tekstur przedmiotów z arkusza (sprite sheet)
 const itemAssets = {
     sheet: new Image(),
     cache: {}
 };
 itemAssets.sheet.src = 'ui/assets/inventory-items.png';
 
+// Pomocnicza funkcja do pobierania i cachowania obrazów w celu optymalizacji pamięci
 function getCachedImage(path) {
     if (!itemAssets.cache[path]) {
         const img = new Image();
@@ -61,6 +66,7 @@ const startPos = maze.getStartPos();
 const player = new Player(startPos.x, startPos.y);
 const camera = new Camera(canvas.width, canvas.height, maze.cols * tileSize, maze.rows * tileSize);
 
+// Inicjalizacja gry po pełnym załadowaniu struktury DOM i zasobów okna
 window.onload = () => {
     UI.updateStaticTexts();
     UI.initMenuEvents();
@@ -83,7 +89,7 @@ window.onload = () => {
     UI.setInventoryBtnVisibility(false);
 };
 
-// глобальные обработчики ввода клавиатуры | globalne procedury obsługi wprowadzania z klawiatury
+// Globalna obsługa zdarzeń wciśnięcia klawisza (sterowanie ruchem, zamykanie menu i obsługa pauzy)
 window.addEventListener("keydown", (e) => {
     if (UI.isFullscreenPaused) return; 
 
@@ -146,12 +152,13 @@ window.addEventListener("keydown", (e) => {
     if (e.key) keys[e.key.toLowerCase()] = true;
 });
 
+// Zwalnianie flag ruchu i akcji po puszczeniu klawisza
 window.addEventListener("keyup", (e) => {
     if (typeof CutsceneManager !== 'undefined' && CutsceneManager.active) { return; }
     keys[e.key.toLowerCase()] = false;
 });
 
-// глобальный обработчик кликов мыши на холсте (для комнат) | globalna procedura obsługi kliknięć myszą na płótnie (dla pokoi)
+// Obsługa interakcji myszy z obiektami pokojów (aktywacja zagadek lub używanie przedmiotów z ekwipunku)
 canvas.addEventListener("mouseup", (e) => {
     if (UI.isMessageActive || UI.isPaused || UI.isFullscreenPaused) {
         e.preventDefault();
@@ -181,8 +188,9 @@ canvas.addEventListener("mouseup", (e) => {
     }
 }, true);
 
+// Resetuje całkowicie stan gry do poziomu pierwszego (wywoływane po śmierci lub restarcie)
 function restartGame() {
-    currentLevelIndex = 2;
+    currentLevelIndex = 0;
     Inventory.items = [];
     
     maze = new Maze(allLevels[currentLevelIndex], tileSize);
@@ -217,11 +225,12 @@ function restartGame() {
     }
 }
 
+// Przywraca stan domyślny (nieodkryty/nierozwiązany) dla wszystkich pokojów w grze
 function resetRoomsData() {
     roomsData = JSON.parse(JSON.stringify(INITIAL_ROOMS_DATA));
 }
 
-// загрузка сущностей уровня | ładowanie encji poziomu
+// Generuje i rozstawia przeciwników zgodnie ze zdefiniowaną ścieżką dla wybranego poziomu
 function loadEnemies(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
     enemies = []; 
@@ -233,6 +242,7 @@ function loadEnemies(levelIndex) {
     }
 }
 
+// Inicjalizuje przedmioty leżące bezpośrednio na posadzce labiryntu na początku poziomu
 function loadMazeItems(levelIndex) {
     const levelKey = "map" + (levelIndex + 1);
     currentMazeItems = [];
@@ -245,8 +255,7 @@ function loadMazeItems(levelIndex) {
     }
 }
 
-
-// отрисовка эффекта тумана войны вокруг игрока | rysowanie efektu mgły wojny wokół gracza
+// Tworzy dynamiczną maskę światła (winietę) wokół gracza na wyższym poziomie trudności (efekt ciemności)
 function drawFogOfWar(ctx, player, camera) {
     if (gameDifficulty === 'easy') return;
     
@@ -273,6 +282,7 @@ function drawFogOfWar(ctx, player, camera) {
 
 const keys = {};
 
+// Aktualizuje rozmiar Canvasu oraz kamerę przy zmianie wielkości okna przeglądarki
 function resizeCanvas(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -285,6 +295,7 @@ function resizeCanvas(){
 
 let hasTriedRunning = false;
 
+// Blok wyświetlania jednorazowej wskazówki o bieganiu (aktywuje się przy pierwszym użyciu Shifta w ruchu)
 function checkRunningHint(e) {
     if ((e.key === "Shift") && !hasTriedRunning && player.isMoving) {
         UI.showMessage(t.messages.running_hint);        
@@ -295,6 +306,7 @@ function checkRunningHint(e) {
 
 window.addEventListener("keydown", checkRunningHint);
 
+// Pauzuje grę po wyjściu z trybu pełnoekranowego
 document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
         if (currentState !== GameState.MENU) {
@@ -310,7 +322,7 @@ document.addEventListener('fullscreenchange', () => {
 
 resizeCanvas(); 
 
-// изменение текущего состояния игры (меню/лабиринт/комната) | zmiana aktualnego stanu gry (menu/labirynt/pokój)
+// Zmienia stan gry i przełącza widoczność odpowiednich paneli interfejsu
 function setGameState(newState) {
     currentState = newState;
     const consPanel = document.getElementById('consumables-panel');
@@ -337,7 +349,7 @@ function setGameState(newState) {
     }
 }
 
-// переход на следующий уровень | przejście do następnego poziomu
+// Obsługuje przejście na kolejny poziom, konfigurując mapę, pozycję gracza lub uruchamiając scenę finałową
 function nextLevel() {
     currentLevelIndex++;
     
@@ -372,7 +384,7 @@ function nextLevel() {
 }
 
 
-// выход из комнаты в лабиринт | wyjście z pokoju do labiryntu
+// Wyjście z pokoju — relokuje gracza z powrotem do labiryntu na pierwsze wolne sąsiadujące pole
 function exitRoom() {
     const directions = [{ x: 0, y: 1 }, { x: 0, y: -1 }, { x: 1, y: 0 }, { x: -1, y: 0 }];
 
@@ -393,12 +405,13 @@ function exitRoom() {
     transitionAlpha = 1; 
 }
 
-// эффекты затемнения при входе в комнату | efekty zaciemnienia przy wejściu do pokoju
+// Inicjuje przejście (ściemnienie ekranu) do stanu pokoju
 function startTransitionToRoom() {
     currentState = GameState.TRANSITION;
     transitionAlpha = 0;
 }
 
+// Kontroluje płynne rozjaśnianie i ściemnianie warstwy przejścia (transitionAlpha) przy zmianie scen
 function handleTransition(dt) {
     const fadeSpeed = 3.0; 
 
@@ -416,7 +429,7 @@ function handleTransition(dt) {
     }
 }
 
-// проверка подбора предметов | sprawdzanie podnoszenia przedmiotów
+// Sprawdza, czy gracz wszedł na pole z niezebranym przedmiotem w labiryncie i dodaje go do ekwipunku
 function checkMazeItemPickup(gridX, gridY) {
     for (let item of currentMazeItems) {
         if (!item.collected && gridX === item.x && gridY === item.y) {
@@ -425,14 +438,14 @@ function checkMazeItemPickup(gridX, gridY) {
                 item.collected = true;
                 Inventory.addItem({ ...libData });
                 
-                const pickUpMessage = t.itemPickUp?.[item.id] || `${item.id} подобран`; 
+                const pickUpMessage = t.itemPickUp?.[item.id] || `${item.id} podobran`; 
                 UI.showMessage(pickUpMessage);
             }
         }
     }
 }
 
-// обновление состояния игры | aktualizacja stanu gry
+// Główna funkcja aktualizująca logikę gry (ruch gracza, stany wrogów, sprawdzanie warunków wyjścia)
 function update(dt) {
     if (currentState !== GameState.MAZE || UI.isMessageActive || UI.isPaused) return;
 
@@ -441,7 +454,6 @@ function update(dt) {
     let dx = 0;
     let dy = 0;
 
-    // обработка ввода движения | obsługa wejścia ruchu\
     if (!player.isControlLocked) {
         if (keys["w"] || keys["arrowup"] || keys["ц"]) dy = -1;
         else if (keys["s"] || keys["arrowdown"] || keys["ы"]) dy = 1;
@@ -449,7 +461,6 @@ function update(dt) {
         else if (keys["d"] || keys["arrowright"] || keys["в"]) dx = 1;
     }
 
-    // попытка движения игрока | próba ruchu gracza
     if ((dx !== 0 || dy !== 0) && !player.isMoving) {
         const targetX = player.gridX + dx;
         const targetY = player.gridY + dy;
@@ -461,7 +472,6 @@ function update(dt) {
         }
     }
 
-    // переход в комнату | przejście do pokoju
     const cellValue = maze.grid[player.gridY]?.[player.gridX];
     if (cellValue >= 11 && !player.isMoving) {
         startTransitionToRoom();
@@ -470,6 +480,7 @@ function update(dt) {
 
     enemies.forEach(enemy => enemy.update(player, maze, dt));
 
+    // Obsługa przejścia przez drzwi końcowe poziomu (wymaga zardzewiałego klucza)
     const exit = maze.getExitPos();
     if (exit && player.gridX === exit.x && player.gridY === exit.y && !player.isMoving) {
         const keyItem = Inventory.items.find(it => it.id === 'rusty_key');
@@ -477,6 +488,8 @@ function update(dt) {
         SoundManager.play('doorOpen');
         
         if (currentLevelIndex === 2) { 
+            SoundManager.playAmbient('end'); 
+            
             CutsceneManager.play('outro', () => {
                 setGameState(GameState.MAZE); 
                 nextLevel(); 
@@ -492,18 +505,17 @@ function update(dt) {
     }
 }
 
-// главный метод отрисовки всей сцены | główna metoda rysowania całej sceny
+// Główna funkcja renderująca — rysuje labirynt, gracza, przeciwników, przedmioty, mgłę wojny lub wnętrze pokoju
 function drawAll() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Отрисовка лабиринта
     if (currentState === GameState.MAZE || currentState === GameState.TRANSITION || currentState === GameState.DEAD) {
         ctx.save();
         camera.apply(ctx); 
         maze.draw(ctx); 
 
-        // Предметы на полу
+        // Renderowanie przedmiotów leżących na ziemi w labiryncie
         currentMazeItems.forEach(item => {
             if (!item.collected) {
                 const centerX = item.x * tileSize + tileSize / 2;
@@ -539,12 +551,10 @@ function drawAll() {
         drawFogOfWar(ctx, player, camera);
     }
     
-    // Отрисовка внутренностей комнаты поверх | rysowanie wnętrza pokoju na wierzchu
     if (currentState === GameState.ROOM) {
         roomManager.draw(ctx, canvas.width, canvas.height); 
     }
 
-    // Применение прозрачного слоя для эффекта перехода | nałożenie przezroczystej warstwy dla efektu przejścia
     if (transitionAlpha > 0) {
         ctx.fillStyle = `rgba(0, 0, 0, ${transitionAlpha})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -553,14 +563,13 @@ function drawAll() {
 
 let lastTime = performance.now();
 
-// основной игровой цикл браузера | główna pętla gry przeglądarki
+// Główna pętla gry
 function gameLoop(timestamp = performance.now()) {
     if (currentState === GameState.MENU) {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    // расчет дельты времени между кадрами | obliczanie różnicy czasu między klatkami
     let dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
@@ -568,9 +577,10 @@ function gameLoop(timestamp = performance.now()) {
 
     if (player.hp <= 0 && currentState !== GameState.DEAD && currentState !== GameState.MENU) {
         setGameState(GameState.DEAD);
-            UI.showDeathMenu();
+        UI.showDeathMenu();
     }
 
+    // Obsługa i renderowanie animacji uderzenia przeciwnika (Slash effect)
     if (slashAnim.active) {
         slashAnim.frameTimer += dt;
         
@@ -633,6 +643,7 @@ function gameLoop(timestamp = performance.now()) {
 
 requestAnimationFrame(gameLoop);
 
+// Logika i sterowanie końcową sekwencją gry
 const Epilogue = {
     active: false,
     phase: 0,
@@ -646,8 +657,6 @@ const Epilogue = {
         this.brother = { x: bx * tileSize, y: by * tileSize, gridY: by };
         player.isControlLocked = false; 
         player.speed = PLAYER_CONFIG.SPEED; 
-
-        SoundManager.playAmbient('end');
     },
 
     update(dt) {
