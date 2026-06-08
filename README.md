@@ -19,9 +19,10 @@ Wraz z postępem w grze poziom trudności rośnie – labirynty stają się rozl
 
 Aplikacja została zbudowana w oparciu o nowoczesne standardy webowe, co pozwala na jej uruchomienie w dowolnej przeglądarce bez konieczności instalacji:
 
-* **HTML5** wraz z elementem **Canvas** do renderowania grafiki.
-* **CSS3** do stylizacji interfejsu.
-* **JavaScript (ES6+)** jako silnik logiki gry.
+* **HTML5** wraz z elementem **Canvas** do renderowania dynamicznej grafiki dwuwymiarowej.
+* **CSS3** do stylizacji elementów interfejsu użytkownika, menu oraz animacji przejść.
+* **JavaScript (ES6+)** jako obiektowy silnik logiki gry.
+* **Web Audio API** do zaawansowanej obsługi efektów dźwiękowych i przestrzennego audio.
 
 ---
 
@@ -30,36 +31,63 @@ Aplikacja została zbudowana w oparciu o nowoczesne standardy webowe, co pozwala
 ### **1. System Ruchu i Nawigacji**
 
 * **Intuicyjne sterowanie:** Obsługa za pomocą sekcji `WASD` lub strzałek kierunkowych.
-* **Silnik kolizji:** Postać płynnie porusza się wewnątrz korytarzy, reagując na ściany.
-* **Struktura Gridu:** Świat gry oparty jest na siatce, co zapewnia precyzyjne rozmieszczenie obiektów.
+* **Silnik kolizji:** Postać płynnie porusza się wewnątrz korytarzy, reagując na ściany i zablokowane przejścia.
+* **Struktura Gridu:** Świat gry oparty jest na siatce kafelków o rozmiarze 90x90 pikseli, co zapewnia precyzyjne rozmieszczenie obiektów.
+* **Mechanika biegu:** Przytrzymanie klawisza `Shift` pozwala na szybsze poruszanie się, jednak generuje hałas przyciągający przeciwników.
+* **Płynna kamera:** System śledzenia gracza z martwą strefą (300x200 pikseli), zaokrąglający pozycję przesunięcia (`Math.floor`) w celu wyeliminowania rozmycia pikseli.
+* **Dynamiczna mgła wojny:** Radialny gradient generujący ciemność wokół gracza na wyższym poziomie trudności, ograniczając pole widzenia.
 
-### **2. Interaktywne Przedmioty**
+### **2. Pokoje z Zagadkami (Tryb ROOM)**
 
-Na mapie rozmieszczone są zasoby, które po zebraniu są usuwane z planszy i modyfikują statystyki gracza:
+* **Widok panoramiczny:** Po wejściu do pokoju gra przechodzi w tryb Point-and-Click z nawigacją panoramiczną (Lewo, Środek, Prawo) za pomocą strzałek na ekranie.
+* **Dynamiczny kursor:** Wybrany z ekwipunku przedmiot zastępuje systemowy kursor myszy, wskazując gotowość do interakcji z otoczeniem.
+* **Przedmioty:**
+    * Kamień — służy do rozbijania skrzyń lub blokowania kół zębatych.
+    * Rubin — element umieszczanн w oczodołach posągu.
+    * I inne.
 
-* **Apteczki:** Regeneracja punktów życia.
-* **Klucze:** Niezbędne do otwierania zamkniętych drzwi.
+### **3. Przeciwnicy i Przetrwanie**
 
-### **3. Wyzwania Logiczne**
+* **Sztuczna inteligencja:** Przeciwnicy patrolują wyznaczone ścieżki i szukają gracza za pomocą algorytmu A*.
+* **Zmysły wzroku i słuchu:** Reakcja na pojawienie się gracza w linii wzroku lub na dźwięk kroków podczas biegu.
+* **Trójfazowe poszukiwanie:** Po utracie kontaktu potwór idzie do ostatniej pozycji gracza, wykonuje ruch z bezwładnością (`inertia`) do najbliższego skrzyżowania, a następnie rozgląda się na boki.
+* **Unikanie zablokowania:** Jeśli przeciwnicy zablokują się w korytarzu na dłużej niż 2.5 sekundy, potwór automatycznie koryguje swoją trasę.
+* **Zarządzanie HP:** Każdy kontakt z zagrożeniem odbiera 1 HP. Gracz otrzymuje sekundę niewrażliwości (miganie postaci), a na ekranie pojawia się animacja uderzenia. Wyzerowanie HP kończy się ekranem „Game Over”.
 
-Dostęp do kolejnych sekcji labiryntu często zablokowany jest przez bariery wymagające:
+### **4. System Poziomów**
 
-* odnalezieniu kluczu otwierającego drzwi
-
-### **4. Przeciwnicy i Przetrwanie**
-
-* **Zagrożenia:** Gracz musi unikać kontaktu z przeciwnikami oraz pułapkami.
-* **Zarządzanie HP:** Każdy błąd skutkuje utratą zdrowia. Wyzerowanie paska HP kończy się ekranem „Game Over”.
+* **Poziom 1 (Etap Wstępny):** Zapoznanie z ruchem, wprowadzenie do gry.
+* **Poziom 2 (Etap Średni):** Trudniejsze zagadki, patrolujący wrogowie.
+* **Poziom 3 (Etap Zaawansowany):** Duża mapa z zaawansowaną zagadką i dużą ilością wrogów.
+* **Poziom 4 (Epilog):** Specjalny poziom fabularny.
 
 ---
 
-## **Struktura Poziomów**
+## **Interfejs i Oprawa (UI/UX)**
 
-Projekt oferuje progresywny system trudności podzielony na trzy etapy:
+### **User Interface**
 
-1. **Etap Wstępny:** Zapoznanie z mechaniką na małej mapie.
-2. **Etap Średni:** Rozbudowany układ korytarzy i pierwsze poważne wyzwania.
-3. **Etap Zaawansowany:** Duża skala trudności, gęsta sieć przeciwników.
+* **Pasek zdrowia:** Animowane serca paska życia reagujące na zmiany zdrowia stanami utraty (`.lost`) i uleczenia (`.healed`).
+* **Regulacja głośności:** Paski głośności renderowane za pomocą segmentów kostnych (10 stopni skali).
+* **System komunikatów:** Tekst dialogów i interakcji wyświetlany z prędkością 40ms na znak, z blokadą przypadkowego przeklikania (`preventClickThrough`).
+* **Pauza systemowa:** Wyjście z trybu pełnoekranowego automatycznie zatrzymuje rozgrywkę i wywołuje menu przywracania ekranu.
+
+### **Grafika i Warstwa Audio**
+
+* **Estetyka:** Spójna i czytelna oprawa wizualna pixel-art zoptymalizowana pod kątem płynności działania.
+* **Audio oparte na odległości:** Dźwięki kroków potwora wyciszają się na podstawie odległości euklidesowej od gracza.
+* **Efekt stłumienia:** Automatyczne przygłuszanie częstotliwości muzyki tła na pauzie i przy braku ostrości okna.
+* **Płynność dźwięku:** Bezpieczne nakładanie się dźwięków dzięki dynamicznemu klonowaniu węzłów audio.
+
+---
+
+## **Uruchomienie Projektu**
+
+Gra została wdrożona i jest dostępna bezpośrednio w przeglądarce internetowej. Nie wymaga klonowania repozytorium ani lokalnej instalacji.
+
+Możesz uruchomić grę i od razu zacząć rozgrywkę pod poniższym adresem:
+👉 **[Zagraj w Eyes of the Abyss na GitHub Pages](https://kirillsiarchenia.github.io/ZEGgame/game/)**
+
 
 ---
 ## **Interfejs i Oprawa (UI/UX)**
