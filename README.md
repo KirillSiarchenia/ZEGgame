@@ -67,9 +67,9 @@ Aplikacja została zbudowana w oparciu o nowoczesne standardy webowe, co pozwala
 
 ### **User Interface**
 
-* **Pasek zdrowia:** Animowane serca paska życia reagujące na zmiany zdrowia stanami utraty (`.lost`) i uleczenia (`.healed`).
-* **Regulacja głośności:** Paski głośności renderowane za pomocą segmentów kostnych (10 stopni skali).
-* **System komunikatów:** Tekst dialogów i interakcji wyświetlany z prędkością 40ms na znak, z blokadą przypadkowego przeklikania (`preventClickThrough`).
+* **Pasek zdrowia:** Animowane serca paska życia reagujące na zmiany zdrowia stanami utraty i uleczenia.
+* **Regulacja głośności:** Paski głośności renderowane za pomocą segmentów(10 stopni skali).
+* **System komunikatów:** Tekst dialogów i interakcji wyświetlany z prędkością 40ms na znak, z blokadą przypadkowego przeklikania.
 * **Pauza systemowa:** Wyjście z trybu pełnoekranowego automatycznie zatrzymuje rozgrywkę i wywołuje menu przywracania ekranu.
 
 ### **Grafika i Warstwa Audio**
@@ -89,21 +89,55 @@ Możesz uruchomić grę i od razu zacząć rozgrywkę pod poniższym adresem:
 👉 **[Zagraj w Eyes of the Abyss na GitHub Pages](https://kirillsiarchenia.github.io/ZEGgame/game/)**
 
 
+## **Podział ról w zespole**
+
+| Rola | Odpowiedzialność | Członek zespołu |
+| :--- | :--- | :--- |
+| **Lead Developer & JS Developer** | Projektowanie i implementacja silnika gry, programowanie AI wrogów (algorytm A*), silnik zderzeń, system kamer z martwą strefą, dynamiczna mgła wojny, integracja systemu Audio, zarządzanie stanami gry, lokalizacja językowa. | **Kirill Siarchenia** |
+| **Graphic Designer** | Tworzenie oprawy graficznej pixel-art (sprajty postaci, elementy tła,)| **Nathaniel Kusal 2P** |
+
 ---
-## **Interfejs i Oprawa (UI/UX)**
 
-### **User Interface**
+## **Zarządzanie projektem**
 
-Przejrzysty panel informacyjny dostarcza graczowi kluczowych danych:
+* **Metodyka:** Kanban oparty o tablicę zadań Trello do monitorowania postępów i sprawnej organizacji pracy zespołu.
+* **Kontrola wersji:** System Git oraz repozytorium GitHub do sprawnego scalania kodu i automatycznego wdrażania stabilnej wersji za pomocą usługi GitHub Pages.
+* **Etapy realizacji:**
+  1. *Analiza:* Ustalenie mechaniki siatki (grid 90x90) oraz założeń projektowych.
+  2. *Projektowanie:* Przygotowywanie arkuszy sprajtów, szkicowanie UI i projektowanie struktury 4 poziomów.
+  3. *Implementacja:* Kodowanie logiki ruchu, mechaniki Point-and-Click w pokojach zagadek oraz maszyny stanów AI przeciwnika.
+  4. *Testowanie i wdrożenie:* Optymalizacja działania audio, usuwanie błędów kolizji oraz wdrożenie stabilnej wersji gry online.
 
-* Wizualny pasek zdrowia oraz licznik obecnego poziomu.
-* Podgląd posiadanego ekwipunku.
-* System powiadomień informujący o sukcesach (rozwiązanie zagadki, zwycięstwo) lub błędach.
+---
 
-### **Grafika i Warstwa Audio**
+## **Testowanie**
 
-* **Estetyka:** Jednolita i czytelna oprawa wizualna, zoptymalizowana pod kątem płynności działania.
-* **Dźwięk:** 
+W ramach kontroli jakości przeprowadzono manualne oraz integracyjne testy następujących funkcjonalności:
+
+* **Kolizje i fizyka ruchu:** Zweryfikowano zachowanie sprajtu gracza na granicach ścian na każdym z poziomów. Przetestowano zaokrąglanie przesunięć kamery za pomocą `Math.floor`, co zapobiega rozmywaniu pikseli.
+* **Sztuczna inteligencja przeciwników (AI):** Przetestowano przechodzenie wrogów przez stany `patrol`, `chase` oraz `searching` (ruch bezwładny, rozglądanie się). Zweryfikowano działanie korekty trasy po 2.5 sekundy blokowania się potworów w wąskich przejściach.
+* **Zarządzanie zdrowiem:** Sprawdzono poprawne naliczanie obrażeń, odrzut (knockback), sekundy niewrażliwości (miganie postaci) oraz synchronizację efektów wizualnych i dźwiękowych.
+* **Interakcja z obiektami w pokojach (ROOM):** Przetestowano pełną ścieżkę interakcji ze wszystkimi przedmiotami.
+* **UI/UX i Dźwięk:** Przetestowano automatyczne wstrzymanie rozgrywki po wyjściu z trybu pełnoekranowego. Zweryfikowano euklidesowe wyciszanie kroków potwora oraz tłumienie pasma muzyki tła przy pauzie.
+
+---
+
+## **Możliwości rozwoju**
+
+Architektura silnika gry została zaprojektowana w oparciu o elastyczne struktury danych (podejście *data-driven*). Dzięki oddzieleniu logiki kodu od konfiguracji zasobów, gra oferuje przejrzyste możliwości rozbudowy bezpośrednio w istniejących plikach źródłowych:
+
+* **Proste dodawanie przedmiotów i interakcji:** Wszystkie przedmioty w grze są zdefiniowane w centralnym rejestrze `ObjectsLibrary`. Dodanie nowego przedmiotu (użytkowego lub fabularnego) wymaga jedynie dopisania klucza ze sprajtem i opcjonalnej funkcji zwrotnej `action`, bez modyfikowania kodu odpowiedzialnego za ekwipunek.
+* **Rozszerzanie lokalizacji językowej:** Gra wspiera dynamiczne przełączanie języków w locie. Dodanie nowego języka (np. niemieckiego) sprowadza się do stworzenia słownika tłumaczeń analogicznego do `langPL` i dopisania go do obiektu `allLanguages` w pliku głównym.
+* **Wdrażanie efektów audio i muzyki:** Rejestracja zasobów dźwiękowych w `SoundManager.js` opiera się na prostym mapowaniu klucz-wartość w obiektach `soundFiles` (dla SFX) oraz `ambientFiles` (dla muzyki tła). Nowe efekty audio wymagają jedynie umieszczenia pliku w katalogu i dodania wpisu do rejestru inicjalizacyjnego.
+* **Szybkie tworzenie map i pokojów zagadek:** 
+  * Labirynty są przechowywane w postaci czytelnych tablic dwuwymiarowych w obiekcie `maps` (plik `maps.js`).
+  * Zawartość pokojów Point-and-Click, ich graficzne tła oraz położenie obiektów w trzech perspektywach (lewo, środek, prawo) konfiguruje się deklaratywnie w obiekcie `INITIAL_ROOMS_DATA` (plik `RoomsData.js`).
+* **Zarządzanie rozmieszczeniem potworów i skarbów:** Pliki konfiguracyjne `enemiesData.js` oraz `mazeItemsData.js` pozwalają na swobodne dodawanie nowych wrogów (wraz z ich ścieżkami patrolowymi) oraz przedmiotów na planszy bez ingerencji w skrypty zachowań potworów czy gracza.
+
+---
+
+### **Wymagania techniczne**
+* Dowolna nowoczesna przeglądarka internetowa wspierająca specyfikację **HTML5 Canvas**, **CSS3** oraz **Web Audio API**. Gra działa płynnie przy 60 FPS i nie wymaga pobierania zewnętrznych bibliotek ani frameworków.
 
 
 ### Czas Wykonania Projektu: Od 10.04.2026 do 08.06.2026
