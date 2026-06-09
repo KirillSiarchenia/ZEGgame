@@ -202,7 +202,8 @@ function restartGame() {
     player.hasReceivedFirstDamage = false; 
     player.waitingForSafeMoment = false;     
     player.safeTimeElapsed = 0;               
-    player.firstDamageReactionDone = false;     
+    player.firstDamageReactionDone = false; 
+    player.missingEye = false;
     const startPos = maze.getStartPos();
     player.gridX = startPos.x;
     player.gridY = startPos.y;
